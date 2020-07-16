@@ -27,7 +27,7 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import org.jnativehook.NativeHookException;
+import org.jnativehook.GlobalScreen;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
 
@@ -36,7 +36,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.RoundRectangle2D;
+import java.util.logging.Level;
 
+import static java.util.logging.Logger.getLogger;
 import static org.jnativehook.GlobalScreen.*;
 
 /**
@@ -139,13 +141,34 @@ public class KmCaster {
   }
 
   public static void main( final String[] args ) {
+    initNativeHook();
+
+    final var kc = new KmCaster();
+    SwingUtilities.invokeLater( kc::show );
+  }
+
+  private static void initNativeHook() {
     try {
       registerNativeHook();
 
-      final var kc = new KmCaster();
-      kc.show();
-    } catch( final NativeHookException ex ) {
-      ex.printStackTrace();
+      final var logger = getLogger( GlobalScreen.class.getPackage().getName() );
+      logger.setLevel( Level.OFF );
+      logger.setUseParentHandlers( false );
+    } catch( final Exception ex ) {
+      rethrow( ex );
     }
+  }
+
+  /**
+   * Cast a checked exception as a {@link RuntimeException}.
+   *
+   * @param <T>       What type of {@link Throwable} to throw.
+   * @param throwable The problem to cast.
+   * @throws T The throwable is casted to this type.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends Throwable> void rethrow( final Throwable throwable )
+      throws T {
+    throw (T) throwable;
   }
 }
