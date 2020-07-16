@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be1819c5-28d3-4984-9634-0b266734e13c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/FrameDragListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/keys.svg" beforeDir="false" afterPath="$PROJECT_DIR$/images/keys.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,6 +37,13 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -51,6 +62,15 @@
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
     <property name="show.unlinked.gradle.project.popup" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="com.whitemagicsoftware.kmcaster" />
+      <recent name="com.whitemagicsoftware.kmcaster.listeners" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="com.whitemagicsoftware.kmcaster.listeners" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="KmCaster" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
@@ -93,17 +113,45 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="813" y="683" width="218" height="250" key="#Notifications/0.28.2560.1529@0.28.2560.1529" timestamp="1594856235998" />
-    <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog" timestamp="1594855895029">
+    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1594860488340">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594855895029" />
+    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594860488340" />
+    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog" timestamp="1594860490819">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594860490819" />
+    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594858565314">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594858565314" />
+    <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog" timestamp="1594859006476">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594859006476" />
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594865163234">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594865163234" />
+    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594865163233">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594865163233" />
+    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594865163233">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594865163233" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594865163233">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594865163233" />
     <state x="423" y="444" key="SettingsEditor" timestamp="1594855824250">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="423" y="444" key="SettingsEditor/0.28.2560.1529@0.28.2560.1529" timestamp="1594855824250" />
-    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup" timestamp="1594858076497">
+    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup" timestamp="1594858571847">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594858076497" />
+    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594858571847" />
   </component>
 </project>

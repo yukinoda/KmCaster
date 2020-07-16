@@ -27,15 +27,11 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
+import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import org.jnativehook.GlobalScreen;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseInputListener;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -59,92 +55,23 @@ import static org.jnativehook.GlobalScreen.*;
  * </ol>
  */
 @SuppressWarnings("unused")
-public class KmCaster {
-  private static final float ARC = 8;
-  private static final int FRAME_WIDTH = 380;
-  private static final int FRAME_HEIGHT = 60;
-
-  public static class MouseListener implements NativeMouseInputListener {
-    public void nativeMouseClicked( NativeMouseEvent e ) {
-//      System.out.println( "Mouse Clicked: " + e.getClickCount() );
-    }
-
-    public void nativeMousePressed( NativeMouseEvent e ) {
-//      System.out.println( "Mouse Pressed: " + e.getButton() );
-    }
-
-    public void nativeMouseReleased( NativeMouseEvent e ) {
-//      System.out.println( "Mouse Released: " + e.getButton() );
-    }
-
-    public void nativeMouseMoved( NativeMouseEvent e ) {
-//      System.out.println( "Mouse Moved: " + e.getX() + ", " + e.getY() );
-    }
-
-    public void nativeMouseDragged( NativeMouseEvent e ) {
-//      System.out.println( "Mouse Dragged: " + e.getX() + ", " + e.getY() );
-    }
-  }
-
-  public static class FrameDragListener extends MouseAdapter {
-    private final JFrame mFrame;
-    private Point mInitCoordinates;
-
-    public FrameDragListener( final JFrame frame ) {
-      mFrame = frame;
-    }
-
-    public void mouseReleased( final MouseEvent e ) {
-      mInitCoordinates = null;
-    }
-
-    public void mousePressed( final MouseEvent e ) {
-      mInitCoordinates = e.getPoint();
-    }
-
-    public void mouseDragged( final MouseEvent e ) {
-      final Point dragCoordinates = e.getLocationOnScreen();
-      mFrame.setLocation( dragCoordinates.x - mInitCoordinates.x,
-                          dragCoordinates.y - mInitCoordinates.y );
-    }
-  }
-
-  private static class EventFrame extends JFrame {
-    public EventFrame() {
-      setUndecorated( true );
-      setAlwaysOnTop( true );
-      setBackground( new Color( .2f, .2f, .2f, 0.5f ) );
-
-      setLocationRelativeTo( null );
-      setSize( FRAME_WIDTH, FRAME_HEIGHT );
-      setShape( new RoundRectangle2D.Double(
-          0, 0, getWidth(), getHeight(), ARC, ARC ) );
-
-      FrameDragListener frameDragListener = new FrameDragListener( this );
-      addMouseListener( frameDragListener );
-      addMouseMotionListener( frameDragListener );
-    }
-  }
-
-  private final EventFrame mFrame = new EventFrame();
+public class KmCaster extends EventFrame {
 
   public KmCaster() {
-    final MouseListener mouseListener = new MouseListener();
+    final MouseListener mouseEventListener = new MouseListener();
+    addNativeMouseListener( mouseEventListener );
+    addNativeMouseMotionListener( mouseEventListener );
+    addNativeMouseWheelListener( mouseEventListener );
 
-    // Add the appropriate listeners.
-    addNativeMouseListener( mouseListener );
-    addNativeMouseMotionListener( mouseListener );
-  }
-
-  public void show() {
-    mFrame.setVisible( true );
+    final KeyboardListener keyboardListener = new KeyboardListener();
+    addNativeKeyListener( keyboardListener );
   }
 
   public static void main( final String[] args ) {
     initNativeHook();
 
     final var kc = new KmCaster();
-    SwingUtilities.invokeLater( kc::show );
+    SwingUtilities.invokeLater( () -> kc.setVisible( true ) );
   }
 
   private static void initNativeHook() {

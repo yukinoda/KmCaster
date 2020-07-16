@@ -11,6 +11,8 @@ repositories {
 }
 
 dependencies {
+  implementation 'com.kitfox.svg:svg-salamander:1.0'
+
   implementation 'com.1stleg:jnativehook:2.1.0'
 }
 
