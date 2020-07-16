@@ -30,7 +30,7 @@ compileJava {
 
 application {
   applicationName = 'kmcaster'
-  mainClassName = "com.whitemagicsoftware.${applicationName}.KmCast"
+  mainClassName = "com.whitemagicsoftware.${applicationName}.KmCaster"
 }
 
 jar {

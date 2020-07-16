@@ -32,6 +32,8 @@ import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import org.jnativehook.GlobalScreen;
 
 import javax.swing.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
@@ -55,7 +57,7 @@ import static org.jnativehook.GlobalScreen.*;
  * </ol>
  */
 @SuppressWarnings("unused")
-public class KmCaster extends EventFrame {
+public class KmCaster extends EventFrame implements PropertyChangeListener {
 
   public KmCaster() {
     final MouseListener mouseEventListener = new MouseListener();
@@ -65,15 +67,17 @@ public class KmCaster extends EventFrame {
 
     final KeyboardListener keyboardListener = new KeyboardListener();
     addNativeKeyListener( keyboardListener );
+    keyboardListener.addPropertyChangeListener( this );
   }
 
-  public static void main( final String[] args ) {
-    initNativeHook();
-
-    final var kc = new KmCaster();
-    SwingUtilities.invokeLater( () -> kc.setVisible( true ) );
+  @Override
+  public void propertyChange( final PropertyChangeEvent evt ) {
+    System.out.println( evt );
   }
 
+  /**
+   * Initialize the key and mouse event listener native interface.
+   */
   private static void initNativeHook() {
     try {
       registerNativeHook();
@@ -84,6 +88,18 @@ public class KmCaster extends EventFrame {
     } catch( final Exception ex ) {
       rethrow( ex );
     }
+  }
+
+  /**
+   * Main entry point.
+   *
+   * @param args Unused.
+   */
+  public static void main( final String[] args ) {
+    initNativeHook();
+
+    final var kc = new KmCaster();
+    SwingUtilities.invokeLater( () -> kc.setVisible( true ) );
   }
 
   /**

@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 
 class EventFrame extends JFrame {
+
   private static final float ARC = 8;
   private static final int FRAME_WIDTH = 380;
   private static final int FRAME_HEIGHT = 60;

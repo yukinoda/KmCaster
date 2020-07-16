@@ -12,7 +12,8 @@ public class MouseListener implements
     NativeMouseInputListener, NativeMouseWheelListener {
 
   public void nativeMouseClicked( NativeMouseEvent e ) {
-    System.out.println( "Mouse Clicked: " + e.getClickCount() );
+//    System.out.println( "Clicked # Times: " + e.getClickCount() );
+//    System.out.println( "Button clicked: " + e.getButton() );
   }
 
   public void nativeMousePressed( NativeMouseEvent e ) {
