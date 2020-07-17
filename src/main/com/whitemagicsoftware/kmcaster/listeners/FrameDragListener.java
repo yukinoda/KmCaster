@@ -32,6 +32,9 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+/**
+ * Responsible for moving the window when the user drags it around the screen.
+ */
 public class FrameDragListener extends MouseAdapter {
   private final JFrame mFrame;
   private Point mInitCoordinates;

@@ -29,8 +29,8 @@ package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
-import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
 import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -72,16 +72,24 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
     keyboardListener.addPropertyChangeListener( this );
   }
 
+  /**
+   * Called when a hardware switch has changed state.
+   *
+   * @param e Contains the identifier for the switch, its previous value,
+   *          and its new value.
+   */
   @Override
   public void propertyChange( final PropertyChangeEvent e ) {
-    var switchValue = e.getNewValue().toString();
+    final var switchName = e.getPropertyName();
+    final var switchValue = e.getNewValue().toString();
 
     // True or false indicates a non-regular key was pressed.
-    if( !"false".equals( switchValue ) && !"true".equals( switchValue ) ) {
-      switchValue = ANY_KEY;
-    }
+    final var context =
+        (!"false".equals( switchValue ) && !"true".equals( switchValue ))
+            ? ANY_KEY
+            : switchValue;
 
-    final var switchState = createState( e.getPropertyName(), switchValue );
+    final var switchState = createState( e.getPropertyName(), context );
     updateSwitchState( switchState );
     updateSwitchLabel( switchState.getKey(), switchValue );
   }
@@ -91,7 +99,7 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
     assert name != null;
     assert state != null;
 
-    final var key = SwitchName.valueFrom( name );
+    final var key = HardwareSwitch.valueFrom( name );
 
     return new HardwareState( key, state );
   }
@@ -99,16 +107,12 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
   /**
    * Initialize the key and mouse event listener native interface.
    */
-  private static void initNativeHook() {
-    try {
-      registerNativeHook();
+  private static void initNativeHook() throws NativeHookException {
+    registerNativeHook();
 
-      final var logger = getLogger( GlobalScreen.class.getPackage().getName() );
-      logger.setLevel( Level.OFF );
-      logger.setUseParentHandlers( false );
-    } catch( final Exception ex ) {
-      rethrow( ex );
-    }
+    final var logger = getLogger( GlobalScreen.class.getPackage().getName() );
+    logger.setLevel( Level.OFF );
+    logger.setUseParentHandlers( false );
   }
 
   /**
@@ -116,25 +120,12 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
    *
    * @param args Unused.
    */
-  public static void main( final String[] args ) {
+  public static void main( final String[] args ) throws NativeHookException {
     initNativeHook();
 
     invokeLater( () -> {
       final var kc = new KmCaster();
       kc.setVisible( true );
     } );
-  }
-
-  /**
-   * Cast a checked exception as a {@link RuntimeException}.
-   *
-   * @param <T>       What type of {@link Throwable} to throw.
-   * @param throwable The problem to cast.
-   * @throws T The throwable is casted to this type.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T extends Throwable> void rethrow( final Throwable throwable )
-      throws T {
-    throw (T) throwable;
   }
 }

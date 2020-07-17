@@ -11,7 +11,8 @@ repositories {
 }
 
 dependencies {
-  implementation 'com.kitfox.svg:svg-salamander:1.0'
+  // SVG
+  implementation fileTree(include: ['**/*.jar'], dir: 'libs')
 
   implementation 'com.1stleg:jnativehook:2.1.0'
 }

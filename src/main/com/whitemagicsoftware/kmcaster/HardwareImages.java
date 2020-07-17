@@ -27,14 +27,12 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
-import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.lang.String.format;
 
 /**
@@ -42,7 +40,7 @@ import static java.lang.String.format;
  * images. The images provide an on-screen interface that indicate to the user
  * what key or mouse events are being triggered.
  */
-public class HardwareSwitches {
+public class HardwareImages {
 
   private final static String DIR_IMAGES = "/images";
   private final static String DIR_IMAGES_KEYBOARD = DIR_IMAGES + "/key";
@@ -57,10 +55,10 @@ public class HardwareSwitches {
    * Constructs an enumerated type that represents the different types of
    * images shown when keyboard and mouse events are triggered.
    *
-   * @param dimension The image will be scaled to the given height, aspect
+   * @param dimension The image will be scaled to the given dimensions, aspect
    *                  ratio is maintained.
    */
-  public HardwareSwitches( final Dimension dimension ) {
+  public HardwareImages( final Dimension dimension ) {
     assert dimension != null;
 
     mDimension = dimension;
@@ -69,7 +67,7 @@ public class HardwareSwitches {
 
     for( int i = 1; i <= 3; i++ ) {
       final var s = Integer.toString( i );
-      final var switchName = SwitchName.valueFrom( "button " + s );
+      final var switchName = HardwareSwitch.valueFrom( "button " + s );
       mImages.put( state( switchName, true ), mouseImage( s ) );
       mImages.put( state( switchName, false ), mouseReleased );
     }
@@ -92,12 +90,12 @@ public class HardwareSwitches {
   }
 
   public static HardwareState state(
-      final SwitchName name, final boolean state ) {
+      final HardwareSwitch name, final boolean state ) {
     return state( name, Boolean.toString( state ) );
   }
 
   public static HardwareState state(
-      final SwitchName name, final String state ) {
+      final HardwareSwitch name, final String state ) {
     return new HardwareState( name, state );
   }
 
@@ -123,6 +121,28 @@ public class HardwareSwitches {
   private Image createImage( final String path ) {
     assert mDimension != null;
 
-    return sRasterizer.rasterize( format( "%s.svg", path ), mDimension );
+    final var resource = format( "%s.svg", path );
+
+    try {
+      return sRasterizer.rasterize( resource, mDimension );
+    } catch( final Exception ex ) {
+      rethrow( ex );
+    }
+
+    final var msg = format( "Missing resource %s", resource );
+    throw new RuntimeException( msg );
+  }
+
+  /**
+   * Cast a checked exception as a {@link RuntimeException}.
+   *
+   * @param <T> What type of {@link Throwable} to throw.
+   * @param t   The problem to cast.
+   * @throws T The throwable is casted to this type.
+   */
+  @SuppressWarnings("unchecked")
+  private static <T extends Throwable> void rethrow( final Throwable t )
+      throws T {
+    throw (T) t;
   }
 }

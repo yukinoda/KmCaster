@@ -27,27 +27,25 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
-
 /**
  * Responsible for defining hardware switch states.
  */
 public class HardwareState {
   public final static String ANY_KEY = "*";
 
-  private final SwitchName mName;
+  private final HardwareSwitch mName;
   private final String mState;
 
   /**
    * Constructs a new instance that represents whether a key or mouse button
    * was pressed.
    *
-   * @param name  The {@link SwitchName} representing the type of switch
+   * @param name  The {@link HardwareSwitch} representing the type of switch
    *              state to represent.
    * @param state A value of "*' means a regular key was pressed; otherwise,
    *              "true" or "false" indicate pressed or released, respectively.
    */
-  public HardwareState( final SwitchName name, final String state ) {
+  public HardwareState( final HardwareSwitch name, final String state ) {
     assert name != null;
     assert valid( state );
 
@@ -55,7 +53,7 @@ public class HardwareState {
     mState = state;
   }
 
-  public SwitchName getKey() {
+  public HardwareSwitch getKey() {
     return mName;
   }
 

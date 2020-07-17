@@ -27,26 +27,24 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
-import static org.jnativehook.NativeInputEvent.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
+/**
+ * Responsible for sending property change events when the keyboard state
+ * changes.
+ */
 public class KeyboardListener implements NativeKeyListener {
-  private final List<KeyboardModifier> mModifiers = List.of(
-      new KeyboardModifier( KEY_ALT, ALT_MASK ),
-      new KeyboardModifier( KEY_CTRL, CTRL_MASK ),
-      new KeyboardModifier( KEY_SHIFT, SHIFT_MASK )
-  );
-
   @SuppressWarnings("RedundantTypeArguments")
   private final static Map<Integer, String> KEY_CODES =
       Map.<Integer, String>ofEntries(
@@ -148,12 +146,17 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 65301, "SysRq" )
       );
 
-  private String mRegularHeld = "";
+  private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
 
   private final PropertyChangeSupport mDispatcher =
       new PropertyChangeSupport( this );
 
+  private String mRegularHeld = "";
+
   public KeyboardListener() {
+    mModifiers.put( KEY_ALT, false );
+    mModifiers.put( KEY_CTRL, false );
+    mModifiers.put( KEY_SHIFT, false );
   }
 
   public void addPropertyChangeListener(
@@ -196,8 +199,8 @@ public class KeyboardListener implements NativeKeyListener {
     boolean isModifier = false;
 
     // The key is regular iff its name does not match any modifier name.
-    for( final var modifier : mModifiers ) {
-      isModifier |= (modifier.isKeyName( n ) || modifier.isKeyName( o ));
+    for( final var key : mModifiers.keySet() ) {
+      isModifier |= (key.isName( n ) || key.isName( o ));
     }
 
     // If it's not a modifier key, broadcast the regular value.
@@ -213,10 +216,10 @@ public class KeyboardListener implements NativeKeyListener {
    * @param e The keyboard event that was most recently triggered.
    */
   private void updateModifiers( final NativeKeyEvent e ) {
-    for( final var modifier : mModifiers ) {
-      final boolean down = modifier.matches( e );
-      tryFire( modifier.getKey(), modifier.isHeld(), down );
-      modifier.setHeld( down );
+    for( final var key : mModifiers.keySet() ) {
+      final boolean down = key.isPressed( e.getModifiers() );
+      tryFire( key, mModifiers.get( key ), down );
+      mModifiers.put( key, down );
     }
   }
 
@@ -227,21 +230,24 @@ public class KeyboardListener implements NativeKeyListener {
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final SwitchName key, final String o, final String n ) {
+  private void tryFire( final HardwareSwitch key, final String o,
+                        final String n ) {
     if( !o.equals( n ) ) {
       mDispatcher.firePropertyChange( key.toString(), o, n );
     }
   }
 
   /**
-   * Delegates to {@link #tryFire(SwitchName, String, String)} with {@link Boolean}
+   * Delegates to {@link #tryFire(HardwareSwitch, String, String)} with
+   * {@link Boolean}
    * values as strings.
    *
    * @param key The name of the property that has changed.
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final SwitchName key, final boolean o, final boolean n ) {
+  private void tryFire( final HardwareSwitch key, final boolean o,
+                        final boolean n ) {
     tryFire( key, Boolean.toString( o ), Boolean.toString( n ) );
   }
 

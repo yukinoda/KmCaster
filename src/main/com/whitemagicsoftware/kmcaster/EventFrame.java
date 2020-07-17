@@ -28,7 +28,6 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
-import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,8 +35,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.HardwareSwitches.state;
-import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.HardwareImages.state;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 
 public class EventFrame extends JFrame {
 
@@ -46,8 +45,8 @@ public class EventFrame extends JFrame {
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
 
-  private final HardwareSwitches mSwitches;
-  private final Map<SwitchName, ImageComponent> mSwitchViews = new HashMap<>();
+  private final HardwareImages mSwitches;
+  private final Map<HardwareSwitch, ImageComponent> mSwitchViews = new HashMap<>();
 
   public EventFrame() {
     setDefaultCloseOperation( EXIT_ON_CLOSE );
@@ -62,8 +61,8 @@ public class EventFrame extends JFrame {
     addMouseListener( frameDragListener );
     addMouseMotionListener( frameDragListener );
 
-    final var dimensions = new Dimension( getWidth(), getHeight() - 10 );
-    mSwitches = new HardwareSwitches( dimensions );
+    final var dimensions = new Dimension( getWidth(), getHeight()- 10 );
+    mSwitches = new HardwareImages( dimensions );
 
     final var mouseImage = mSwitches.get( state( MOUSE_LEFT, false ) );
     final var mouseComponent = createImageComponent( mouseImage );
@@ -107,7 +106,8 @@ public class EventFrame extends JFrame {
   }
 
   protected void updateSwitchLabel(
-      final SwitchName name, final String label ) {
+      final HardwareSwitch name, final String label ) {
+    System.out.println( "Switch Label: " + label );
   }
 
   private ImageComponent createImageComponent( final Image image ) {
