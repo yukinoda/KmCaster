@@ -35,7 +35,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
-import static java.lang.Boolean.parseBoolean;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
@@ -73,16 +72,23 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
 
   @Override
   public void propertyChange( final PropertyChangeEvent e ) {
-    final var keyState = createKeyState( e.getPropertyName(), e.getNewValue() );
-    updateKeys( keyState );
+    var switchValue = e.getNewValue().toString();
+
+    if( !"false".equals( switchValue ) && !"true".equals( switchValue ) ) {
+      switchValue = "*";
+    }
+
+    final var switchState = createState( e.getPropertyName(), switchValue );
+    updateSwitchState( switchState );
+    updateSwitchLabel( switchState.getKey(), switchValue );
   }
 
-  private HardwareState createKeyState( final String name, final Object bool ) {
+  private HardwareState createState(
+      final String name, final String state ) {
     assert name != null;
-    assert bool != null;
+    assert state != null;
 
     final var key = SwitchName.valueFrom( name );
-    final var state = parseBoolean( bool.toString() );
 
     return new HardwareState( key, state );
   }

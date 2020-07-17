@@ -46,7 +46,7 @@ public class EventFrame extends JFrame {
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
 
   private final HardwareSwitches mSwitches;
-  private final Map<SwitchName, ImageComponent> mKeyViews = new HashMap<>();
+  private final Map<SwitchName, ImageComponent> mSwitchViews = new HashMap<>();
 
   public EventFrame() {
     setDefaultCloseOperation( EXIT_ON_CLOSE );
@@ -92,17 +92,24 @@ public class EventFrame extends JFrame {
     content.setLayout( layout );
     content.add( panel );
 
-    mKeyViews.put( KEY_SHIFT, shiftComponent );
-    mKeyViews.put( KEY_CTRL, ctrlComponent );
-    mKeyViews.put( KEY_ALT, altComponent );
-    mKeyViews.put( KEY_REGULAR, regularComponent );
+    mSwitchViews.put( KEY_SHIFT, shiftComponent );
+    mSwitchViews.put( KEY_CTRL, ctrlComponent );
+    mSwitchViews.put( KEY_ALT, altComponent );
+    mSwitchViews.put( KEY_REGULAR, regularComponent );
   }
 
-  protected void updateKeys( final HardwareState keyState ) {
+  protected void updateSwitchState( final HardwareState keyState ) {
     final var image = mSwitches.get( keyState );
-    final var component = mKeyViews.get( keyState.getKey() );
+    final var component = mSwitchViews.get( keyState.getKey() );
 
-    component.repaint( image );
+    System.out.println( keyState );
+
+    component.redraw( image );
+  }
+
+  protected void updateSwitchLabel(
+      final SwitchName name, final String label ) {
+    System.out.printf( "%s = %s%n", name, label );
   }
 
   private ImageComponent createImageComponent( final Image image ) {

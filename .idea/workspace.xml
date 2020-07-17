@@ -2,16 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be1819c5-28d3-4984-9634-0b266734e13c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareSwitches.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/SvgRasterizer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareSwitches.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareSwitches.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/ImageComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/ImageComponent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KeyState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareState.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Key.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/SwitchName.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/key/dn/short.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/dn/short.svg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,11 +33,6 @@
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="kmcaster" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="kmcaster" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
             </expand>
             <select />
@@ -129,14 +122,14 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="813" y="683" width="218" height="250" key="#Notifications/0.28.2560.1529@0.28.2560.1529" timestamp="1594856235998" />
-    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594963749524">
+    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594970464272">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594963749524" />
-    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser" timestamp="1594883540197">
+    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594970464272" />
+    <state x="734" y="519" width="477" height="578" key="#com.intellij.ide.util.MemberChooser" timestamp="1594969516839">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594883540197" />
+    <state x="734" y="519" width="477" height="578" key="#com.intellij.ide.util.MemberChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594969516839" />
     <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1594958988910">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -157,22 +150,22 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594872764235" />
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594967617575">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594971628573">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594967617575" />
-    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594967617574">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628573" />
+    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594971628572">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594967617574" />
-    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594967617574">
+    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628572" />
+    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594971628572">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594967617574" />
-    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594967617575">
+    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628572" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594971628573">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594967617575" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628573" />
     <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1594959771008">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -205,10 +198,10 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="840" y="410" width="564" height="770" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594946566725" />
-    <state x="833" y="545" width="586" height="502" key="find.popup" timestamp="1594949350582">
+    <state x="833" y="545" width="586" height="502" key="find.popup" timestamp="1594969799927">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594949350582" />
+    <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594969799927" />
     <state x="915" y="547" width="415" height="496" key="refactoring.ChangeSignatureDialog" timestamp="1594967617639">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>

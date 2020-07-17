@@ -80,7 +80,7 @@ public class HardwareSwitches {
     mImages.put( state( KEY_CTRL, false ), keyUpImage( "medium" ) );
     mImages.put( state( KEY_SHIFT, true ), keyDnImage( "long" ) );
     mImages.put( state( KEY_SHIFT, false ), keyUpImage( "long" ) );
-    mImages.put( state( KEY_REGULAR, true ), keyDnImage( "short" ) );
+    mImages.put( state( KEY_REGULAR, "*" ), keyDnImage( "short" ) );
     mImages.put( state( KEY_REGULAR, false ), keyUpImage( "short" ) );
   }
 
@@ -88,7 +88,13 @@ public class HardwareSwitches {
     return mImages.get( state );
   }
 
-  public static HardwareState state( final SwitchName name, final boolean state ) {
+  public static HardwareState state(
+      final SwitchName name, final boolean state ) {
+    return state( name, Boolean.toString( state ) );
+  }
+
+  public static HardwareState state(
+      final SwitchName name, final String state ) {
     return new HardwareState( name, state );
   }
 

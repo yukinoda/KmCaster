@@ -31,18 +31,41 @@ package com.whitemagicsoftware.kmcaster;
  * Responsible for defining hardware switch states.
  */
 public class HardwareState {
-  private final SwitchName mKey;
+  private final SwitchName mName;
   private final String mState;
 
-  public HardwareState( final SwitchName key, final boolean pressed ) {
-    assert key != null;
+  /**
+   * Constructs a new instance that represents whether a key or mouse button
+   * was pressed.
+   *
+   * @param name  The {@link SwitchName} representing the type of switch
+   *              state to represent.
+   * @param state A value of "*' means a regular key was pressed; otherwise,
+   *              "true" or "false" indicate pressed or released, respectively.
+   */
+  public HardwareState( final SwitchName name, final String state ) {
+    assert name != null;
+    assert valid( state );
 
-    mKey = key;
-    mState = Boolean.toString( pressed );
+    mName = name;
+    mState = state;
   }
 
   public SwitchName getKey() {
-    return mKey;
+    return mName;
+  }
+
+  /**
+   * Test whether the given state conforms to specification.
+   *
+   * @param state A value of "*' means a regular key was pressed; otherwise,
+   *              "true" or "false" indicate pressed or released, respectively.
+   * @return {@code true} The given {@code state} is a known value.
+   */
+  private boolean valid( final String state ) {
+    return "*".equals( state ) ||
+        "true".equals( state ) ||
+        "false".equals( state );
   }
 
   @Override
@@ -56,7 +79,7 @@ public class HardwareState {
 
     final HardwareState that = (HardwareState) o;
 
-    if( mKey != that.mKey ) {
+    if( mName != that.mName ) {
       return false;
     }
     return mState.equals( that.mState );
@@ -64,8 +87,16 @@ public class HardwareState {
 
   @Override
   public int hashCode() {
-    int result = mKey.hashCode();
+    int result = mName.hashCode();
     result = 31 * result + mState.hashCode();
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getName() + "{" +
+        "mKey=" + mName +
+        ", mState='" + mState + '\'' +
+        '}';
   }
 }

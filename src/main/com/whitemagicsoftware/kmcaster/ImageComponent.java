@@ -45,6 +45,7 @@ public class ImageComponent extends JComponent {
 
   @Override
   public Dimension getPreferredSize() {
+    // Race-condition guard.
     final var image = mImage;
 
     return new Dimension(
@@ -60,17 +61,13 @@ public class ImageComponent extends JComponent {
     g.drawImage( mImage, 0, 0, this );
   }
 
-  public Image getImage() {
-    return mImage;
-  }
-
   /**
    * Repaints this component using the given image. This is a mutable
    * operation that changes the internal {@link Image} instance.
    *
    * @param image The new image to use for painting.
    */
-  public void repaint( final Image image ) {
+  public void redraw( final Image image ) {
     mImage = image;
     repaint();
   }

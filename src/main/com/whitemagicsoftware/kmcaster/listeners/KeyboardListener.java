@@ -176,7 +176,7 @@ public class KeyboardListener implements NativeKeyListener {
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    updateRegular( getDisplayText( e ), "" );
+    updateRegular( getDisplayText( e ), "false" );
     updateModifiers( e );
   }
 
