@@ -179,7 +179,7 @@ public class KeyboardListener implements NativeKeyListener {
 
     // If it's not a modifier key, broadcast the regular value.
     if( isRegular ) {
-      tryFire( KEY_REGULAR.toString(), mRegularHeld, regularHeld );
+      tryFire( KEY_REGULAR, mRegularHeld, regularHeld );
       mRegularHeld = regularHeld;
     }
 
@@ -204,7 +204,7 @@ public class KeyboardListener implements NativeKeyListener {
   private void updateModifiers( final NativeKeyEvent e ) {
     for( final var modifier : mModifiers ) {
       final boolean down = modifier.matches( e );
-      tryFire( modifier.toString(), modifier.isHeld(), down );
+      tryFire( modifier.getKey(), modifier.isHeld(), down );
       modifier.setHeld( down );
     }
   }
@@ -212,26 +212,26 @@ public class KeyboardListener implements NativeKeyListener {
   /**
    * Called to fire the property change with the two given values differ.
    *
-   * @param name The name of the property that has changed.
-   * @param o    Old property value.
-   * @param n    New property value.
+   * @param key The name of the property that has changed.
+   * @param o   Old property value.
+   * @param n   New property value.
    */
-  private void tryFire( final String name, final String o, final String n ) {
+  private void tryFire( final Key key, final String o, final String n ) {
     if( !o.equals( n ) ) {
-      mDispatcher.firePropertyChange( name, o, n );
+      mDispatcher.firePropertyChange( key.toString(), o, n );
     }
   }
 
   /**
-   * Delegates to {@link #tryFire(String, String, String)} with {@link Boolean}
+   * Delegates to {@link #tryFire(Key, String, String)} with {@link Boolean}
    * values as strings.
    *
-   * @param name The name of the property that has changed.
-   * @param o    Old property value.
-   * @param n    New property value.
+   * @param key The name of the property that has changed.
+   * @param o   Old property value.
+   * @param n   New property value.
    */
-  private void tryFire( final String name, final boolean o, final boolean n ) {
-    tryFire( name, Boolean.toString( o ), Boolean.toString( n ) );
+  private void tryFire( final Key key, final boolean o, final boolean n ) {
+    tryFire( key, Boolean.toString( o ), Boolean.toString( n ) );
   }
 
   /**

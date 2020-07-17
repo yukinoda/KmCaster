@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be1819c5-28d3-4984-9634-0b266734e13c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Key.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Modifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

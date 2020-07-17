@@ -45,7 +45,7 @@ class KeyboardModifier {
   }
 
   public boolean isKeyName( final String key ) {
-    return mKey.isName( key );
+    return getKey().isName( key );
   }
 
   public boolean isHeld() {
@@ -54,6 +54,10 @@ class KeyboardModifier {
 
   public void setHeld( final boolean held ) {
     mHeld = held;
+  }
+
+  public Key getKey() {
+    return mKey;
   }
 
   /**
@@ -68,6 +72,6 @@ class KeyboardModifier {
   }
 
   public String toString() {
-    return mKey.toString();
+    return getKey().toString();
   }
 }
