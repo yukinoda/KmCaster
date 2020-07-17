@@ -27,6 +27,7 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import com.whitemagicsoftware.kmcaster.SwitchName;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
@@ -35,7 +36,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.listeners.Key.*;
+import static com.whitemagicsoftware.kmcaster.SwitchName.*;
 import static java.util.Map.entry;
 import static org.jnativehook.NativeInputEvent.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
@@ -227,21 +228,21 @@ public class KeyboardListener implements NativeKeyListener {
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final Key key, final String o, final String n ) {
+  private void tryFire( final SwitchName key, final String o, final String n ) {
     if( !o.equals( n ) ) {
       mDispatcher.firePropertyChange( key.toString(), o, n );
     }
   }
 
   /**
-   * Delegates to {@link #tryFire(Key, String, String)} with {@link Boolean}
+   * Delegates to {@link #tryFire(SwitchName, String, String)} with {@link Boolean}
    * values as strings.
    *
    * @param key The name of the property that has changed.
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final Key key, final boolean o, final boolean n ) {
+  private void tryFire( final SwitchName key, final boolean o, final boolean n ) {
     tryFire( key, Boolean.toString( o ), Boolean.toString( n ) );
   }
 

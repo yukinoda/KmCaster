@@ -27,7 +27,6 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import com.whitemagicsoftware.kmcaster.listeners.Key;
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import org.jnativehook.GlobalScreen;
@@ -36,6 +35,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
+import static java.lang.Boolean.parseBoolean;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
@@ -77,11 +77,14 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
     updateKeys( keyState );
   }
 
-  private KeyState createKeyState( final String name, final Object bool ) {
-    final var key = Key.valueFrom( name );
-    final var state = bool.toString();
+  private HardwareState createKeyState( final String name, final Object bool ) {
+    assert name != null;
+    assert bool != null;
 
-    return new KeyState( key, state );
+    final var key = SwitchName.valueFrom( name );
+    final var state = parseBoolean( bool.toString() );
+
+    return new HardwareState( key, state );
   }
 
   /**

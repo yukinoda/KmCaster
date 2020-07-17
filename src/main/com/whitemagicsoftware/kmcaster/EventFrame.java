@@ -28,7 +28,6 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
-import com.whitemagicsoftware.kmcaster.listeners.Key;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,8 +35,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.AppImage.*;
-import static com.whitemagicsoftware.kmcaster.listeners.Key.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitches.state;
+import static com.whitemagicsoftware.kmcaster.SwitchName.*;
 
 public class EventFrame extends JFrame {
 
@@ -46,8 +45,8 @@ public class EventFrame extends JFrame {
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
 
-  private final Map<KeyState, Image> mKeyStates = new HashMap<>();
-  private final Map<Key, ImageComponent> mKeyViews = new HashMap<>();
+  private final HardwareSwitches mSwitches;
+  private final Map<SwitchName, ImageComponent> mKeyViews = new HashMap<>();
 
   public EventFrame() {
     setDefaultCloseOperation( EXIT_ON_CLOSE );
@@ -63,14 +62,15 @@ public class EventFrame extends JFrame {
     addMouseMotionListener( frameDragListener );
 
     final var dimensions = new Dimension( getWidth(), getHeight() - 10 );
+    mSwitches = new HardwareSwitches( dimensions );
 
-    final var mouseImage = MOUSE_REST.toImage( dimensions );
+    final var mouseImage = mSwitches.get( state( MOUSE_LEFT, false ) );
     final var mouseComponent = createImageComponent( mouseImage );
 
-    final var shiftUpImage = KEY_UP_SHIFT.toImage( dimensions );
-    final var ctrlUpImage = KEY_UP_CTRL.toImage( dimensions );
-    final var altUpImage = KEY_UP_ALT.toImage( dimensions );
-    final var regularUpImage = KEY_UP_REGULAR.toImage( dimensions );
+    final var shiftUpImage = mSwitches.get( state( KEY_SHIFT, false ) );
+    final var ctrlUpImage = mSwitches.get( state( KEY_CTRL, false ) );
+    final var altUpImage = mSwitches.get( state( KEY_ALT, false ) );
+    final var regularUpImage = mSwitches.get( state( KEY_REGULAR, false ) );
 
     final var shiftComponent = createImageComponent( shiftUpImage );
     final var ctrlComponent = createImageComponent( ctrlUpImage );
@@ -92,28 +92,14 @@ public class EventFrame extends JFrame {
     content.setLayout( layout );
     content.add( panel );
 
-    final var shiftDnImage = KEY_DN_SHIFT.toImage( dimensions );
-    final var ctrlDnImage = KEY_DN_CTRL.toImage( dimensions );
-    final var altDnImage = KEY_DN_ALT.toImage( dimensions );
-    final var regularDnImage = KEY_DN_REGULAR.toImage( dimensions );
-
-    mKeyStates.put( new KeyState( KEY_SHIFT, false ), shiftUpImage );
-    mKeyStates.put( new KeyState( KEY_SHIFT, true ), shiftDnImage );
-    mKeyStates.put( new KeyState( KEY_CTRL, false ), ctrlUpImage );
-    mKeyStates.put( new KeyState( KEY_CTRL, true ), ctrlDnImage );
-    mKeyStates.put( new KeyState( KEY_ALT, false ), altUpImage );
-    mKeyStates.put( new KeyState( KEY_ALT, true ), altDnImage );
-    mKeyStates.put( new KeyState( KEY_REGULAR, false ), regularUpImage );
-    mKeyStates.put( new KeyState( KEY_REGULAR, true ), regularDnImage );
-
     mKeyViews.put( KEY_SHIFT, shiftComponent );
     mKeyViews.put( KEY_CTRL, ctrlComponent );
     mKeyViews.put( KEY_ALT, altComponent );
     mKeyViews.put( KEY_REGULAR, regularComponent );
   }
 
-  protected void updateKeys( final KeyState keyState ) {
-    final var image = mKeyStates.get( keyState );
+  protected void updateKeys( final HardwareState keyState ) {
+    final var image = mSwitches.get( keyState );
     final var component = mKeyViews.get( keyState.getKey() );
 
     component.repaint( image );

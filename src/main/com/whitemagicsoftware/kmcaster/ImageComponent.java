@@ -60,6 +60,10 @@ public class ImageComponent extends JComponent {
     g.drawImage( mImage, 0, 0, this );
   }
 
+  public Image getImage() {
+    return mImage;
+  }
+
   /**
    * Repaints this component using the given image. This is a mutable
    * operation that changes the internal {@link Image} instance.

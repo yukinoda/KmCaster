@@ -27,50 +27,47 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import com.whitemagicsoftware.kmcaster.listeners.Key;
+/**
+ * Used for compile-time binding between change listeners input events.
+ */
+public enum SwitchName {
+  KEY_ALT( "alt" ),
+  KEY_CTRL( "ctrl" ),
+  KEY_SHIFT( "shift" ),
+  KEY_REGULAR( "regular" ),
+  MOUSE_LEFT( "button 1" ),
+  MOUSE_WHEEL( "button 2" ),
+  MOUSE_RIGHT( "button 3" ),
+  MOUSE_LR( "button 1-3" );
 
-import static java.lang.Boolean.parseBoolean;
+  private final String mName;
 
-public class KeyState {
-  private final Key mKey;
-  private final String mState;
-
-  public KeyState( final Key key, final boolean pressed ) {
-    assert key != null;
-
-    mKey = key;
-    mState = Boolean.toString( pressed );
+  SwitchName( final String name ) {
+    mName = name;
   }
 
-  public KeyState( final Key key, final String pressed ) {
-    this( key, parseBoolean( pressed ) );
+  public boolean isName( final String name ) {
+    return mName.equalsIgnoreCase( name );
   }
 
-  public Key getKey() {
-    return mKey;
+  /**
+   * Looks up the key that matches the given name, case-insensitively.
+   *
+   * @param name The name of the key to find in this enum.
+   * @return The {@link SwitchName} object that matches the name.
+   */
+  public static SwitchName valueFrom( final String name ) {
+    for( final var b : SwitchName.values() ) {
+      if( b.isName( name ) ) {
+        return b;
+      }
+    }
+
+    return KEY_REGULAR;
   }
 
   @Override
-  public boolean equals( final Object o ) {
-    if( this == o ) {
-      return true;
-    }
-    if( o == null || getClass() != o.getClass() ) {
-      return false;
-    }
-
-    final KeyState keyState = (KeyState) o;
-
-    if( mKey != keyState.mKey ) {
-      return false;
-    }
-    return mState.equals( keyState.mState );
-  }
-
-  @Override
-  public int hashCode() {
-    int result = mKey.hashCode();
-    result = 31 * result + mState.hashCode();
-    return result;
+  public String toString() {
+    return mName;
   }
 }

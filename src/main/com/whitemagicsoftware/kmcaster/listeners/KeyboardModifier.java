@@ -27,6 +27,7 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import com.whitemagicsoftware.kmcaster.SwitchName;
 import org.jnativehook.keyboard.NativeKeyEvent;
 
 /**
@@ -35,9 +36,9 @@ import org.jnativehook.keyboard.NativeKeyEvent;
 class KeyboardModifier {
   private boolean mHeld;
   private final int mMask;
-  private final Key mKey;
+  private final SwitchName mKey;
 
-  KeyboardModifier( final Key key, final int mask ) {
+  KeyboardModifier( final SwitchName key, final int mask ) {
     assert key != null;
 
     mKey = key;
@@ -56,7 +57,7 @@ class KeyboardModifier {
     mHeld = held;
   }
 
-  public Key getKey() {
+  public SwitchName getKey() {
     return mKey;
   }
 

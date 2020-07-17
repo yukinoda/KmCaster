@@ -31,7 +31,6 @@ import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -40,15 +39,13 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.KmCaster.rethrow;
 import static java.awt.RenderingHints.*;
+import static java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
-import static java.lang.String.format;
 
 /**
- * Responsible for loading vector graphics representations of application
- * images. The images provide an on-screen interface that indicate to the user
- * what key or mouse events are being triggered.
+ * Responsible for converting SVG images into rasterized PNG images.
  */
-public class AppImage {
+public class SvgRasterizer {
   public final static Map<Object, Object> RENDERING_HINTS = Map.of(
       KEY_ANTIALIASING,
       VALUE_ANTIALIAS_ON,
@@ -70,59 +67,18 @@ public class AppImage {
       VALUE_TEXT_ANTIALIAS_ON
   );
 
-  private final static String IMAGES = "/images";
-  private final static String IMAGES_KEY = IMAGES + "/key";
-  private final static String IMAGES_MOUSE = IMAGES + "/mouse";
-
-  public static final AppImage MOUSE_REST = mouseImage( "0" );
-  public static final AppImage MOUSE_LEFT = mouseImage( "1" );
-  public static final AppImage MOUSE_CHORD = mouseImage( "2" );
-  public static final AppImage MOUSE_RIGHT = mouseImage( "3" );
-  public static final AppImage MOUSE_LR = mouseImage( "1-3" );
-  public static final AppImage KEY_UP_SHIFT = keyUpImage( "long" );
-  public static final AppImage KEY_UP_ALT = keyUpImage( "medium" );
-  public static final AppImage KEY_UP_CTRL = keyUpImage( "medium" );
-  public static final AppImage KEY_UP_REGULAR = keyUpImage( "short" );
-  public static final AppImage KEY_DN_SHIFT = keyDnImage( "long" );
-  public static final AppImage KEY_DN_ALT = keyDnImage( "medium" );
-  public static final AppImage KEY_DN_CTRL = keyDnImage( "medium" );
-  public static final AppImage KEY_DN_REGULAR = keyDnImage( "short" );
-
-  private static AppImage mouseImage( final String prefix ) {
-    return createImage( format( "%s/%s", IMAGES_MOUSE, prefix ) );
-  }
-
-  private static AppImage keyImage( final String state, final String prefix ) {
-    return createImage( format( "%s/%s/%s", IMAGES_KEY, state, prefix ) );
-  }
-
-  private static AppImage keyUpImage( final String prefix ) {
-    return keyImage( "up", prefix );
-  }
-
-  private static AppImage keyDnImage( final String prefix ) {
-    return keyImage( "dn", prefix );
-  }
-
-  private static AppImage createImage( final String path ) {
-    return new AppImage( format( "%s.svg", path ) );
-  }
-
-  private final SVGUniverse mRenderer = new SVGUniverse();
-  private final String mPath;
+  private final static SVGUniverse sRenderer = new SVGUniverse();
 
   /**
-   * Constructs an enumerated type that represents the different types of
-   * images shown when keyboard and mouse events are triggered.
+   * Rasterizes a vector graphic to a given size using a {@link BufferedImage}.
+   * The rendering hints are set to produce high quality output.
    *
-   * @param path File name, including directory, to load.
+   * @param path   Fully qualified path to the image resource to rasterize.
+   * @param dstDim The output image dimensions.
+   * @return The rasterized {@link Image}.
    */
-  private AppImage( final String path ) {
-    mPath = path;
-  }
-
-  public Image toImage( final Dimension dstDim ) {
-    final var diagram = loadDiagram();
+  public Image rasterize( final String path, final Dimension dstDim ) {
+    final var diagram = loadDiagram( path );
     final var diaWidth = diagram.getWidth();
     final var diaHeight = diagram.getHeight();
     final var srcDim = new Dimension( (int) diaWidth, (int) diaHeight );
@@ -150,22 +106,18 @@ public class AppImage {
     return image;
   }
 
-  private SVGDiagram loadDiagram() {
-    final var url = getResourceUrl();
-    return applySettings( mRenderer.getDiagram( mRenderer.loadSVG( url ) ) );
+  private URL getResourceUrl( final String path ) {
+    return HardwareSwitches.class.getResource( path );
+  }
+
+  private SVGDiagram loadDiagram( final String path ) {
+    final var url = getResourceUrl( path );
+    return applySettings( sRenderer.getDiagram( sRenderer.loadSVG( url ) ) );
   }
 
   private SVGDiagram applySettings( final SVGDiagram diagram ) {
     diagram.setIgnoringClipHeuristic( true );
     return diagram;
-  }
-
-  private URL getResourceUrl() {
-    return AppImage.class.getResource( getPath() );
-  }
-
-  private String getPath() {
-    return mPath;
   }
 
   private Dimension scale( final Dimension src, final Dimension dst ) {
