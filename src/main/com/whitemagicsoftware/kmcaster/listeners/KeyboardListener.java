@@ -170,15 +170,15 @@ public class KeyboardListener implements NativeKeyListener {
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
     final String regularHeld = getDisplayText( e );
-    boolean isRegular = true;
+    boolean isModifier = false;
 
     // The key is regular iff its name does not match any modifier name.
     for( final var modifier : mModifiers ) {
-      isRegular &= modifier.isKeyName( regularHeld );
+      isModifier |= modifier.isKeyName( regularHeld );
     }
 
     // If it's not a modifier key, broadcast the regular value.
-    if( isRegular ) {
+    if( !isModifier ) {
       tryFire( KEY_REGULAR, mRegularHeld, regularHeld );
       mRegularHeld = regularHeld;
     }
@@ -188,7 +188,12 @@ public class KeyboardListener implements NativeKeyListener {
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    mRegularHeld = "";
+    final String oldValue = getDisplayText( e );
+    final String newValue = "";
+
+    tryFire( KEY_REGULAR, oldValue, newValue );
+    mRegularHeld = newValue;
+
     updateModifiers( e );
   }
 

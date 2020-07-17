@@ -42,6 +42,8 @@ class EventFrame extends JFrame {
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
 
+
+
   public EventFrame() {
     setLocationRelativeTo( null );
     setUndecorated( true );
