@@ -1,3 +1,30 @@
+/*
+ * Copyright 2020 White Magic Software, Ltd.
+ *
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *  o Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ *
+ *  o Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 package com.whitemagicsoftware.kmcaster.listeners;
 
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -5,25 +32,20 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.Map.entry;
 import static org.jnativehook.NativeInputEvent.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 public class KeyboardListener implements NativeKeyListener {
-  public final static String KEY_NAME_ALT = "ALT";
-  public final static String KEY_NAME_CTRL = "CTRL";
-  public final static String KEY_NAME_SHIFT = "SHIFT";
-  public final static String KEY_NAME_REGULAR = "REGULAR";
+  public final static String KEY_NAME_REGULAR = "regular";
 
-  /**
-   * The library has default names for these modifiers, which will be
-   * converted to lower case for comparison with this set.
-   */
-  private final static Set<String> modifiers = Set.of(
-      "alt", "ctrl", "shift"
+  private final List<Modifier> mModifiers = List.of(
+      new Modifier( "alt", ALT_MASK ),
+      new Modifier( "ctrl", CTRL_MASK ),
+      new Modifier( "shift", SHIFT_MASK )
   );
 
   @SuppressWarnings("RedundantTypeArguments")
@@ -127,9 +149,6 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 65301, "SysRq" )
       );
 
-  private boolean mAltHeld;
-  private boolean mCtrlHeld;
-  private boolean mShiftHeld;
   private String mRegularHeld = "";
 
   private final PropertyChangeSupport mDispatcher =
@@ -143,6 +162,7 @@ public class KeyboardListener implements NativeKeyListener {
     mDispatcher.addPropertyChangeListener( listener );
   }
 
+  @SuppressWarnings("unused")
   public void removePropertyChangeListener(
       final PropertyChangeListener listener ) {
     mDispatcher.removePropertyChangeListener( listener );
@@ -152,13 +172,14 @@ public class KeyboardListener implements NativeKeyListener {
   public void nativeKeyPressed( final NativeKeyEvent e ) {
     final String regularHeld = getDisplayText( e );
 
-    // If it's not a modifier key, broadcast the regular value.
-    if( !modifiers.contains( regularHeld.toLowerCase() ) ) {
-      tryFire( KEY_NAME_REGULAR, mRegularHeld, regularHeld );
-      mRegularHeld = regularHeld;
+    for( final var modifier : mModifiers ) {
+      // If it's not a modifier key, broadcast the regular value.
+      if( modifier.isName( regularHeld.toLowerCase() ) ) {
+        tryFire( KEY_NAME_REGULAR, mRegularHeld, regularHeld );
+        mRegularHeld = regularHeld;
+      }
     }
 
-    // If the modifier has changed, it'll be caught here.
     updateModifiers( e );
   }
 
@@ -172,18 +193,17 @@ public class KeyboardListener implements NativeKeyListener {
   public void nativeKeyTyped( final NativeKeyEvent e ) {
   }
 
+  /**
+   * Notifies of any modifier state changes.
+   *
+   * @param e The keyboard event that was most recently triggered.
+   */
   private void updateModifiers( final NativeKeyEvent e ) {
-    final boolean alt = isAltDown( e );
-    final boolean ctrl = isControlDown( e );
-    final boolean shift = isShiftDown( e );
-
-    tryFire( KEY_NAME_ALT, mAltHeld, alt );
-    tryFire( KEY_NAME_CTRL, mCtrlHeld, ctrl );
-    tryFire( KEY_NAME_SHIFT, mShiftHeld, shift );
-
-    mAltHeld = alt;
-    mCtrlHeld = ctrl;
-    mShiftHeld = shift;
+    for( final var modifier : mModifiers ) {
+      final boolean down = modifier.matches( e );
+      tryFire( modifier.toString(), modifier.isHeld(), down );
+      modifier.setHeld( down );
+    }
   }
 
   /**
@@ -193,7 +213,6 @@ public class KeyboardListener implements NativeKeyListener {
    * @param o    Old property value.
    * @param n    New property value.
    */
-  @SuppressWarnings("SameParameterValue")
   private void tryFire( final String name, final String o, final String n ) {
     if( !o.equals( n ) ) {
       mDispatcher.firePropertyChange( name, o, n );
@@ -201,16 +220,15 @@ public class KeyboardListener implements NativeKeyListener {
   }
 
   /**
-   * Called to fire the property change with the two given values differ.
+   * Delegates to {@link #tryFire(String, String, String)} with {@link Boolean}
+   * values as strings.
    *
    * @param name The name of the property that has changed.
    * @param o    Old property value.
    * @param n    New property value.
    */
   private void tryFire( final String name, final boolean o, final boolean n ) {
-    if( o != n ) {
-      mDispatcher.firePropertyChange( name, o, n );
-    }
+    tryFire( name, Boolean.toString( o ), Boolean.toString( n ) );
   }
 
   /**
@@ -224,21 +242,5 @@ public class KeyboardListener implements NativeKeyListener {
     return KEY_CODES.getOrDefault(
         e.getRawCode(), getKeyText( e.getKeyCode() )
     );
-  }
-
-  private boolean isModifierDown( final NativeKeyEvent e, final int mask ) {
-    return (e.getModifiers() & mask) != 0;
-  }
-
-  private boolean isAltDown( final NativeKeyEvent e ) {
-    return isModifierDown( e, ALT_MASK );
-  }
-
-  private boolean isControlDown( final NativeKeyEvent e ) {
-    return isModifierDown( e, CTRL_MASK );
-  }
-
-  private boolean isShiftDown( final NativeKeyEvent e ) {
-    return isModifierDown( e, SHIFT_MASK );
   }
 }

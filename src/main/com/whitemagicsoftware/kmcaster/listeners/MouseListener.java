@@ -29,7 +29,7 @@ public class MouseListener implements
   }
 
   public void nativeMouseDragged( NativeMouseEvent e ) {
-    System.out.println( "Mouse Dragged: " + e.getX() + ", " + e.getY() );
+//    System.out.println( "Mouse Dragged: " + e.getX() + ", " + e.getY() );
   }
 
   public void nativeMouseWheelMoved( NativeMouseWheelEvent e ) {

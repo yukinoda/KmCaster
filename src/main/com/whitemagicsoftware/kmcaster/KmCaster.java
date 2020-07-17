@@ -37,6 +37,7 @@ import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
 import static java.util.logging.Logger.getLogger;
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
 
 /**
@@ -98,8 +99,10 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
   public static void main( final String[] args ) {
     initNativeHook();
 
-    final var kc = new KmCaster();
-    SwingUtilities.invokeLater( () -> kc.setVisible( true ) );
+    invokeLater( () -> {
+      final var kc = new KmCaster();
+      kc.setVisible( true );
+    } );
   }
 
   /**

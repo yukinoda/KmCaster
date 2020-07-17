@@ -2,25 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be1819c5-28d3-4984-9634-0b266734e13c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Modifier.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/1-3.svg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/dn/alphanum.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/dn/short.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/dn/modifier.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/dn/medium.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/dn/shift.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/dn/long.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/up/alphanum.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/up/short.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/up/modifier.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/up/medium.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/key/up/shift.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/up/long.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/mouse/all.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/all.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/mouse/chord.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/2.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/mouse/left.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/1.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/mouse/rest.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/0.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/images/mouse/right.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/3.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/0.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/0.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/1.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/1.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/2.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/2.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/3.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/3.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/all.svg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,12 +29,20 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
         <projects_view>
           <tree_state>
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="kmcaster" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="kmcaster" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
             </expand>
             <select />
@@ -52,8 +54,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -81,8 +83,8 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveInnerDialog.RECENTS_KEY">
-      <recent name="com.whitemagicsoftware.kmcaster" />
       <recent name="com.whitemagicsoftware.kmcaster.listeners" />
+      <recent name="com.whitemagicsoftware.kmcaster" />
     </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="com.whitemagicsoftware.kmcaster" />
@@ -130,18 +132,22 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="813" y="683" width="218" height="250" key="#Notifications/0.28.2560.1529@0.28.2560.1529" timestamp="1594856235998" />
-    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser" timestamp="1594881096559">
+    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594912481218">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594881096559" />
-    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1594860488340">
+    <state x="314" y="436" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594912481218" />
+    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser" timestamp="1594883540197">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594860488340" />
-    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog" timestamp="1594860490819">
+    <state x="734" y="519" width="376" height="578" key="#com.intellij.ide.util.MemberChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594883540197" />
+    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1594953388252">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594860490819" />
+    <state x="745" y="737" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594953388252" />
+    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog" timestamp="1594953392347">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594953392347" />
     <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594858565314">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -154,46 +160,58 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594872764235" />
-    <state width="1479" height="406" key="GridCell.Tab.0.bottom" timestamp="1594881867827">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594954347951">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
-    <state width="1479" height="406" key="GridCell.Tab.0.center" timestamp="1594881867826">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347951" />
+    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594954347950">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867826" />
-    <state width="1479" height="406" key="GridCell.Tab.0.left" timestamp="1594881867826">
+    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347950" />
+    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594954347950">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867826" />
-    <state width="1479" height="406" key="GridCell.Tab.0.right" timestamp="1594881867827">
+    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347950" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594954347951">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
-    <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1594881867827">
+    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347951" />
+    <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1594948352434">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.1.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
-    <state width="1479" height="406" key="GridCell.Tab.1.center" timestamp="1594881867827">
+    <state width="1479" height="406" key="GridCell.Tab.1.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594948352434" />
+    <state width="1479" height="406" key="GridCell.Tab.1.center" timestamp="1594948352433">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.1.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
-    <state width="1479" height="406" key="GridCell.Tab.1.left" timestamp="1594881867827">
+    <state width="1479" height="406" key="GridCell.Tab.1.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594948352433" />
+    <state width="1479" height="406" key="GridCell.Tab.1.left" timestamp="1594948352432">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.1.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
-    <state width="1479" height="406" key="GridCell.Tab.1.right" timestamp="1594881867827">
+    <state width="1479" height="406" key="GridCell.Tab.1.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594948352432" />
+    <state width="1479" height="406" key="GridCell.Tab.1.right" timestamp="1594948352433">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="406" key="GridCell.Tab.1.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594881867827" />
+    <state width="1479" height="406" key="GridCell.Tab.1.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594948352433" />
     <state x="423" y="444" width="1026" height="842" key="SettingsEditor" timestamp="1594876039235">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="423" y="444" width="1026" height="842" key="SettingsEditor/0.28.2560.1529@0.28.2560.1529" timestamp="1594876039235" />
+    <state width="761" height="601" key="XDebugger.FullValuePopup" timestamp="1594940367498">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state width="761" height="601" key="XDebugger.FullValuePopup/0.28.2560.1529@0.28.2560.1529" timestamp="1594940367498" />
     <state x="265" y="308" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1594881438574">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="265" y="308" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594881438573" />
+    <state x="840" y="410" width="564" height="770" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1594946566725">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="840" y="410" width="564" height="770" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594946566725" />
+    <state x="833" y="545" width="586" height="502" key="find.popup" timestamp="1594949350582">
+      <screen x="0" y="28" width="2560" height="1529" />
+    </state>
+    <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594949350582" />
     <state x="589" y="382" key="run.anything.popup" timestamp="1594881668952">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -202,12 +220,5 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="589" y="477" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594880500645" />
-  </component>
-  <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="Remote">
-        <watch expression="mClassLoader.getResource(&quot;/images/key/dn/shift.svg&quot;)" language="JAVA" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>
