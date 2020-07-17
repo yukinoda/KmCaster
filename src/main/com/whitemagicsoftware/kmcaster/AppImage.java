@@ -121,27 +121,6 @@ public class AppImage {
     mPath = path;
   }
 
-  public JComponent toComponent( final Dimension dimension ) {
-    final var image = toImage( dimension );
-
-    return new JComponent() {
-      @Override
-      public Dimension getPreferredSize() {
-        return new Dimension(
-            image.getWidth( null ), image.getHeight( null )
-        );
-      }
-
-      @Override
-      protected void paintComponent( final Graphics graphics ) {
-        super.paintComponent( graphics );
-
-        final var g = (Graphics2D) graphics.create();
-        g.drawImage( image, 0, 0, this );
-      }
-    };
-  }
-
   public Image toImage( final Dimension dstDim ) {
     final var diagram = loadDiagram();
     final var diaWidth = diagram.getWidth();

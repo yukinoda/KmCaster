@@ -25,46 +25,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster.listeners;
+package com.whitemagicsoftware.kmcaster;
 
-/**
- * Used for compile-time binding between change listeners and keyboard
- * events.
- */
-public enum Key {
-  KEY_ALT( "alt" ),
-  KEY_CTRL( "ctrl" ),
-  KEY_SHIFT( "shift" ),
-  KEY_REGULAR( "regular" );
+import com.whitemagicsoftware.kmcaster.listeners.Key;
 
-  private final String mName;
+import static java.lang.Boolean.parseBoolean;
 
-  Key( final String name ) {
-    mName = name;
+public class KeyState {
+  private final Key mKey;
+  private final String mState;
+
+  public KeyState( final Key key, final boolean pressed ) {
+    assert key != null;
+
+    mKey = key;
+    mState = Boolean.toString( pressed );
   }
 
-  public boolean isName( final String name ) {
-    return mName.equalsIgnoreCase( name );
+  public KeyState( final Key key, final String pressed ) {
+    this( key, parseBoolean( pressed ) );
   }
 
-  /**
-   * Looks up the key that matches the given name, case-insensitively.
-   *
-   * @param name The name of the key to find in this enum.
-   * @return The {@link Key} object that matches the name.
-   */
-  public static Key valueFrom( final String name ) {
-    for( final var b : Key.values() ) {
-      if( b.isName( name ) ) {
-        return b;
-      }
-    }
-
-    return KEY_REGULAR;
+  public Key getKey() {
+    return mKey;
   }
 
   @Override
-  public String toString() {
-    return mName;
+  public boolean equals( final Object o ) {
+    if( this == o ) {
+      return true;
+    }
+    if( o == null || getClass() != o.getClass() ) {
+      return false;
+    }
+
+    final KeyState keyState = (KeyState) o;
+
+    if( mKey != keyState.mKey ) {
+      return false;
+    }
+    return mState.equals( keyState.mState );
+  }
+
+  @Override
+  public int hashCode() {
+    int result = mKey.hashCode();
+    result = 31 * result + mState.hashCode();
+    return result;
   }
 }

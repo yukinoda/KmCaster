@@ -25,46 +25,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster.listeners;
+package com.whitemagicsoftware.kmcaster;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
- * Used for compile-time binding between change listeners and keyboard
- * events.
+ * Responsible for drawing an image, which can be changed at any time.
  */
-public enum Key {
-  KEY_ALT( "alt" ),
-  KEY_CTRL( "ctrl" ),
-  KEY_SHIFT( "shift" ),
-  KEY_REGULAR( "regular" );
-
-  private final String mName;
-
-  Key( final String name ) {
-    mName = name;
-  }
-
-  public boolean isName( final String name ) {
-    return mName.equalsIgnoreCase( name );
-  }
-
+public class ImageComponent extends JComponent {
   /**
-   * Looks up the key that matches the given name, case-insensitively.
-   *
-   * @param name The name of the key to find in this enum.
-   * @return The {@link Key} object that matches the name.
+   * Mutable image.
    */
-  public static Key valueFrom( final String name ) {
-    for( final var b : Key.values() ) {
-      if( b.isName( name ) ) {
-        return b;
-      }
-    }
+  private Image mImage;
 
-    return KEY_REGULAR;
+  ImageComponent( final Image image ) {
+    mImage = image;
   }
 
   @Override
-  public String toString() {
-    return mName;
+  public Dimension getPreferredSize() {
+    final var image = mImage;
+
+    return new Dimension(
+        image.getWidth( null ), image.getHeight( null )
+    );
+  }
+
+  @Override
+  protected void paintComponent( final Graphics graphics ) {
+    super.paintComponent( graphics );
+
+    final var g = (Graphics2D) graphics.create();
+    g.drawImage( mImage, 0, 0, this );
+  }
+
+  /**
+   * Repaints this component using the given image. This is a mutable
+   * operation that changes the internal {@link Image} instance.
+   *
+   * @param image The new image to use for painting.
+   */
+  public void repaint( final Image image ) {
+    mImage = image;
+    repaint();
   }
 }
