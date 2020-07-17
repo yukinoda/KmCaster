@@ -28,6 +28,7 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
+import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitches.state;
-import static com.whitemagicsoftware.kmcaster.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
 
 public class EventFrame extends JFrame {
 
@@ -102,14 +103,11 @@ public class EventFrame extends JFrame {
     final var image = mSwitches.get( keyState );
     final var component = mSwitchViews.get( keyState.getKey() );
 
-    System.out.println( keyState );
-
     component.redraw( image );
   }
 
   protected void updateSwitchLabel(
       final SwitchName name, final String label ) {
-    System.out.printf( "%s = %s%n", name, label );
   }
 
   private ImageComponent createImageComponent( final Image image ) {

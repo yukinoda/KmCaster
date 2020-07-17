@@ -27,7 +27,6 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
-import com.whitemagicsoftware.kmcaster.SwitchName;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
@@ -36,7 +35,7 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
 import static java.util.Map.entry;
 import static org.jnativehook.NativeInputEvent.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;

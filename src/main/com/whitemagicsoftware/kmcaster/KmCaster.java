@@ -29,12 +29,14 @@ package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
+import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
 import org.jnativehook.GlobalScreen;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
+import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
@@ -74,8 +76,9 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
   public void propertyChange( final PropertyChangeEvent e ) {
     var switchValue = e.getNewValue().toString();
 
+    // True or false indicates a non-regular key was pressed.
     if( !"false".equals( switchValue ) && !"true".equals( switchValue ) ) {
-      switchValue = "*";
+      switchValue = ANY_KEY;
     }
 
     final var switchState = createState( e.getPropertyName(), switchValue );

@@ -6,10 +6,12 @@
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareState.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareSwitches.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/HardwareSwitches.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/ImageComponent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/ImageComponent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/SwitchName.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/SwitchName.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/FrameDragListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/FrameDragListener.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/key/dn/short.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/key/dn/short.svg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,7 +89,7 @@
       <module name="kmcaster.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.whitemagicsoftware.kmcaster.*" />
+          <option name="PATTERN" value="com.whitemagicsoftware.kmcaster.listeners.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -150,22 +152,22 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594872764235" />
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594971628573">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594972026417">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628573" />
-    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594971628572">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594972026417" />
+    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594972026417">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628572" />
-    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594971628572">
+    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594972026417" />
+    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594972026416">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628572" />
-    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594971628573">
+    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594972026416" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594972026417">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594971628573" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594972026417" />
     <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1594959771008">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -198,10 +200,10 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="840" y="410" width="564" height="770" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.28.2560.1529@0.28.2560.1529" timestamp="1594946566725" />
-    <state x="833" y="545" width="586" height="502" key="find.popup" timestamp="1594969799927">
+    <state x="833" y="545" width="586" height="502" key="find.popup" timestamp="1594972340355">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594969799927" />
+    <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594972340355" />
     <state x="915" y="547" width="415" height="496" key="refactoring.ChangeSignatureDialog" timestamp="1594967617639">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>

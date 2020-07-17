@@ -27,11 +27,14 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.SwitchName.*;
+import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
+import static com.whitemagicsoftware.kmcaster.listeners.SwitchName.*;
 import static java.lang.String.format;
 
 /**
@@ -80,7 +83,7 @@ public class HardwareSwitches {
     mImages.put( state( KEY_CTRL, false ), keyUpImage( "medium" ) );
     mImages.put( state( KEY_SHIFT, true ), keyDnImage( "long" ) );
     mImages.put( state( KEY_SHIFT, false ), keyUpImage( "long" ) );
-    mImages.put( state( KEY_REGULAR, "*" ), keyDnImage( "short" ) );
+    mImages.put( state( KEY_REGULAR, ANY_KEY ), keyDnImage( "short" ) );
     mImages.put( state( KEY_REGULAR, false ), keyUpImage( "short" ) );
   }
 

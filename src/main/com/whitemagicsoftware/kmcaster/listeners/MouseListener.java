@@ -33,6 +33,6 @@ public class MouseListener implements
   }
 
   public void nativeMouseWheelMoved( NativeMouseWheelEvent e ) {
-    System.out.println( "Mouse Scroll: " + e.getWheelRotation() );
+//    System.out.println( "Mouse Scroll: " + e.getWheelRotation() );
   }
 }

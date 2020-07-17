@@ -27,10 +27,14 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.listeners.SwitchName;
+
 /**
  * Responsible for defining hardware switch states.
  */
 public class HardwareState {
+  public final static String ANY_KEY = "*";
+
   private final SwitchName mName;
   private final String mState;
 
@@ -63,7 +67,7 @@ public class HardwareState {
    * @return {@code true} The given {@code state} is a known value.
    */
   private boolean valid( final String state ) {
-    return "*".equals( state ) ||
+    return ANY_KEY.equals( state ) ||
         "true".equals( state ) ||
         "false".equals( state );
   }

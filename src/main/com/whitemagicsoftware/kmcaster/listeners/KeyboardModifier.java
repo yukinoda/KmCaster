@@ -27,13 +27,12 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
-import com.whitemagicsoftware.kmcaster.SwitchName;
 import org.jnativehook.keyboard.NativeKeyEvent;
 
 /**
  * Responsible for tracking the state of modifier keys.
  */
-class KeyboardModifier {
+public class KeyboardModifier {
   private boolean mHeld;
   private final int mMask;
   private final SwitchName mKey;
