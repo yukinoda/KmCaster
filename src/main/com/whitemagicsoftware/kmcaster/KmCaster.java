@@ -91,7 +91,7 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
 
     final var switchState = createState( e.getPropertyName(), context );
     updateSwitchState( switchState );
-    updateSwitchLabel( switchState.getKey(), switchValue );
+    updateSwitchLabel( switchState, switchValue );
   }
 
   private HardwareState createState(

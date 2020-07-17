@@ -38,7 +38,7 @@ import static java.lang.String.format;
 /**
  * Responsible for loading vector graphics representations of application
  * images. The images provide an on-screen interface that indicate to the user
- * what key or mouse events are being triggered.
+ * what key or mouse events have been triggered.
  */
 public class HardwareImages {
 

@@ -37,6 +37,7 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareImages.state;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static java.lang.Boolean.parseBoolean;
 
 public class EventFrame extends JFrame {
 
@@ -44,9 +45,11 @@ public class EventFrame extends JFrame {
   private static final Dimension FRAME_DIMENSIONS = new Dimension( 484, 70 );
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
+  private static final Color COLOUR_LABEL = new Color( 33, 33, 33 );
 
   private final HardwareImages mSwitches;
-  private final Map<HardwareSwitch, ImageComponent> mSwitchViews = new HashMap<>();
+  private final Map<HardwareSwitch, ImageComponent> mSwitchViews =
+      new HashMap<>();
 
   public EventFrame() {
     setDefaultCloseOperation( EXIT_ON_CLOSE );
@@ -61,7 +64,7 @@ public class EventFrame extends JFrame {
     addMouseListener( frameDragListener );
     addMouseMotionListener( frameDragListener );
 
-    final var dimensions = new Dimension( getWidth(), getHeight()- 10 );
+    final var dimensions = new Dimension( getWidth(), getHeight() - 10 );
     mSwitches = new HardwareImages( dimensions );
 
     final var mouseImage = mSwitches.get( state( MOUSE_LEFT, false ) );
@@ -100,20 +103,49 @@ public class EventFrame extends JFrame {
 
   protected void updateSwitchState( final HardwareState keyState ) {
     final var image = mSwitches.get( keyState );
-    final var component = mSwitchViews.get( keyState.getKey() );
+    final var component = mSwitchViews.get( keyState.getHardwareSwitch() );
 
     component.redraw( image );
   }
 
   protected void updateSwitchLabel(
-      final HardwareSwitch name, final String label ) {
-    System.out.println( "Switch Label: " + label );
+      final HardwareState state, final String value ) {
+    if( state.isModifier() ) {
+      final var pressed = parseBoolean( value );
+      System.out.println( "Modifier pressed: " + pressed );
+    }
+    else {
+      final var component = mSwitchViews.get( state.getHardwareSwitch() );
+      component.removeAll();
+
+      if( !"false".equals( value ) ) {
+        System.out.println( "Regular pressed: " + value );
+
+        final var label = labelFor( value );
+        label.setSize( component.getSize() );
+
+        component.add( label );
+        component.repaint();
+      }
+    }
+  }
+
+  private JLabel labelFor( final String value ) {
+    final var label = new JLabel( value );
+    label.setForeground( COLOUR_LABEL );
+
+    return label;
   }
 
   private ImageComponent createImageComponent( final Image image ) {
     return new ImageComponent( image );
   }
 
+  /**
+   * Returns the shape for the application's window frame.
+   *
+   * @return A rounded rectangle.
+   */
   private Shape createShape() {
     return new RoundRectangle2D.Double(
         0, 0, getWidth(), getHeight(), ARC, ARC

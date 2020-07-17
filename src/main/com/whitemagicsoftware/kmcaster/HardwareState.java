@@ -33,28 +33,44 @@ package com.whitemagicsoftware.kmcaster;
 public class HardwareState {
   public final static String ANY_KEY = "*";
 
-  private final HardwareSwitch mName;
-  private final String mState;
+  private final HardwareSwitch mHardwareSwitch;
+  private final String mHardwareStatus;
 
   /**
    * Constructs a new instance that represents whether a key or mouse button
    * was pressed.
    *
-   * @param name  The {@link HardwareSwitch} representing the type of switch
-   *              state to represent.
-   * @param state A value of "*' means a regular key was pressed; otherwise,
-   *              "true" or "false" indicate pressed or released, respectively.
+   * @param hardwareSwitch The {@link HardwareSwitch} representing the type
+   *                       of switch state to represent.
+   * @param hardwareStatus A value of {@link #ANY_KEY} means a regular key was
+   *                       pressed; otherwise, "true" or "false" indicate
+   *                       pressed or released, respectively.
    */
-  public HardwareState( final HardwareSwitch name, final String state ) {
-    assert name != null;
-    assert valid( state );
+  public HardwareState(
+      final HardwareSwitch hardwareSwitch, final String hardwareStatus ) {
+    assert hardwareSwitch != null;
+    assert valid( hardwareStatus );
 
-    mName = name;
-    mState = state;
+    mHardwareSwitch = hardwareSwitch;
+    mHardwareStatus = hardwareStatus;
   }
 
-  public HardwareSwitch getKey() {
-    return mName;
+  /**
+   * Returns the physical switch containing its name.
+   *
+   * @return The {@link HardwareSwitch} having a switch-dependent state.
+   */
+  public HardwareSwitch getHardwareSwitch() {
+    return mHardwareSwitch;
+  }
+
+  /**
+   * Answers whether this is a modifier key.
+   *
+   * @return {@code true} when this is a modifier key.
+   */
+  public boolean isModifier() {
+    return mHardwareSwitch.isModifier();
   }
 
   /**
@@ -81,24 +97,16 @@ public class HardwareState {
 
     final HardwareState that = (HardwareState) o;
 
-    if( mName != that.mName ) {
+    if( mHardwareSwitch != that.mHardwareSwitch ) {
       return false;
     }
-    return mState.equals( that.mState );
+    return mHardwareStatus.equals( that.mHardwareStatus );
   }
 
   @Override
   public int hashCode() {
-    int result = mName.hashCode();
-    result = 31 * result + mState.hashCode();
+    int result = mHardwareSwitch.hashCode();
+    result = 31 * result + mHardwareStatus.hashCode();
     return result;
-  }
-
-  @Override
-  public String toString() {
-    return getClass().getName() + "{" +
-        "mKey=" + mName +
-        ", mState='" + mState + '\'' +
-        '}';
   }
 }
