@@ -29,25 +29,23 @@ package com.whitemagicsoftware.kmcaster.listeners;
 
 import org.jnativehook.keyboard.NativeKeyEvent;
 
-import javax.swing.event.ChangeListener;
-
 /**
  * Responsible for tracking the state of modifier keys.
  */
-class Modifier {
+class KeyboardModifier {
   private boolean mHeld;
   private final int mMask;
-  private final String mName;
+  private final Key mKey;
 
-  Modifier( final String name, final int mask ) {
-    assert name != null;
+  KeyboardModifier( final Key key, final int mask ) {
+    assert key != null;
 
-    mName = name.toLowerCase();
+    mKey = key;
     mMask = mask;
   }
 
-  public boolean isName( final String name ) {
-    return mName.equals( name );
+  public boolean isKeyName( final String key ) {
+    return mKey.isName( key );
   }
 
   public boolean isHeld() {
@@ -69,14 +67,7 @@ class Modifier {
     return (e.getModifiers() & mMask) != 0;
   }
 
-  /**
-   * Returns a unique identifier for this modifier that can be used by
-   * a {@link ChangeListener}.
-   *
-   * @return The modifier key name, in lowercase.
-   */
-  @Override
   public String toString() {
-    return mName;
+    return mKey.toString();
   }
 }

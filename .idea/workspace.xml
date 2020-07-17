@@ -2,19 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be1819c5-28d3-4984-9634-0b266734e13c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Modifier.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/1-3.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Key.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/AppImage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/EventFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/KmCaster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/MouseListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/0.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/0.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/1.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/1.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/2.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/2.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/3.svg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/images/mouse/3.svg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/images/mouse/all.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/Modifier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/com/whitemagicsoftware/kmcaster/listeners/KeyboardModifier.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,8 +45,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -148,10 +139,10 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="707" y="657" width="431" height="302" key="#com.intellij.refactoring.move.moveInner.MoveInnerDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594953392347" />
-    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594858565314">
+    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594954562308">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594858565314" />
+    <state x="567" y="28" width="711" height="1526" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594954562308" />
     <state x="659" y="559" width="526" height="497" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1594880960290">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -160,22 +151,22 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="710" y="704" width="425" height="207" key="DetectedRootsChooserDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594872764235" />
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594954347951">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom" timestamp="1594955521867">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347951" />
-    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594954347950">
+    <state width="1479" height="330" key="GridCell.Tab.0.bottom/0.28.2560.1529@0.28.2560.1529" timestamp="1594955521867" />
+    <state width="1479" height="330" key="GridCell.Tab.0.center" timestamp="1594955521866">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347950" />
-    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594954347950">
+    <state width="1479" height="330" key="GridCell.Tab.0.center/0.28.2560.1529@0.28.2560.1529" timestamp="1594955521866" />
+    <state width="1479" height="330" key="GridCell.Tab.0.left" timestamp="1594955521866">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347950" />
-    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594954347951">
+    <state width="1479" height="330" key="GridCell.Tab.0.left/0.28.2560.1529@0.28.2560.1529" timestamp="1594955521866" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right" timestamp="1594955521867">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594954347951" />
+    <state width="1479" height="330" key="GridCell.Tab.0.right/0.28.2560.1529@0.28.2560.1529" timestamp="1594955521867" />
     <state width="1479" height="406" key="GridCell.Tab.1.bottom" timestamp="1594948352434">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -200,10 +191,10 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state width="761" height="601" key="XDebugger.FullValuePopup/0.28.2560.1529@0.28.2560.1529" timestamp="1594940367498" />
-    <state x="265" y="308" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1594881438574">
+    <state x="1068" y="347" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog" timestamp="1594955523088">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="265" y="308" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594881438573" />
+    <state x="1068" y="347" width="1323" height="1003" key="com.intellij.history.integration.ui.views.FileHistoryDialog/0.28.2560.1529@0.28.2560.1529" timestamp="1594955523088" />
     <state x="840" y="410" width="564" height="770" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1594946566725">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
@@ -212,13 +203,13 @@
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
     <state x="833" y="545" width="586" height="502" key="find.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594949350582" />
-    <state x="589" y="382" key="run.anything.popup" timestamp="1594881668952">
+    <state x="589" y="382" width="672" height="677" key="run.anything.popup" timestamp="1594954728874">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="589" y="382" key="run.anything.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594881668952" />
-    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup" timestamp="1594880500645">
+    <state x="589" y="382" width="672" height="677" key="run.anything.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594954728874" />
+    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup" timestamp="1594954743947">
       <screen x="0" y="28" width="2560" height="1529" />
     </state>
-    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594880500645" />
+    <state x="589" y="477" width="672" height="678" key="search.everywhere.popup/0.28.2560.1529@0.28.2560.1529" timestamp="1594954743947" />
   </component>
 </project>

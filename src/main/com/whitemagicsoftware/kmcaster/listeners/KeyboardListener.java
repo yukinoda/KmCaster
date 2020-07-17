@@ -35,17 +35,16 @@ import java.beans.PropertyChangeSupport;
 import java.util.List;
 import java.util.Map;
 
+import static com.whitemagicsoftware.kmcaster.listeners.Key.*;
 import static java.util.Map.entry;
 import static org.jnativehook.NativeInputEvent.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 public class KeyboardListener implements NativeKeyListener {
-  public final static String KEY_NAME_REGULAR = "regular";
-
-  private final List<Modifier> mModifiers = List.of(
-      new Modifier( "alt", ALT_MASK ),
-      new Modifier( "ctrl", CTRL_MASK ),
-      new Modifier( "shift", SHIFT_MASK )
+  private final List<KeyboardModifier> mModifiers = List.of(
+      new KeyboardModifier( KEY_ALT, ALT_MASK ),
+      new KeyboardModifier( KEY_CTRL, CTRL_MASK ),
+      new KeyboardModifier( KEY_SHIFT, SHIFT_MASK )
   );
 
   @SuppressWarnings("RedundantTypeArguments")
@@ -171,13 +170,17 @@ public class KeyboardListener implements NativeKeyListener {
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
     final String regularHeld = getDisplayText( e );
+    boolean isRegular = true;
 
+    // The key is regular iff its name does not match any modifier name.
     for( final var modifier : mModifiers ) {
-      // If it's not a modifier key, broadcast the regular value.
-      if( modifier.isName( regularHeld.toLowerCase() ) ) {
-        tryFire( KEY_NAME_REGULAR, mRegularHeld, regularHeld );
-        mRegularHeld = regularHeld;
-      }
+      isRegular &= modifier.isKeyName( regularHeld );
+    }
+
+    // If it's not a modifier key, broadcast the regular value.
+    if( isRegular ) {
+      tryFire( KEY_REGULAR.toString(), mRegularHeld, regularHeld );
+      mRegularHeld = regularHeld;
     }
 
     updateModifiers( e );
