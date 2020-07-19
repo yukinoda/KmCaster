@@ -25,54 +25,57 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster;
+package com.whitemagicsoftware.kmcaster.ui;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
- * Responsible for drawing an image, which can be changed at any time.
+ * Provides the ability to scale a dimension in relation to another
+ * dimension. The dimensions are unit-less.
  */
-public class ImageComponent extends JComponent {
-  /**
-   * Mutable image.
-   */
-  private Image mImage;
-
-  public ImageComponent( final Image image ) {
-    assert image != null;
-
-    mImage = image;
-  }
-
-  @Override
-  public Dimension getPreferredSize() {
-    // Race-condition guard.
-    final var image = mImage;
-
-    return new Dimension(
-        image.getWidth( null ), image.getHeight( null )
-    );
-  }
-
-  @Override
-  protected void paintComponent( final Graphics graphics ) {
-    super.paintComponent( graphics );
-
-    final var g = (Graphics2D) graphics.create();
-    g.drawImage( mImage, 0, 0, this );
-  }
+public final class KmDimension extends Dimension {
 
   /**
-   * Repaints this component using the given image. This is a mutable
-   * operation that changes the internal {@link Image} instance.
+   * Delegates construction to the superclass.
    *
-   * @param image The new image to use for painting.
+   * @param w The dimension's width.
+   * @param h The dimension's height.
    */
-  public void redraw( final Image image ) {
-    assert image != null;
+  public KmDimension( final int w, final int h ) {
+    super( w, h );
+  }
 
-    mImage = image;
-    repaint();
+  /**
+   * Delegates construction to this class.
+   *
+   * @param w The width, cast to an integer.
+   * @param h The height, cast to an integer.
+   */
+  @SuppressWarnings("unused")
+  public KmDimension( final double w, final double h ) {
+    this( (int) w, (int) h );
+  }
+
+  /**
+   * Scales the given source {@link Dimension} to the destination
+   * {@link Dimension}, maintaining the aspect ratio with respect to
+   * the best fit.
+   *
+   * @param dst The desired image dimensions to scale.
+   * @return The given source dimensions scaled to the destination dimensions,
+   * maintaining the aspect ratio.
+   */
+  public Dimension scaleTo( final Dimension dst ) {
+    final var srcWidth = getWidth();
+    final var srcHeight = getHeight();
+
+    // Determine the ratio that will have the best fit.
+    final var ratio = Math.min(
+        dst.getWidth() / srcWidth, dst.getHeight() / srcHeight
+    );
+
+    // Scale both dimensions with respect to the best fit ratio.
+    return new KmDimension( (int) (srcWidth * ratio),
+                            (int) (srcHeight * ratio) );
   }
 }

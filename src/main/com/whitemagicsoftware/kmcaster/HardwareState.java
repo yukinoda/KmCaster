@@ -40,8 +40,22 @@ public class HardwareState {
    * Constructs a new instance that represents whether a key or mouse button
    * was pressed.
    *
-   * @param hardwareSwitch The {@link HardwareSwitch} representing the type
-   *                       of switch state to represent.
+   * @param name           Name of a {@link HardwareSwitch} that represents
+   *                       the type of switch having the given status.
+   * @param hardwareStatus A value of {@link #ANY_KEY} means a regular key was
+   *                       pressed; otherwise, "true" or "false" indicate
+   *                       pressed or released, respectively.
+   */
+  public HardwareState( final String name, final String hardwareStatus ) {
+    this( HardwareSwitch.valueFrom( name ), hardwareStatus );
+  }
+
+  /**
+   * Constructs a new instance that represents whether a key or mouse button
+   * was pressed.
+   *
+   * @param hardwareSwitch A {@link HardwareSwitch} that represents the type of
+   *                       switch having the given status.
    * @param hardwareStatus A value of {@link #ANY_KEY} means a regular key was
    *                       pressed; otherwise, "true" or "false" indicate
    *                       pressed or released, respectively.

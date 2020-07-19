@@ -35,6 +35,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
@@ -45,10 +46,25 @@ import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
  * changes.
  */
 public class KeyboardListener implements NativeKeyListener {
+  private final static String KEY_SPACE = "Space";
+  private final static String KEY_BACKSPACE = "Back ⌫";
+  private final static String KEY_TAB = "Tab ↹";
+  private final static String KEY_ENTER = "Enter ⏎";
+
+  /**
+   * Defines larger-sized keys.
+   */
+  public final static Set<String> KEYS_MEDIUM = Set.of(
+      KEY_SPACE,
+      KEY_BACKSPACE,
+      KEY_TAB,
+      KEY_ENTER
+  );
+
   @SuppressWarnings("RedundantTypeArguments")
   private final static Map<Integer, String> KEY_CODES =
       Map.<Integer, String>ofEntries(
-          entry( 32, "␣" ),
+          entry( 32, KEY_SPACE ),
           entry( 33, "!" ),
           entry( 34, "'" ),
           entry( 35, "#" ),
@@ -107,10 +123,10 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 124, "|" ),
           entry( 125, "}" ),
           entry( 126, "~" ),
-          entry( 65288, "Back ⌫" ),
-          entry( 65056, "Tab ↹" ),
-          entry( 65289, "Tab ↹" ),
-          entry( 65293, "Enter ⏎" ),
+          entry( 65288, KEY_BACKSPACE ),
+          entry( 65056, KEY_TAB ),
+          entry( 65289, KEY_TAB ),
+          entry( 65293, KEY_ENTER ),
           entry( 65361, "←" ),
           entry( 65362, "↑" ),
           entry( 65363, "→" ),

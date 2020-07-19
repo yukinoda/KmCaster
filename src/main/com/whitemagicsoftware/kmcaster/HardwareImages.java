@@ -33,6 +33,7 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
 import static java.lang.String.format;
 
 /**
@@ -124,25 +125,16 @@ public class HardwareImages {
     final var resource = format( "%s.svg", path );
 
     try {
-      return sRasterizer.rasterize( resource, mDimension );
+      final var diagram = sRasterizer.loadDiagram( resource );
+      final var scale = sRasterizer.calculateScale( diagram, mDimension );
+      final var rasterized = sRasterizer.rasterize( diagram, mDimension );
+
+      return rasterized;
     } catch( final Exception ex ) {
       rethrow( ex );
     }
 
     final var msg = format( "Missing resource %s", resource );
     throw new RuntimeException( msg );
-  }
-
-  /**
-   * Cast a checked exception as a {@link RuntimeException}.
-   *
-   * @param <T> What type of {@link Throwable} to throw.
-   * @param t   The problem to cast.
-   * @throws T The throwable is casted to this type.
-   */
-  @SuppressWarnings("unchecked")
-  private static <T extends Throwable> void rethrow( final Throwable t )
-      throws T {
-    throw (T) t;
   }
 }

@@ -31,16 +31,17 @@ import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.TextLayout;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareImages.state;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static java.awt.Font.BOLD;
 import static java.lang.Boolean.parseBoolean;
 
 public class EventFrame extends JFrame {
-
   private static final float ARC = 8;
   private static final Dimension FRAME_DIMENSIONS = new Dimension( 484, 70 );
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
@@ -52,17 +53,8 @@ public class EventFrame extends JFrame {
       new HashMap<>();
 
   public EventFrame() {
-    setDefaultCloseOperation( EXIT_ON_CLOSE );
-    setLocationRelativeTo( null );
-    setUndecorated( true );
-    setAlwaysOnTop( true );
-    setBackground( TRANSPARENT );
-    setSize( FRAME_DIMENSIONS );
-    setShape( createShape() );
-
-    final var frameDragListener = new FrameDragListener( this );
-    addMouseListener( frameDragListener );
-    addMouseMotionListener( frameDragListener );
+    initWindowFrame();
+    initWindowDragListener();
 
     final var dimensions = new Dimension( getWidth(), getHeight() - 10 );
     mSwitches = new HardwareImages( dimensions );
@@ -81,7 +73,7 @@ public class EventFrame extends JFrame {
     final var regularComponent = createImageComponent( regularUpImage );
 
     final var panel = new JPanel();
-    panel.setAlignmentX( Component.CENTER_ALIGNMENT );
+    panel.setAlignmentX( CENTER_ALIGNMENT );
     panel.setBackground( TRANSLUCENT );
     panel.add( mouseComponent );
     panel.add( shiftComponent );
@@ -99,6 +91,22 @@ public class EventFrame extends JFrame {
     mSwitchViews.put( KEY_CTRL, ctrlComponent );
     mSwitchViews.put( KEY_ALT, altComponent );
     mSwitchViews.put( KEY_REGULAR, regularComponent );
+  }
+
+  private void initWindowFrame() {
+    setDefaultCloseOperation( EXIT_ON_CLOSE );
+    setLocationRelativeTo( null );
+    setUndecorated( true );
+    setAlwaysOnTop( true );
+    setBackground( TRANSPARENT );
+    setSize( FRAME_DIMENSIONS );
+    setShape( createShape() );
+  }
+
+  private void initWindowDragListener() {
+    final var frameDragListener = new FrameDragListener( this );
+    addMouseListener( frameDragListener );
+    addMouseMotionListener( frameDragListener );
   }
 
   protected void updateSwitchState( final HardwareState keyState ) {
@@ -119,10 +127,8 @@ public class EventFrame extends JFrame {
       component.removeAll();
 
       if( !"false".equals( value ) ) {
-        System.out.println( "Regular pressed: " + value );
-
-        final var label = labelFor( value );
-        label.setSize( component.getSize() );
+        final var bounds = component.getBounds();
+        final var label = labelFor( value, bounds );
 
         component.add( label );
         component.repaint();
@@ -130,11 +136,68 @@ public class EventFrame extends JFrame {
     }
   }
 
-  private JLabel labelFor( final String value ) {
-    final var label = new JLabel( value );
+  /**
+   * @param text The text
+   * @param r    The maximum width and height.
+   * @return A label adjusted to the given dimensions.
+   */
+  private JLabel labelFor( final String text, final Rectangle r ) {
+    final int width = (int) r.getWidth() + 1;
+    final int height = (int) r.getHeight() + 1;
+
+    final var label = new JLabel( text );
+    final var font = new Font( "DejaVu Sans", BOLD, 12 );
+    label.setFont( font );
+    label.setSize( width, height );
     label.setForeground( COLOUR_LABEL );
 
+    final var scaledFont = scaleFont( label.getText(), font, r );
+    label.setFont( scaledFont );
+
     return label;
+  }
+
+  /**
+   * Adjusts the given {@link Font}/{@link String} size such that it fits
+   * within the bounds of the given {@link Rectangle}.
+   *
+   * @param text The text string to be rendered within the bounds of the
+   *             given {@link Rectangle}.
+   * @param font The {@link Font} to use when rendering the text string.
+   * @param dst  The bounds for fitting the string.
+   * @return A new {@link Font} instance that is guaranteed to write the given
+   * string within the bounds of the given {@link Rectangle}.
+   */
+  private Font scaleFont(
+      final String text, final Font font, final Rectangle dst ) {
+    final var g = (Graphics2D) getGraphics();
+    final var frc = g.getFontRenderContext();
+    final var dstWidthPx = dst.getWidth();
+    final var dstHeightPx = dst.getHeight();
+
+    var minSizePt = 1f;
+    var maxSizePt = 1000f;
+    var scaledFont = font;
+    float scaledPt = scaledFont.getSize();
+
+    while( maxSizePt - minSizePt > 2 ) {
+      final var layout = new TextLayout( text, scaledFont, frc );
+      final float fontWidthPx = layout.getVisibleAdvance();
+      final var metrics = scaledFont.getLineMetrics( text, frc );
+      final float fontHeightPx = metrics.getHeight();
+
+      if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
+        maxSizePt = scaledPt;
+      }
+      else {
+        minSizePt = scaledPt;
+      }
+
+      scaledPt = (minSizePt + maxSizePt) / 2;
+      scaledFont = scaledFont.deriveFont( scaledPt );
+    }
+
+    return scaledFont;
   }
 
   private ImageComponent createImageComponent( final Image image ) {

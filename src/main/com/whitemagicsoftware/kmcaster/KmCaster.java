@@ -37,6 +37,7 @@ import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
+import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
@@ -60,16 +61,26 @@ import static org.jnativehook.GlobalScreen.*;
  */
 @SuppressWarnings("unused")
 public class KmCaster extends EventFrame implements PropertyChangeListener {
+  /**
+   * Fastest typing speed in words per minute.
+   */
+  private final static float TYPING_SPEED_WPM = 216f;
+  /**
+   * Fastest typing speed in words per second.
+   */
+  private final static float TYPING_SPEED_WPS = TYPING_SPEED_WPM / 60f;
+  /**
+   * Fastest typing speed in characters per second.
+   */
+  private final static float TYPING_SPEED_CPS = TYPING_SPEED_WPS * 5.1f;
+  /**
+   * Fastest typing speed in characters per millisecond, which will
+   * govern the speed that any pressed key remains visible before showing
+   * as released, even if the typist released the key sooner.
+   */
+  private final static float TYPING_SPEED_CPMS = TYPING_SPEED_CPS / 1000;
 
   public KmCaster() {
-    final MouseListener mouseEventListener = new MouseListener();
-    addNativeMouseListener( mouseEventListener );
-    addNativeMouseMotionListener( mouseEventListener );
-    addNativeMouseWheelListener( mouseEventListener );
-
-    final KeyboardListener keyboardListener = new KeyboardListener();
-    addNativeKeyListener( keyboardListener );
-    keyboardListener.addPropertyChangeListener( this );
   }
 
   /**
@@ -89,27 +100,26 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
             ? ANY_KEY
             : switchValue;
 
-    final var switchState = createState( e.getPropertyName(), context );
+    final var switchState = new HardwareState( e.getPropertyName(), context );
     updateSwitchState( switchState );
     updateSwitchLabel( switchState, switchValue );
   }
 
-  private HardwareState createState(
-      final String name, final String state ) {
-    assert name != null;
-    assert state != null;
+  private void initListeners() {
+    final MouseListener mouseEventListener = new MouseListener();
+    addNativeMouseListener( mouseEventListener );
+    addNativeMouseMotionListener( mouseEventListener );
+    addNativeMouseWheelListener( mouseEventListener );
 
-    final var key = HardwareSwitch.valueFrom( name );
-
-    return new HardwareState( key, state );
+    final KeyboardListener keyboardListener = new KeyboardListener();
+    addNativeKeyListener( keyboardListener );
+    keyboardListener.addPropertyChangeListener( this );
   }
 
   /**
-   * Initialize the key and mouse event listener native interface.
+   * Suppress writing logging messages to standard output.
    */
-  private static void initNativeHook() throws NativeHookException {
-    registerNativeHook();
-
+  private static void disableNativeHookLogger() {
     final var logger = getLogger( GlobalScreen.class.getPackage().getName() );
     logger.setLevel( Level.OFF );
     logger.setUseParentHandlers( false );
@@ -121,11 +131,19 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
    * @param args Unused.
    */
   public static void main( final String[] args ) throws NativeHookException {
-    initNativeHook();
+    initFonts();
+    disableNativeHookLogger();
+    registerNativeHook();
+
+    while( !isNativeHookRegistered() ) {
+      Thread.yield();
+    }
+
+    final var kc = new KmCaster();
 
     invokeLater( () -> {
-      final var kc = new KmCaster();
       kc.setVisible( true );
+      kc.initListeners();
     } );
   }
 }

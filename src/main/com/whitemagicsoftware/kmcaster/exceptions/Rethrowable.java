@@ -25,54 +25,24 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster;
-
-import javax.swing.*;
-import java.awt.*;
+package com.whitemagicsoftware.kmcaster.exceptions;
 
 /**
- * Responsible for drawing an image, which can be changed at any time.
+ * Responsible for throwing  {@link Throwable}
  */
-public class ImageComponent extends JComponent {
-  /**
-   * Mutable image.
-   */
-  private Image mImage;
-
-  public ImageComponent( final Image image ) {
-    assert image != null;
-
-    mImage = image;
-  }
-
-  @Override
-  public Dimension getPreferredSize() {
-    // Race-condition guard.
-    final var image = mImage;
-
-    return new Dimension(
-        image.getWidth( null ), image.getHeight( null )
-    );
-  }
-
-  @Override
-  protected void paintComponent( final Graphics graphics ) {
-    super.paintComponent( graphics );
-
-    final var g = (Graphics2D) graphics.create();
-    g.drawImage( mImage, 0, 0, this );
-  }
+public final class Rethrowable {
 
   /**
-   * Repaints this component using the given image. This is a mutable
-   * operation that changes the internal {@link Image} instance.
+   * Cast a checked {@link Throwable} as different type, such as
+   * {@link RuntimeException}.
    *
-   * @param image The new image to use for painting.
+   * @param <T> What type of {@link Throwable} to throw.
+   * @param t   The problem to cast.
+   * @throws T The throwable is casted to this type.
    */
-  public void redraw( final Image image ) {
-    assert image != null;
-
-    mImage = image;
-    repaint();
+  @SuppressWarnings("unchecked")
+  public static <T extends Throwable> void rethrow( final Throwable t )
+      throws T {
+    throw (T) t;
   }
 }

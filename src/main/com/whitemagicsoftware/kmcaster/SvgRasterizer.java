@@ -30,10 +30,12 @@ package com.whitemagicsoftware.kmcaster;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
+import com.whitemagicsoftware.kmcaster.ui.KmDimension;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.AbstractMap;
 import java.util.Map;
 
 import static java.awt.RenderingHints.*;
@@ -67,38 +69,84 @@ public class SvgRasterizer {
   private final static SVGUniverse sRenderer = new SVGUniverse();
 
   /**
+   * Loads the resource specified by the given path into an instance of
+   * {@link SVGDiagram} that can be rasterized into a bitmap format. The
+   * {@link SVGUniverse} class will
+   *
+   * @param path The full path (starting at the root), relative to the
+   *             application or JAR file's resources directory.
+   * @return An {@link SVGDiagram} that can be rasterized onto a
+   * {@link BufferedImage}.
+   */
+  public SVGDiagram loadDiagram( final String path ) {
+    final var url = getResourceUrl( path );
+    final var uri = sRenderer.loadSVG( url );
+    final var diagram = sRenderer.getDiagram( uri );
+    return applySettings( diagram );
+  }
+
+  /**
+   * A reusable method to help compute the scaling factor between the
+   * given {@link SVGDiagram} image and the target {@link Dimension}s.
+   *
+   * @param diagram A 2-dimensional vector graphic having a width and height.
+   * @param dstDim  The image's target dimensions.
+   * @return A key-value pair of the source image dimensions with the
+   * scaled image dimensions.
+   */
+  public Map.Entry<Dimension, Dimension> calculateScale(
+      final SVGDiagram diagram, final Dimension dstDim ) {
+    final var srcDim = new KmDimension(
+        (int) diagram.getWidth(), (int) diagram.getHeight()
+    );
+    final var scaled = srcDim.scaleTo( dstDim );
+
+    return new AbstractMap.SimpleEntry<>( srcDim, scaled );
+  }
+
+  /**
    * Rasterizes a vector graphic to a given size using a {@link BufferedImage}.
    * The rendering hints are set to produce high quality output.
    *
-   * @param path   Fully qualified path to the image resource to rasterize.
-   * @param dstDim The output image dimensions.
+   * @param diagram    The diagram to rasterize.
+   * @param dimensions The output image dimensions.
    * @return The rasterized {@link Image}.
    * @throws SVGException Could not open, read, parse, or render SVG data.
    */
-  public Image rasterize( final String path, final Dimension dstDim )
-      throws SVGException {
-    final var diagram = loadDiagram( path );
-    final var wDiagram = diagram.getWidth();
-    final var hDiagram = diagram.getHeight();
-    final var srcDim = new Dimension( (int) wDiagram, (int) hDiagram );
-
-    final var scaled = fit( srcDim, dstDim );
+  public BufferedImage rasterize(
+      final SVGDiagram diagram,
+      final Map.Entry<Dimension, Dimension> dimensions ) throws SVGException {
+    final var scaled = dimensions.getValue();
     final var wScaled = (int) scaled.getWidth();
     final var hScaled = (int) scaled.getHeight();
-
     final var image = new BufferedImage( wScaled, hScaled, TYPE_INT_ARGB );
+    final var graphics = image.createGraphics();
+    graphics.setRenderingHints( RENDERING_HINTS );
 
-    final var g = image.createGraphics();
-    g.setRenderingHints( RENDERING_HINTS );
+    final var srcDim = dimensions.getKey();
+    final var transform = graphics.getTransform();
+    transform.setToScale( wScaled / srcDim.getWidth(),
+                          hScaled / srcDim.getHeight() );
 
-    final var transform = g.getTransform();
-    transform.setToScale( wScaled / wDiagram, hScaled / hDiagram );
-
-    g.setTransform( transform );
-    diagram.render( g );
-    g.dispose();
+    graphics.setTransform( transform );
+    diagram.render( graphics );
+    graphics.dispose();
 
     return image;
+  }
+
+  /**
+   * Rasterizes a vector graphic to a given size using a {@link BufferedImage}.
+   * The rendering hints are set to produce high quality output.
+   *
+   * @param diagram The diagram to rasterize.
+   * @param dstDim  The output image dimensions.
+   * @return The rasterized {@link Image}.
+   * @throws SVGException Could not open, read, parse, or render SVG data.
+   */
+  public Image rasterize(
+      final SVGDiagram diagram, final Dimension dstDim ) throws SVGException {
+    return rasterize( diagram, calculateScale( diagram, dstDim ) );
   }
 
   /**
@@ -115,23 +163,6 @@ public class SvgRasterizer {
   }
 
   /**
-   * Loads the resource specified by the given path into an instance of
-   * {@link SVGDiagram} that can be rasterized into a bitmap format. The
-   * {@link SVGUniverse} class will
-   *
-   * @param path The full path (starting at the root), relative to the
-   *             application or JAR file's resources directory.
-   * @return An {@link SVGDiagram} that can be rasterized onto a
-   * {@link BufferedImage}.
-   */
-  private SVGDiagram loadDiagram( final String path ) {
-    final var url = getResourceUrl( path );
-    final var uri = sRenderer.loadSVG( url );
-    final var diagram = sRenderer.getDiagram( uri );
-    return applySettings( diagram );
-  }
-
-  /**
    * Instructs the SVG renderer to rasterize the image even if it would be
    * clipped.
    *
@@ -141,28 +172,5 @@ public class SvgRasterizer {
   private SVGDiagram applySettings( final SVGDiagram diagram ) {
     diagram.setIgnoringClipHeuristic( true );
     return diagram;
-  }
-
-  /**
-   * Scales the given source {@link Dimension} to the destination
-   * {@link Dimension}, maintaining the aspect ratio with respect to
-   * the best fit.
-   *
-   * @param src The original vector graphic dimensions to change.
-   * @param dst The desired image dimensions to scale.
-   * @return The given source dimensions scaled to the destination dimensions,
-   * maintaining the aspect ratio.
-   */
-  private Dimension fit( final Dimension src, final Dimension dst ) {
-    final var srcWidth = src.getWidth();
-    final var srcHeight = src.getHeight();
-
-    // Determine the ratio that will have the best fit.
-    final var ratio = Math.min(
-        dst.getWidth() / srcWidth, dst.getHeight() / srcHeight
-    );
-
-    // Scale both dimensions with respect to the best fit ratio.
-    return new Dimension( (int) (srcWidth * ratio), (int) (srcHeight * ratio) );
   }
 }
