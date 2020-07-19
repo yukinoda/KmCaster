@@ -42,7 +42,6 @@ import static java.lang.String.format;
  * what key or mouse events have been triggered.
  */
 public class HardwareImages {
-
   private final static String DIR_IMAGES = "/images";
   private final static String DIR_IMAGES_KEYBOARD = DIR_IMAGES + "/key";
   private final static String DIR_IMAGES_MOUSE = DIR_IMAGES + "/mouse";
@@ -51,20 +50,19 @@ public class HardwareImages {
 
   private final Map<HardwareSwitch, HardwareComponent<HardwareState, Image>>
       mSwitches = new HashMap<>();
-  private final Dimension mDimension;
+
+  /**
+   * Images are scaled to these dimensions, maintaining aspect ratio. The
+   * height constrains the width, so as long as the width is sufficiently
+   * large, the application's window will adjust to fit.
+   */
+  private final Dimension mDimension = new Dimension( 1024, 60 );
 
   /**
    * Constructs an enumerated type that represents the different types of
    * images shown when keyboard and mouse events are triggered.
-   *
-   * @param dimension The image will be scaled to the given dimensions, aspect
-   *                  ratio is maintained.
    */
-  public HardwareImages( final Dimension dimension ) {
-    assert dimension != null;
-
-    mDimension = dimension;
-
+  public HardwareImages() {
     final var mouseReleased = mouseImage( "0" );
     final var mouseStates = new HardwareComponent<HardwareState, Image>();
 
@@ -133,8 +131,6 @@ public class HardwareImages {
   }
 
   private Image createImage( final String path ) {
-    assert mDimension != null;
-
     final var resource = format( "%s.svg", path );
 
     try {

@@ -63,10 +63,6 @@ import static org.jnativehook.GlobalScreen.*;
  */
 @SuppressWarnings("unused")
 public class KmCaster extends JFrame {
-  private static final Dimension FRAME_DIMENSIONS = new Dimension( 484, 70 );
-  private static final Dimension HARDWARE_DIMENSIONS = new Dimension(
-      (int) FRAME_DIMENSIONS.getWidth(),
-      (int) (FRAME_DIMENSIONS.getHeight() - 10) );
   private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final float ARC = 8;
@@ -93,8 +89,7 @@ public class KmCaster extends JFrame {
    */
   private final static float TYPING_SPEED_CPMS = TYPING_SPEED_CPS / 1000;
 
-  private final HardwareImages mHardwareImages =
-      new HardwareImages( HARDWARE_DIMENSIONS );
+  private final HardwareImages mHardwareImages = new HardwareImages();
   private final EventHandler mEventHandler =
       new EventHandler( mHardwareImages );
 
@@ -115,7 +110,6 @@ public class KmCaster extends JFrame {
     setUndecorated( true );
     setAlwaysOnTop( true );
     setBackground( TRANSPARENT );
-    setSize( FRAME_DIMENSIONS );
     setShape( createShape() );
   }
 
