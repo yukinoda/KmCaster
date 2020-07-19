@@ -5,7 +5,7 @@
    <stop stop-color="#cfcfcf" offset="0"/>
    <stop stop-color="#efefef" offset="1"/>
   </linearGradient>
-  <linearGradient id="f" x1="447.49" x2="524.77" y1="177.84" y2="177.84" gradientTransform="matrix(.12439 0 0 .18074 -53.372 -26.428)" gradientUnits="userSpaceOnUse">
+  <linearGradient id="f" x1="447.49" x2="524.77" y1="177.84" y2="177.84" gradientTransform="matrix(.12439 0 0 .18074 -53.453 -26.428)" gradientUnits="userSpaceOnUse">
    <stop stop-color="#fafafa" offset="0"/>
    <stop stop-color="#f1f1f1" offset="1"/>
   </linearGradient>
@@ -21,6 +21,6 @@
    <path d="m2.114 11.197-2.1029 0.36569-0.011106 3.0474c0.0014059 0.78594 0.6088 1.2375 1.2366 1.2647l1.3513-0.01522 0.4739-3.5655z"/>
    <path d="m23.903 2.0256 2.5551-0.86194c-0.1015-0.82869-0.65415-1.1252-1.4242-1.1421-0.1978-0.0043395-0.3604-0.01602-0.5702-0.019672-0.2098-0.0036886-0.68849-3.5801e-4 -0.68849-3.5801e-4 -0.48272 0.097262-0.86059 0.38179-1.1247 0.84836z"/>
   </g>
-  <rect x="2.1859" y=".94301" width="22.249" height="12.84" ry=".97408" fill="#f8f8f8" stroke="url(#f)" stroke-width=".17779"/>
+  <rect x="2.1045" y=".94301" width="22.249" height="12.84" ry=".97408" fill="#f8f8f8" stroke="url(#f)" stroke-width=".26458"/>
  </g>
 </svg>

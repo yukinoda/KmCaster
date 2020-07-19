@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="66" height="60" version="1.1" viewBox="0 0 66 60" xmlns="http://www.w3.org/2000/svg">
  <defs>
-  <linearGradient id="b" x1="42.147" x2="41.637" y1="3.3281" y2="1.2281" gradientTransform="matrix(1.3664 0 0 1.3668 -.00095647 5.5268e-6)" gradientUnits="userSpaceOnUse">
+  <linearGradient id="b" x1="42.147" x2="41.637" y1="3.3281" y2="1.2281" gradientTransform="matrix(1.3664,0,0,1.3668,-9.5647e-4,5.5268e-6)" gradientUnits="userSpaceOnUse">
    <stop stop-color="#d6d6d6" offset="0"/>
    <stop stop-color="#656565" offset="1"/>
   </linearGradient>
-  <linearGradient id="c" x1="2.228" x2="6.048" y1="36.498" y2="39.108" gradientTransform="matrix(1.3664 0 0 1.3668 -.00095647 5.5268e-6)" gradientUnits="userSpaceOnUse">
+  <linearGradient id="c" x1="2.228" x2="6.048" y1="36.498" y2="39.108" gradientTransform="matrix(1.3664,0,0,1.3668,-9.5647e-4,5.5268e-6)" gradientUnits="userSpaceOnUse">
    <stop stop-color="#656565" offset="0"/>
    <stop stop-color="#939393" offset="1"/>
   </linearGradient>
@@ -14,23 +14,21 @@
   <stop stop-color="#d6d6d6" offset="0"/>
   <stop stop-color="#939393" offset="1"/>
  </linearGradient>
- <linearGradient id="d" x1="461.97" x2="535.38" y1="186.96" y2="186.96" gradientTransform="matrix(.48361 0 0 .68308 -207.5 -99.883)" gradientUnits="userSpaceOnUse">
+ <linearGradient id="d" x1="461.97" x2="535.38" y1="186.96" y2="186.96" gradientTransform="matrix(.48361 0 0 .68308 -207.56 -99.883)" gradientUnits="userSpaceOnUse">
   <stop stop-color="#d8d8d8" offset="0"/>
   <stop stop-color="#b1b1b1" offset="1"/>
  </linearGradient>
- <linearGradient id="e" x1="453.41" x2="483.79" y1="177.84" y2="177.84" gradientTransform="matrix(.48361 0 0 .68308 -207.5 -99.883)" gradientUnits="userSpaceOnUse">
+ <linearGradient id="e" x1="453.41" x2="483.79" y1="177.84" y2="177.84" gradientTransform="matrix(.48361 0 0 .68308 -207.56 -99.883)" gradientUnits="userSpaceOnUse">
   <stop stop-color="#f1f1f1" offset="0"/>
   <stop stop-color="#c1c1c1" offset="1"/>
  </linearGradient>
- <g fill-rule="evenodd">
-  <g stroke-width="1.3666">
-   <path d="m3.1712 5.5268e-6h56.527c1.7569 0 3.2896 1.4188 3.1714 3.1723v40.53h-62.826l-0.043178-40.53c-0.0013664-1.7574 1.4145-3.1723 3.1714-3.1723z" fill="#656565"/>
-   <path d="m6.823 52.131h50.636v7.8366h-50.636z" fill="#929292"/>
-   <path d="m50.529 4.3982h15.47v39.337h-15.47z" fill="#d6d6d6"/>
-   <path d="m54.154 42.435 11.846 1.3v11.485c-0.0068 2.9705-2.3669 4.6771-4.8074 4.7798l-5.2615-0.026515-5.8069-13.564z" fill="url(#a)"/>
-   <path d="m8.2184 42.32-8.1752 1.3821-0.043178 11.518c0.0054655 2.9705 2.3669 4.6771 4.8074 4.7798l5.2536-0.05754 1.8423-13.476z" fill="url(#c)"/>
-   <path d="m56.066 7.6551 9.9332-3.2577c-0.3946-3.1321-2.5431-4.2528-5.5366-4.3165-0.76895-0.016401-1.4011-0.060548-2.2167-0.07435-0.81562-0.013941-2.6766-0.0013531-2.6766-0.0013531-1.8766 0.3676-3.3457 1.443-4.3726 3.2064z" fill="url(#b)"/>
-  </g>
-  <rect x="8.4977" y="3.5645" width="49.119" height="48.53" ry="3.6815" fill="url(#d)" stroke="url(#e)" stroke-width=".68148"/>
+ <g fill-rule="evenodd" stroke-width="1.3666">
+  <path d="m3.1712 5.5268e-6h56.527c1.7569 0 3.2896 1.4188 3.1714 3.1723v40.53h-62.826l-0.043178-40.53c-0.0013664-1.7574 1.4145-3.1723 3.1714-3.1723z" fill="#656565"/>
+  <path d="m6.823 52.131h50.636v7.8366h-50.636z" fill="#929292"/>
+  <path d="m50.529 4.3982h15.47v39.337h-15.47z" fill="#d6d6d6"/>
+  <path d="m54.154 42.435 11.846 1.3v11.485c-0.0068 2.9705-2.3669 4.6771-4.8074 4.7798l-5.2615-0.02652-5.8069-13.564z" fill="url(#a)"/>
+  <path d="m8.2184 42.32-8.1752 1.3821-0.043178 11.518c0.0054655 2.9705 2.3669 4.6771 4.8074 4.7798l5.2536-0.05754 1.8423-13.476z" fill="url(#c)"/>
+  <path d="m56.066 7.6551 9.9332-3.2577c-0.3946-3.1321-2.5431-4.2528-5.5366-4.3165-0.76895-0.016401-1.4011-0.060548-2.2167-0.07435-0.81562-0.013941-2.6766-0.0013531-2.6766-0.0013531-1.8766 0.3676-3.3457 1.443-4.3726 3.2064z" fill="url(#b)"/>
  </g>
+ <rect x="8.4405" y="3.5645" width="49.119" height="48.53" ry="3.6815" fill="url(#d)" fill-rule="evenodd" stroke="url(#e)"/>
 </svg>
