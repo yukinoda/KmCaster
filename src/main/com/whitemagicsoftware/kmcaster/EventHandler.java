@@ -149,18 +149,16 @@ public class EventHandler implements PropertyChangeListener {
     assert label != null;
     assert dst != null;
     assert graphics != null;
-
-    final var font = label.getFont();
-    final var text = label.getText();
-
     final var frc = ((Graphics2D) graphics).getFontRenderContext();
 
     final var dstWidthPx = dst.getWidth();
     final var dstHeightPx = dst.getHeight();
 
+    final var text = label.getText();
+
     var minSizePt = 1f;
     var maxSizePt = 1000f;
-    var scaledFont = font;
+    var scaledFont = label.getFont();
     float scaledPt = scaledFont.getSize();
 
     while( maxSizePt - minSizePt > 1f ) {
@@ -168,7 +166,6 @@ public class EventHandler implements PropertyChangeListener {
 
       final var layout = new TextLayout( text, scaledFont, frc );
       final var fontWidthPx = layout.getVisibleAdvance();
-
       final var metrics = scaledFont.getLineMetrics( text, frc );
       final var fontHeightPx = metrics.getHeight();
 
@@ -182,6 +179,7 @@ public class EventHandler implements PropertyChangeListener {
       scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
+    // Round down to guarantee fit.
     return scaledFont.deriveFont( (float) Math.floor( scaledPt ) );
   }
 }
