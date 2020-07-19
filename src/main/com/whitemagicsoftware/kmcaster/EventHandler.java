@@ -38,8 +38,8 @@ import static java.awt.Font.BOLD;
 import static java.lang.Boolean.parseBoolean;
 
 public class EventHandler implements PropertyChangeListener {
-  private static final Font DEFAULT_FONT = new Font( "DejaVu Sans", BOLD, 12 );
-  private static final Color COLOUR_LABEL = new Color( 33, 33, 33 );
+  private static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 12 );
+  private static final Color LABEL_COLOUR = new Color( 33, 33, 33 );
 
   private final HardwareImages mHardwareImages;
 
@@ -78,8 +78,7 @@ public class EventHandler implements PropertyChangeListener {
   protected void updateSwitchLabel(
       final HardwareState state, final String value ) {
     if( state.isModifier() ) {
-      //final var pressed = parseBoolean( value );
-      //System.out.println( "Modifier pressed: " + pressed );
+      System.out.println( parseBoolean( value ) );
     }
     else {
       final var component = mHardwareImages.get( state.getHardwareSwitch() );
@@ -125,12 +124,11 @@ public class EventHandler implements PropertyChangeListener {
     final int height = (int) r.getHeight();
 
     final var label = new JLabel( text );
-    label.setFont( DEFAULT_FONT );
+    label.setFont( LABEL_FONT );
     label.setSize( width, height );
-    label.setForeground( COLOUR_LABEL );
-    //label.setBorder( BorderFactory.createLineBorder( Color.RED ) );
+    label.setForeground( LABEL_COLOUR );
 
-    final var scaledFont = scale( label, r, graphics );
+    final var scaledFont = scaleFont( label, r, graphics );
     label.setFont( scaledFont );
 
     return label;
@@ -146,7 +144,7 @@ public class EventHandler implements PropertyChangeListener {
    * @return A new {@link Font} instance that is guaranteed to write the given
    * string within the bounds of the given {@link Rectangle}.
    */
-  private Font scale(
+  public Font scaleFont(
       final JLabel label, final Rectangle dst, final Graphics graphics ) {
     assert label != null;
     assert dst != null;
@@ -165,16 +163,14 @@ public class EventHandler implements PropertyChangeListener {
     var scaledFont = font;
     float scaledPt = scaledFont.getSize();
 
-    while( maxSizePt - minSizePt > 2 ) {
+    while( maxSizePt - minSizePt > 1f ) {
       scaledFont = scaledFont.deriveFont( scaledPt );
 
-//      final var layout = new TextLayout( text, scaledFont, frc );
-//      final float fontWidthPx = layout.getVisibleAdvance();
-      final var fm = graphics.getFontMetrics(scaledFont);
-      final float fontWidthPx = (float)fm.getStringBounds( text, graphics ).getWidth();
+      final var layout = new TextLayout( text, scaledFont, frc );
+      final var fontWidthPx = layout.getVisibleAdvance();
 
       final var metrics = scaledFont.getLineMetrics( text, frc );
-      final float fontHeightPx = metrics.getHeight();
+      final var fontHeightPx = metrics.getHeight();
 
       if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
         maxSizePt = scaledPt;
@@ -186,6 +182,6 @@ public class EventHandler implements PropertyChangeListener {
       scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
-    return scaledFont;
+    return scaledFont.deriveFont( (float) Math.floor( scaledPt ) );
   }
 }

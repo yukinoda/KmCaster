@@ -96,7 +96,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   /**
    * Repaints this component by changing its mutable state. The new state
-   * must have been previously registered by caling {@link #put(Object, Image)}.
+   * must have been previously registered via {@link #put(Object, Image)}.
    *
    * @param state The new state.
    */
