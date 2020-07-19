@@ -93,6 +93,10 @@ public class KmCaster extends JFrame {
   private final EventHandler mEventHandler =
       new EventHandler( mHardwareImages );
 
+  /**
+   * Empty constructor; create an instance then call {@link #init()} from
+   * within the {@link SwingUtilities#invokeLater(Runnable)} thread.
+   */
   public KmCaster() {
   }
 

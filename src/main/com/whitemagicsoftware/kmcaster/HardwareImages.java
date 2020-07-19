@@ -63,7 +63,6 @@ public class HardwareImages {
    * images shown when keyboard and mouse events are triggered.
    */
   public HardwareImages() {
-    final var mouseReleased = mouseImage( "0" );
     final var mouseStates = new HardwareComponent<HardwareState, Image>();
 
     for( int i = 1; i <= 3; i++ ) {
@@ -72,7 +71,7 @@ public class HardwareImages {
     }
 
     mouseStates.put( state( MOUSE, "1-3" ), mouseImage( "1-3" ) );
-    mouseStates.put( state( MOUSE, false ), mouseReleased );
+    mouseStates.put( state( MOUSE, false ), mouseImage( "0" ) );
     mSwitches.put( MOUSE, mouseStates );
 
     final var altStates = new HardwareComponent<HardwareState, Image>();
