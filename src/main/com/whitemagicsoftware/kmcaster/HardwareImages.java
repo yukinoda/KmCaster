@@ -49,7 +49,8 @@ public class HardwareImages {
 
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
 
-  private final Map<HardwareState, Image> mImages = new HashMap<>();
+  private final Map<HardwareSwitch, HardwareComponent<HardwareState, Image>>
+      mSwitches = new HashMap<>();
   private final Dimension mDimension;
 
   /**
@@ -65,37 +66,49 @@ public class HardwareImages {
     mDimension = dimension;
 
     final var mouseReleased = mouseImage( "0" );
+    final var mouseStates = new HardwareComponent<HardwareState, Image>();
 
     for( int i = 1; i <= 3; i++ ) {
       final var s = Integer.toString( i );
-      final var switchName = HardwareSwitch.valueFrom( "button " + s );
-      mImages.put( state( switchName, true ), mouseImage( s ) );
-      mImages.put( state( switchName, false ), mouseReleased );
+      mouseStates.put( state( MOUSE, s ), mouseImage( s ) );
     }
 
-    mImages.put( state( MOUSE_LR, true ), mouseImage( "1-3" ) );
-    mImages.put( state( MOUSE_LR, false ), mouseReleased );
+    mouseStates.put( state( MOUSE, "1-3" ), mouseImage( "1-3" ) );
+    mouseStates.put( state( MOUSE, false ), mouseReleased );
+    mSwitches.put( MOUSE, mouseStates );
 
-    mImages.put( state( KEY_ALT, true ), keyDnImage( "medium" ) );
-    mImages.put( state( KEY_ALT, false ), keyUpImage( "medium" ) );
-    mImages.put( state( KEY_CTRL, true ), keyDnImage( "medium" ) );
-    mImages.put( state( KEY_CTRL, false ), keyUpImage( "medium" ) );
-    mImages.put( state( KEY_SHIFT, true ), keyDnImage( "long" ) );
-    mImages.put( state( KEY_SHIFT, false ), keyUpImage( "long" ) );
-    mImages.put( state( KEY_REGULAR, ANY_KEY ), keyDnImage( "short" ) );
-    mImages.put( state( KEY_REGULAR, false ), keyUpImage( "short" ) );
+    final var altStates = new HardwareComponent<HardwareState, Image>();
+    altStates.put( state( KEY_ALT, true ), keyDnImage( "medium" ) );
+    altStates.put( state( KEY_ALT, false ), keyUpImage( "medium" ) );
+    mSwitches.put( KEY_ALT, altStates );
+
+    final var ctrlStates = new HardwareComponent<HardwareState, Image>();
+    ctrlStates.put( state( KEY_CTRL, true ), keyDnImage( "medium" ) );
+    ctrlStates.put( state( KEY_CTRL, false ), keyUpImage( "medium" ) );
+    mSwitches.put( KEY_CTRL, ctrlStates );
+
+    final var shiftStates = new HardwareComponent<HardwareState, Image>();
+    shiftStates.put( state( KEY_SHIFT, true ), keyDnImage( "long" ) );
+    shiftStates.put( state( KEY_SHIFT, false ), keyUpImage( "long" ) );
+    mSwitches.put( KEY_SHIFT, shiftStates );
+
+    final var regularStates = new HardwareComponent<HardwareState, Image>();
+    regularStates.put( state( KEY_REGULAR, ANY_KEY ), keyDnImage( "short" ) );
+    regularStates.put( state( KEY_REGULAR, false ), keyUpImage( "short" ) );
+    mSwitches.put( KEY_REGULAR, regularStates );
   }
 
-  public Image get( final HardwareState state ) {
-    return mImages.get( state );
+  public HardwareComponent<HardwareState, Image> get(
+      final HardwareSwitch hwSwitch ) {
+    return mSwitches.get( hwSwitch );
   }
 
-  public static HardwareState state(
+  private HardwareState state(
       final HardwareSwitch name, final boolean state ) {
     return state( name, Boolean.toString( state ) );
   }
 
-  public static HardwareState state(
+  private HardwareState state(
       final HardwareSwitch name, final String state ) {
     return new HardwareState( name, state );
   }
@@ -127,9 +140,11 @@ public class HardwareImages {
     try {
       final var diagram = sRasterizer.loadDiagram( resource );
       final var scale = sRasterizer.calculateScale( diagram, mDimension );
-      final var rasterized = sRasterizer.rasterize( diagram, mDimension );
+      final var image = sRasterizer.rasterize( diagram, mDimension );
 
-      return rasterized;
+      // TODO: Scale insets.
+
+      return image;
     } catch( final Exception ex ) {
       rethrow( ex );
     }

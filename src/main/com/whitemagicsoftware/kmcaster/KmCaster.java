@@ -27,16 +27,18 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
-import java.beans.PropertyChangeEvent;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
-import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -60,19 +62,30 @@ import static org.jnativehook.GlobalScreen.*;
  * </ol>
  */
 @SuppressWarnings("unused")
-public class KmCaster extends EventFrame implements PropertyChangeListener {
+public class KmCaster extends JFrame {
+  private static final Dimension FRAME_DIMENSIONS = new Dimension( 484, 70 );
+  private static final Dimension HARDWARE_DIMENSIONS = new Dimension(
+      (int) FRAME_DIMENSIONS.getWidth(),
+      (int) (FRAME_DIMENSIONS.getHeight() - 10) );
+  private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
+  private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
+  private static final float ARC = 8;
+
   /**
    * Fastest typing speed in words per minute.
    */
   private final static float TYPING_SPEED_WPM = 216f;
+
   /**
    * Fastest typing speed in words per second.
    */
   private final static float TYPING_SPEED_WPS = TYPING_SPEED_WPM / 60f;
+
   /**
    * Fastest typing speed in characters per second.
    */
   private final static float TYPING_SPEED_CPS = TYPING_SPEED_WPS * 5.1f;
+
   /**
    * Fastest typing speed in characters per millisecond, which will
    * govern the speed that any pressed key remains visible before showing
@@ -80,40 +93,83 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
    */
   private final static float TYPING_SPEED_CPMS = TYPING_SPEED_CPS / 1000;
 
+  private final HardwareImages mHardwareImages =
+      new HardwareImages( HARDWARE_DIMENSIONS );
+  private final EventHandler mEventHandler =
+      new EventHandler( mHardwareImages );
+
   public KmCaster() {
   }
 
-  /**
-   * Called when a hardware switch has changed state.
-   *
-   * @param e Contains the identifier for the switch, its previous value,
-   *          and its new value.
-   */
-  @Override
-  public void propertyChange( final PropertyChangeEvent e ) {
-    final var switchName = e.getPropertyName();
-    final var switchValue = e.getNewValue().toString();
+  private void init() {
+    initWindowFrame();
+    initWindowContents();
+    initListeners();
+    pack();
+    setVisible( true );
+  }
 
-    // True or false indicates a non-regular key was pressed.
-    final var context =
-        (!"false".equals( switchValue ) && !"true".equals( switchValue ))
-            ? ANY_KEY
-            : switchValue;
+  private void initWindowFrame() {
+    setDefaultCloseOperation( EXIT_ON_CLOSE );
+    setLocationRelativeTo( null );
+    setUndecorated( true );
+    setAlwaysOnTop( true );
+    setBackground( TRANSPARENT );
+    setSize( FRAME_DIMENSIONS );
+    setShape( createShape() );
+  }
 
-    final var switchState = new HardwareState( e.getPropertyName(), context );
-    updateSwitchState( switchState );
-    updateSwitchLabel( switchState, switchValue );
+  private void initWindowContents() {
+    final var switchPanel = new JPanel();
+    switchPanel.setAlignmentX( CENTER_ALIGNMENT );
+    switchPanel.setBackground( TRANSLUCENT );
+
+    // Added using the enumerated type definition declaration order.
+    for( final var hwSwitch : HardwareSwitch.values() ) {
+      switchPanel.add( mHardwareImages.get( hwSwitch ) );
+    }
+
+    add( switchPanel );
   }
 
   private void initListeners() {
+    initWindowDragListener( this );
+    initMouseListener( getEventHandler() );
+    initKeyboardListener( getEventHandler() );
+  }
+
+  private void initWindowDragListener( final JFrame listener ) {
+    final var frameDragListener = new FrameDragListener( listener );
+    addMouseListener( frameDragListener );
+    addMouseMotionListener( frameDragListener );
+  }
+
+  private void initMouseListener( final PropertyChangeListener listener ) {
     final MouseListener mouseEventListener = new MouseListener();
     addNativeMouseListener( mouseEventListener );
     addNativeMouseMotionListener( mouseEventListener );
     addNativeMouseWheelListener( mouseEventListener );
+  }
 
+  private void initKeyboardListener( final PropertyChangeListener listener ) {
     final KeyboardListener keyboardListener = new KeyboardListener();
     addNativeKeyListener( keyboardListener );
-    keyboardListener.addPropertyChangeListener( this );
+    keyboardListener.addPropertyChangeListener( listener );
+  }
+
+  /**
+   * Returns the shape for the application's window frame.
+   *
+   * @return A rounded rectangle.
+   */
+  private Shape createShape() {
+    return new RoundRectangle2D.Double(
+        0, 0, getWidth(), getHeight(), ARC, ARC
+    );
+  }
+
+  private EventHandler getEventHandler() {
+    return mEventHandler;
   }
 
   /**
@@ -140,10 +196,6 @@ public class KmCaster extends EventFrame implements PropertyChangeListener {
     }
 
     final var kc = new KmCaster();
-
-    invokeLater( () -> {
-      kc.setVisible( true );
-      kc.initListeners();
-    } );
+    invokeLater( kc::init );
   }
 }

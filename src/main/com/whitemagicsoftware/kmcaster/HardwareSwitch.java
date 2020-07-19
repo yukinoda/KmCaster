@@ -31,16 +31,16 @@ import static org.jnativehook.NativeInputEvent.*;
 
 /**
  * Used for compile-time binding between change listeners input events.
+ * <p>
+ * The element declaration order dictates the on-screen order.
+ * </p>
  */
 public enum HardwareSwitch {
-  KEY_ALT( "alt", ALT_MASK ),
-  KEY_CTRL( "ctrl", CTRL_MASK ),
+  MOUSE( "mouse" ),
   KEY_SHIFT( "shift", SHIFT_MASK ),
-  KEY_REGULAR( "regular" ),
-  MOUSE_LEFT( "button 1" ),
-  MOUSE_WHEEL( "button 2" ),
-  MOUSE_RIGHT( "button 3" ),
-  MOUSE_LR( "button 1-3" );
+  KEY_CTRL( "ctrl", CTRL_MASK ),
+  KEY_ALT( "alt", ALT_MASK ),
+  KEY_REGULAR( "regular" );
 
   /**
    * Indicates the switch is not a modifier.
@@ -77,7 +77,7 @@ public enum HardwareSwitch {
    * @return {@code true} when the switch is a modifier key.
    */
   public boolean isModifier() {
-    return this == KEY_ALT || this == KEY_CTRL || this == KEY_SHIFT;
+    return mMask != NO_MASK;
   }
 
   /**
@@ -125,7 +125,7 @@ public enum HardwareSwitch {
   /**
    * Returns the switch name.
    *
-   * @return The switch name, nothing more.
+   * @return The switch name, not the enum name.
    */
   @Override
   public String toString() {
