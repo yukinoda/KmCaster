@@ -53,7 +53,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   private S mState;
 
   /**
-   * Available space on the image for drawing. This
+   * Available space on the image for drawing.
    */
   private final Insets mInsets;
 

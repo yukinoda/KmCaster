@@ -46,17 +46,6 @@ public final class ScalableDimension extends Dimension {
   }
 
   /**
-   * Delegates construction to this class.
-   *
-   * @param w The width, cast to an integer.
-   * @param h The height, cast to an integer.
-   */
-  @SuppressWarnings("unused")
-  public ScalableDimension( final double w, final double h ) {
-    this( (int) w, (int) h );
-  }
-
-  /**
    * Scales the given source {@link Dimension} to the destination
    * {@link Dimension}, maintaining the aspect ratio with respect to
    * the best fit.
@@ -75,7 +64,6 @@ public final class ScalableDimension extends Dimension {
     );
 
     // Scale both dimensions with respect to the best fit ratio.
-    return new ScalableDimension( (int) (srcWidth * ratio),
-                                  (int) (srcHeight * ratio) );
+    return new Dimension( (int) (srcWidth * ratio), (int) (srcHeight * ratio) );
   }
 }

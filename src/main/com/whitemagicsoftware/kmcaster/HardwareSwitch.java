@@ -95,8 +95,7 @@ public enum HardwareSwitch {
    * Answers whether this hardware switch is pressed, but only applies to
    * keyboard modifier keys, not mouse buttons.
    *
-   * @param modifiers A set of bits that indicate what modifier keys are
-   *                  pressed.
+   * @param modifiers Bit set that indicates what modifier keys are pressed.
    * @return {@code true} if this switch's modifier bit is set in the
    * given {@code modifiers} value.
    */
@@ -140,5 +139,4 @@ public enum HardwareSwitch {
   public String toString() {
     return mName;
   }
-
 }

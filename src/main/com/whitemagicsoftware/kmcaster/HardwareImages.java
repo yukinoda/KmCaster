@@ -51,6 +51,13 @@ public class HardwareImages {
   private final static String DIR_IMAGES_KEYBOARD = DIR_IMAGES + "/key";
   private final static String DIR_IMAGES_MOUSE = DIR_IMAGES + "/mouse";
 
+  private final static Map<HardwareSwitch, String> FILE_NAME_PREFIXES = Map.of(
+      KEY_ALT, "medium",
+      KEY_CTRL, "medium",
+      KEY_SHIFT, "long",
+      KEY_REGULAR, "short"
+  );
+
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
 
   private final Map<HardwareSwitch, HardwareComponent<HardwareState, Image>>
@@ -75,21 +82,17 @@ public class HardwareImages {
     mouseStates.put( state( MOUSE, FALSE.toString() ), mouseImage( "0" ) );
     mSwitches.put( MOUSE, mouseStates );
 
-    final var fileNamePrefixes = Map.of(
-        KEY_ALT, "medium",
-        KEY_CTRL, "medium",
-        KEY_SHIFT, "long",
-        KEY_REGULAR, "short"
-    );
-
     for( final var key : HardwareSwitch.keyboardKeys() ) {
-      final var hardwareComponent = createHardwareComponent();
       final var stateNameOn = key == KEY_REGULAR ? ANY_KEY : TRUE.toString();
 
       final var stateOn = state( key, stateNameOn );
       final var stateOff = state( key, FALSE.toString() );
-      final var imageDn = keyDnImage( fileNamePrefixes.get( key ) );
-      final var imageUp = keyUpImage( fileNamePrefixes.get( key ) );
+      final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
+      final var imageUp = keyUpImage( FILE_NAME_PREFIXES.get( key ) );
+      final var scale = imageDn.getValue();
+
+      final var insets = KeyCapInsets.scale( scale );
+      final var hardwareComponent = createHardwareComponent( insets );
 
       hardwareComponent.put( stateOn, imageDn.getKey() );
       hardwareComponent.put( stateOff, imageUp.getKey() );
@@ -100,6 +103,11 @@ public class HardwareImages {
 
   private HardwareComponent<HardwareState, Image> createHardwareComponent() {
     return new HardwareComponent<>();
+  }
+
+  private HardwareComponent<HardwareState, Image> createHardwareComponent(
+      final Insets insets ) {
+    return new HardwareComponent<>( insets );
   }
 
   public HardwareComponent<HardwareState, Image> get(

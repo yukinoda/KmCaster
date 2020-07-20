@@ -27,8 +27,9 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
+
 import java.awt.*;
-import java.util.Map;
 
 /**
  * Responsible for scaling graphical insets. The label of each key cannot
@@ -63,20 +64,14 @@ public class KeyCapInsets {
   /**
    * Scales the image insets and padding.
    */
-  public static Insets scaleInsets( final Map.Entry<Dimension, Dimension> factor ) {
-    final var srcDim = factor.getKey();
-    final var dstDim = factor.getValue();
-    final var wRatio = srcDim.getWidth() / dstDim.getWidth();
-    final var hRatio = srcDim.getHeight() / dstDim.getHeight();
+  public static Insets scale( final DimensionTuple factor ) {
+    final var wRatio = factor.getWidthRatio();
+    final var hRatio = factor.getHeightRatio();
 
-    return scale( wRatio, hRatio );
-  }
-
-  private static Insets scale( final double wScale, final double hScale ) {
     return new Insets(
-        (int) (INSET_TOTAL.top * hScale),
-        (int) (INSET_TOTAL.left * wScale),
-        (int) (INSET_TOTAL.bottom * hScale),
-        (int) (INSET_TOTAL.right * wScale) );
+        (int) (INSET_TOTAL.top * hRatio),
+        (int) (INSET_TOTAL.left * wRatio),
+        (int) (INSET_TOTAL.bottom * hRatio),
+        (int) (INSET_TOTAL.right * wRatio) );
   }
 }
