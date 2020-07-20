@@ -39,15 +39,23 @@ import java.util.Map;
  * @param <S> The type of state associated with an image.
  */
 public class HardwareComponent<S, I extends Image> extends JComponent {
-  private final static Insets INSET_PROJECTED =
-      new Insets( 3, 7, 6, 7 );
+  /**
+   * Default insets, has no padding.
+   */
+  private final static Insets INSETS_EMPTY =
+      new Insets( 0, 0, 0, 0 );
 
   private final Map<S, I> mStateImages = new HashMap<>();
 
   /**
-   * Active state.
+   * State that corresponds with the {@link Image} to paint.
    */
   private S mState;
+
+  /**
+   * Available space on the image for drawing. This
+   */
+  private final Insets mInsets;
 
   /**
    * Constructs a new {@link HardwareComponent} without an initial state. The
@@ -55,20 +63,11 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    * drawing the image.
    */
   public HardwareComponent() {
+    this( INSETS_EMPTY );
   }
 
-  /**
-   * Associates a new (or existing) state with the given image. If the
-   * state already exists for the image, the image is updated for that
-   * state. After calling this method, the active state changes to the
-   * given state as a convenience.
-   *
-   * @param state The state to associate with an image.
-   * @param image The image to paint when the given state is selected.
-   */
-  public void put( final S state, final I image ) {
-    getStateImages().put( state, image );
-    setState( state );
+  public HardwareComponent( final Insets insets ) {
+    mInsets = insets;
   }
 
   @Override
@@ -83,7 +82,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   @Override
   public Insets getInsets() {
-    return INSET_PROJECTED;
+    return mInsets;
   }
 
   @Override
@@ -92,6 +91,20 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
     final var g = (Graphics2D) graphics.create();
     g.drawImage( getActiveImage(), 0, 0, this );
+  }
+
+  /**
+   * Associates a new (or existing) state with the given image. If the
+   * state already exists for the image, the image is updated for that
+   * state. After calling this method, the active state changes to the
+   * given state as a convenience.
+   *
+   * @param state The state to associate with an image.
+   * @param image The image to paint when the given state is selected.
+   */
+  public void put( final S state, final I image ) {
+    getStateImages().put( state, image );
+    setState( state );
   }
 
   /**

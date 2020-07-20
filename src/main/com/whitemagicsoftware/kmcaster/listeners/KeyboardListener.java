@@ -233,7 +233,7 @@ public class KeyboardListener implements NativeKeyListener {
    */
   private void updateModifiers( final NativeKeyEvent e ) {
     for( final var key : mModifiers.keySet() ) {
-      final boolean down = key.isPressed( e.getModifiers() );
+      final boolean down = key.isModifierPressed( e.getModifiers() );
       tryFire( key, mModifiers.get( key ), down );
       mModifiers.put( key, down );
     }

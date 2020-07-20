@@ -27,6 +27,9 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
+import com.whitemagicsoftware.kmcaster.util.Pair;
+
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +37,8 @@ import java.util.Map;
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 
 /**
@@ -56,14 +61,10 @@ public class HardwareImages {
    * height constrains the width, so as long as the width is sufficiently
    * large, the application's window will adjust to fit.
    */
-  private final Dimension mDimension = new Dimension( 1024, 60 );
+  private final Dimension mDimension = new Dimension( 1024, 120 );
 
-  /**
-   * Constructs an enumerated type that represents the different types of
-   * images shown when keyboard and mouse events are triggered.
-   */
   public HardwareImages() {
-    final var mouseStates = new HardwareComponent<HardwareState, Image>();
+    final var mouseStates = createHardwareComponent();
 
     for( int i = 1; i <= 3; i++ ) {
       final var s = Integer.toString( i );
@@ -71,28 +72,34 @@ public class HardwareImages {
     }
 
     mouseStates.put( state( MOUSE, "1-3" ), mouseImage( "1-3" ) );
-    mouseStates.put( state( MOUSE, false ), mouseImage( "0" ) );
+    mouseStates.put( state( MOUSE, FALSE.toString() ), mouseImage( "0" ) );
     mSwitches.put( MOUSE, mouseStates );
 
-    final var altStates = new HardwareComponent<HardwareState, Image>();
-    altStates.put( state( KEY_ALT, true ), keyDnImage( "medium" ) );
-    altStates.put( state( KEY_ALT, false ), keyUpImage( "medium" ) );
-    mSwitches.put( KEY_ALT, altStates );
+    final var fileNamePrefixes = Map.of(
+        KEY_ALT, "medium",
+        KEY_CTRL, "medium",
+        KEY_SHIFT, "long",
+        KEY_REGULAR, "short"
+    );
 
-    final var ctrlStates = new HardwareComponent<HardwareState, Image>();
-    ctrlStates.put( state( KEY_CTRL, true ), keyDnImage( "medium" ) );
-    ctrlStates.put( state( KEY_CTRL, false ), keyUpImage( "medium" ) );
-    mSwitches.put( KEY_CTRL, ctrlStates );
+    for( final var key : HardwareSwitch.keyboardKeys() ) {
+      final var hardwareComponent = createHardwareComponent();
+      final var stateNameOn = key == KEY_REGULAR ? ANY_KEY : TRUE.toString();
 
-    final var shiftStates = new HardwareComponent<HardwareState, Image>();
-    shiftStates.put( state( KEY_SHIFT, true ), keyDnImage( "long" ) );
-    shiftStates.put( state( KEY_SHIFT, false ), keyUpImage( "long" ) );
-    mSwitches.put( KEY_SHIFT, shiftStates );
+      final var stateOn = state( key, stateNameOn );
+      final var stateOff = state( key, FALSE.toString() );
+      final var imageDn = keyDnImage( fileNamePrefixes.get( key ) );
+      final var imageUp = keyUpImage( fileNamePrefixes.get( key ) );
 
-    final var regularStates = new HardwareComponent<HardwareState, Image>();
-    regularStates.put( state( KEY_REGULAR, ANY_KEY ), keyDnImage( "short" ) );
-    regularStates.put( state( KEY_REGULAR, false ), keyUpImage( "short" ) );
-    mSwitches.put( KEY_REGULAR, regularStates );
+      hardwareComponent.put( stateOn, imageDn.getKey() );
+      hardwareComponent.put( stateOff, imageUp.getKey() );
+
+      mSwitches.put( key, hardwareComponent );
+    }
+  }
+
+  private HardwareComponent<HardwareState, Image> createHardwareComponent() {
+    return new HardwareComponent<>();
   }
 
   public HardwareComponent<HardwareState, Image> get(
@@ -101,35 +108,33 @@ public class HardwareImages {
   }
 
   private HardwareState state(
-      final HardwareSwitch name, final boolean state ) {
-    return state( name, Boolean.toString( state ) );
-  }
-
-  private HardwareState state(
       final HardwareSwitch name, final String state ) {
     return new HardwareState( name, state );
   }
 
   private Image mouseImage( final String prefix ) {
-    return createImage( format( "%s/%s", DIR_IMAGES_MOUSE, prefix ) );
+    final var imagePair =
+        createImage( format( "%s/%s", DIR_IMAGES_MOUSE, prefix ) );
+
+    return imagePair.getKey();
   }
 
-  private Image keyImage(
+  private Pair<Image, DimensionTuple> keyImage(
       final String state, final String prefix ) {
     return createImage(
         format( "%s/%s/%s", DIR_IMAGES_KEYBOARD, state, prefix )
     );
   }
 
-  private Image keyUpImage( final String prefix ) {
+  private Pair<Image, DimensionTuple> keyUpImage( final String prefix ) {
     return keyImage( "up", prefix );
   }
 
-  private Image keyDnImage( final String prefix ) {
+  private Pair<Image, DimensionTuple> keyDnImage( final String prefix ) {
     return keyImage( "dn", prefix );
   }
 
-  private Image createImage( final String path ) {
+  private Pair<Image, DimensionTuple> createImage( final String path ) {
     final var resource = format( "%s.svg", path );
 
     try {
@@ -137,9 +142,7 @@ public class HardwareImages {
       final var scale = sRasterizer.calculateScale( diagram, mDimension );
       final var image = sRasterizer.rasterize( diagram, mDimension );
 
-      // TODO: Scale insets.
-
-      return image;
+      return new Pair<>( image, scale );
     } catch( final Exception ex ) {
       rethrow( ex );
     }

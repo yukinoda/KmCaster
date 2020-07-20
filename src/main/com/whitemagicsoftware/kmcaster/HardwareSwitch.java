@@ -100,7 +100,7 @@ public enum HardwareSwitch {
    * @return {@code true} if this switch's modifier bit is set in the
    * given {@code modifiers} value.
    */
-  public boolean isPressed( final int modifiers ) {
+  public boolean isModifierPressed( final int modifiers ) {
     assert isModifier();
 
     return (modifiers & mMask) != 0;
@@ -120,6 +120,15 @@ public enum HardwareSwitch {
     }
 
     return KEY_REGULAR;
+  }
+
+  /**
+   * Returns a list of all keyboard keys.
+   *
+   * @return The complete list of keyboard keys.
+   */
+  public static HardwareSwitch[] keyboardKeys() {
+    return new HardwareSwitch[]{KEY_ALT, KEY_CTRL, KEY_SHIFT, KEY_REGULAR};
   }
 
   /**

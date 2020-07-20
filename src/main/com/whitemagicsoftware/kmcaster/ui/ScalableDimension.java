@@ -33,7 +33,7 @@ import java.awt.*;
  * Provides the ability to scale a dimension in relation to another
  * dimension. The dimensions are unit-less.
  */
-public final class KmDimension extends Dimension {
+public final class ScalableDimension extends Dimension {
 
   /**
    * Delegates construction to the superclass.
@@ -41,7 +41,7 @@ public final class KmDimension extends Dimension {
    * @param w The dimension's width.
    * @param h The dimension's height.
    */
-  public KmDimension( final int w, final int h ) {
+  public ScalableDimension( final int w, final int h ) {
     super( w, h );
   }
 
@@ -52,7 +52,7 @@ public final class KmDimension extends Dimension {
    * @param h The height, cast to an integer.
    */
   @SuppressWarnings("unused")
-  public KmDimension( final double w, final double h ) {
+  public ScalableDimension( final double w, final double h ) {
     this( (int) w, (int) h );
   }
 
@@ -65,7 +65,7 @@ public final class KmDimension extends Dimension {
    * @return The given source dimensions scaled to the destination dimensions,
    * maintaining the aspect ratio.
    */
-  public Dimension scaleTo( final Dimension dst ) {
+  public Dimension scale( final Dimension dst ) {
     final var srcWidth = getWidth();
     final var srcHeight = getHeight();
 
@@ -75,7 +75,7 @@ public final class KmDimension extends Dimension {
     );
 
     // Scale both dimensions with respect to the best fit ratio.
-    return new KmDimension( (int) (srcWidth * ratio),
-                            (int) (srcHeight * ratio) );
+    return new ScalableDimension( (int) (srcWidth * ratio),
+                                  (int) (srcHeight * ratio) );
   }
 }

@@ -30,12 +30,12 @@ package com.whitemagicsoftware.kmcaster;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
-import com.whitemagicsoftware.kmcaster.ui.KmDimension;
+import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
+import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
-import java.util.AbstractMap;
 import java.util.Map;
 
 import static java.awt.RenderingHints.*;
@@ -91,42 +91,40 @@ public class SvgRasterizer {
    *
    * @param diagram A 2-dimensional vector graphic having a width and height.
    * @param dstDim  The image's target dimensions.
-   * @return A key-value pair of the source image dimensions with the
-   * scaled image dimensions.
+   * @return A key-value pair of the source image dimensions (key) and the
+   * scaled image dimensions (value).
    */
-  public Map.Entry<Dimension, Dimension> calculateScale(
+  public DimensionTuple calculateScale(
       final SVGDiagram diagram, final Dimension dstDim ) {
-    final var srcDim = new KmDimension(
+    final var srcDim = new ScalableDimension(
         (int) diagram.getWidth(), (int) diagram.getHeight()
     );
-    final var scaled = srcDim.scaleTo( dstDim );
+    final var scaled = srcDim.scale( dstDim );
 
-    return new AbstractMap.SimpleEntry<>( srcDim, scaled );
+    return new DimensionTuple( srcDim, scaled );
   }
 
   /**
    * Rasterizes a vector graphic to a given size using a {@link BufferedImage}.
    * The rendering hints are set to produce high quality output.
    *
-   * @param diagram    The diagram to rasterize.
-   * @param dimensions The output image dimensions.
+   * @param diagram The diagram to rasterize.
+   * @param tuple   The source and destination image dimensions.
    * @return The rasterized {@link Image}.
    * @throws SVGException Could not open, read, parse, or render SVG data.
    */
   public BufferedImage rasterize(
-      final SVGDiagram diagram,
-      final Map.Entry<Dimension, Dimension> dimensions ) throws SVGException {
-    final var scaled = dimensions.getValue();
+      final SVGDiagram diagram, final DimensionTuple tuple )
+      throws SVGException {
+    final var scaled = tuple.getValue();
     final var wScaled = (int) scaled.getWidth();
     final var hScaled = (int) scaled.getHeight();
     final var image = new BufferedImage( wScaled, hScaled, TYPE_INT_ARGB );
     final var graphics = image.createGraphics();
     graphics.setRenderingHints( RENDERING_HINTS );
 
-    final var srcDim = dimensions.getKey();
     final var transform = graphics.getTransform();
-    transform.setToScale( wScaled / srcDim.getWidth(),
-                          hScaled / srcDim.getHeight() );
+    transform.setToScale( tuple.getWidthRatio(), tuple.getHeightRatio() );
 
     graphics.setTransform( transform );
     diagram.render( graphics );
