@@ -81,6 +81,7 @@ public class AutofitLabel extends JLabel {
     setLocation( insets.left, insets.top );
     setSize( bounds.width, bounds.height );
     setFont( computeScaledFont() );
+    setHorizontalAlignment( CENTER );
   }
 
   /**

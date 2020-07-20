@@ -36,6 +36,7 @@ import java.beans.PropertyChangeListener;
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static java.awt.Font.BOLD;
 import static java.lang.Boolean.parseBoolean;
+import static javax.swing.SwingConstants.CENTER;
 
 public class EventHandler implements PropertyChangeListener {
   private static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 12 );
@@ -87,6 +88,7 @@ public class EventHandler implements PropertyChangeListener {
 
       if( !"false".equals( value ) ) {
         final var label = new AutofitLabel( value, LABEL_FONT, LABEL_COLOUR );
+        label.setHorizontalAlignment( CENTER );
 
         component.add( label );
       }

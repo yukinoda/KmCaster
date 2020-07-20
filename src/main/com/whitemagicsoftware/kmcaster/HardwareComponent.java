@@ -59,13 +59,25 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   /**
    * Constructs a new {@link HardwareComponent} without an initial state. The
-   * initial state must be set by calling {@link #setState(Object)} before
-   * drawing the image.
+   * initial state must be set by calling {@link #setState(Object)}
+   * or {@link #put(Object, Image)} before drawing the image.
+   * <p>
+   * The default insets will be empty.
+   * </p>
    */
   public HardwareComponent() {
     this( INSETS_EMPTY );
   }
 
+  /**
+   * Constructs a new {@link HardwareComponent} without an initial state. The
+   * initial state must be set by calling {@link #setState(Object)}
+   * or {@link #put(Object, Image)} before drawing the image.
+   *
+   * @param insets The padding to use around the component so that letters
+   *               can be drawn within a safe region, without extending beyond
+   *               what we'd expected to see visually for key cap text.
+   */
   public HardwareComponent( final Insets insets ) {
     mInsets = insets;
   }

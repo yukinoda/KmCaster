@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static java.lang.Boolean.FALSE;
 import static java.util.Map.entry;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
@@ -162,6 +163,9 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 65301, "SysRq" )
       );
 
+  /**
+   * Stores the state of modifier keys.
+   */
   private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
 
   private final PropertyChangeSupport mDispatcher =
@@ -194,7 +198,7 @@ public class KeyboardListener implements NativeKeyListener {
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    updateRegular( getDisplayText( e ), "false" );
+    updateRegular( getDisplayText( e ), FALSE.toString() );
     updateModifiers( e );
   }
 
