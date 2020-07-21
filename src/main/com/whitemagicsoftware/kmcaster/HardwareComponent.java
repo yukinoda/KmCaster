@@ -76,6 +76,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    *               what we'd expected to see visually for key cap text.
    */
   public HardwareComponent( final Insets insets ) {
+    setDoubleBuffered( true );
     mInsets = insets;
   }
 

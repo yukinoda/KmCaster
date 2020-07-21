@@ -34,10 +34,12 @@ import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
 import static java.awt.Font.BOLD;
 import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.lang.Math.abs;
 import static javax.swing.SwingConstants.CENTER;
 import static javax.swing.SwingConstants.TOP;
@@ -50,10 +52,26 @@ public class EventHandler implements PropertyChangeListener {
    */
   private static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 32 );
 
+  private static final String KEY_UP = FALSE.toString();
+  private static final String KEY_DOWN = TRUE.toString();
+
   /**
-   * Matches the shift-key arrow font colour.
+   * Matches the shift-key arrow font colour when pressed.
    */
-  private static final Color LABEL_COLOUR = new Color( 33, 33, 33 );
+  private static final Color COLOUR_KEY_DN = new Color( 0x21, 0x21, 0x21 );
+
+  /**
+   * Matches the shift-key arrow font colour when released.
+   */
+  private static final Color COLOUR_KEY_UP = new Color( 0xE5, 0xE5, 0xE5 );
+
+  /**
+   * Maps key pressed states to key cap title colours.
+   */
+  private static final Map<String, Color> KEY_COLOURS = Map.of(
+      KEY_DOWN, COLOUR_KEY_DN,
+      KEY_UP, COLOUR_KEY_UP
+  );
 
   private final HardwareImages mHardwareImages;
 
@@ -75,7 +93,7 @@ public class EventHandler implements PropertyChangeListener {
     // True indicates a modifier key was pressed; false indicates a key was
     // released (doesn't matter what kind of key).
     final var context =
-        (!"false".equals( switchValue ) && !"true".equals( switchValue ))
+        (!KEY_UP.equals( switchValue ) && !KEY_DOWN.equals( switchValue ))
             ? ANY_KEY
             : switchValue;
 
@@ -91,69 +109,86 @@ public class EventHandler implements PropertyChangeListener {
 
   protected void updateSwitchLabel(
       final HardwareState state, final String value ) {
-    if( state.isModifier() ) {
-//      final var label = new AutofitLabel( value, LABEL_FONT, LABEL_COLOUR );
-//      label.setVisible( false );
-      System.out.println( state.getHardwareSwitch().toTitleCase() );
-    }
-    else {
-      final var container = getHardwareComponent( state );
+    final var container = getHardwareComponent( state );
+
+    if( KEY_UP.equals( value ) ) {
       container.removeAll();
+    }
 
-      if( !FALSE.toString().equals( value ) ) {
-        final var index = value.indexOf( ' ' );
+    if( state.isModifier() ) {
+      final var hwSwitch = state.getHardwareSwitch();
+      final var switchName = hwSwitch.toTitleCase();
+      final var keyColour = KEY_COLOURS.get( value );
 
-        // If there's a space in the name, the text before the space is
-        // positioned in the upper-left while the text afterwards takes up
-        // the remainder. This is used for number pad keys, backspace, enter,
-        // tab, and a few others.
-        if( index > 0 ) {
-          final var calculator = new BoundsCalculator( container );
-          final var bounds = calculator.computeSize();
-          final var containerDim = new ScalableDimension( bounds );
+      final var label = new AutofitLabel( switchName, LABEL_FONT, keyColour );
+      label.setVisible( false );
+      label.setHorizontalAlignment( CENTER );
+      label.setVerticalAlignment( CENTER );
+      container.removeAll();
+      container.add( label );
+      label.setVisible( true );
+    }
+    else if( !KEY_UP.equals( value ) ) {
+      // A non-modifier key has been pressed.
+      final var index = value.indexOf( ' ' );
+      final var keyColour = KEY_COLOURS.get( KEY_DOWN );
 
-          final var s = new String[]{
-              value.substring( 0, index ),
-              value.substring( index + 1 )
-          };
+      // If there's a space in the name, the text before the space is
+      // positioned in the upper-left while the text afterwards takes up
+      // the remainder. This is used for number pad keys, backspace, enter,
+      // tab, and a few others.
+      if( index > 0 ) {
+        final var calculator = new BoundsCalculator( container );
+        final var contDimen = new ScalableDimension( calculator.computeSize() );
+        final var supSize = contDimen.scale( .6f );
+        final var mainSize = contDimen.scale( .9f );
 
-          // "Num", "Back", "Tab", and other superscript contextual keys.
-          final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT, LABEL_COLOUR );
-          sup.setVisible( false );
-          container.add( sup );
-          sup.setVerticalAlignment( TOP );
-          sup.setSize( containerDim.scale( .6f ) );
-          sup.setVisible( true );
+        final var s = new String[]{
+            value.substring( 0, index ),
+            value.substring( index + 1 )
+        };
 
-          // Number pad keys or icon glyphs.
-          final var main = new AutofitLabel( s[ 1 ], LABEL_FONT, LABEL_COLOUR );
-          main.setVisible( false );
-          container.add( main );
-          main.setSize( containerDim.scale( .9f ) );
-          main.setHorizontalAlignment( CENTER );
-          main.setVerticalAlignment( CENTER );
+        // Label for "Num", "Back", "Tab", and other dual-labelled keys.
+        final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT, keyColour );
+        sup.setVisible( false );
+        sup.setVerticalAlignment( TOP );
 
-          // Center-align the main text with respect to the container.
-          final var location = main.getLocation();
-          final var dx = abs( containerDim.getWidth() - main.getWidth() ) / 2;
-          final var dy = abs( containerDim.getHeight() - main.getHeight() ) / 2;
+        // Label for number pad keys or icon glyphs.
+        final var main = new AutofitLabel( s[ 1 ], LABEL_FONT, keyColour );
+        main.setVisible( false );
+        main.setHorizontalAlignment( CENTER );
+        main.setVerticalAlignment( CENTER );
 
-          // Shift the main text down a smidgen, relative to the superscript.
-          main.setLocation(
-              (int) (location.getX() + dx),
-              (int) (location.getY() + dy) + sup.getHeight() / 4 );
-          main.setVisible( true );
-        }
-        else {
-          // Single keys need no tweaking and can be added to the container
-          // directly. The horizontal and vertical alignments
-          final var label = new AutofitLabel( value, LABEL_FONT, LABEL_COLOUR );
-          label.setVisible( false );
-          container.add( label );
-          label.setHorizontalAlignment( CENTER );
-          label.setVerticalAlignment( CENTER );
-          label.setVisible( true );
-        }
+        // Keep removing then adding as close together as possible to minimize
+        // flicker.
+        container.removeAll();
+        container.add( main );
+        container.add( sup );
+        main.setSize( mainSize );
+        sup.setSize( supSize );
+
+        // Center-align the main text with respect to the container.
+        final var location = main.getLocation();
+        final var dx = abs( contDimen.getWidth() - main.getWidth() ) / 2;
+        final var dy = abs( contDimen.getHeight() - main.getHeight() ) / 2;
+
+        // Shift the main text down a smidgen, relative to the superscript.
+        main.setLocation(
+            (int) (location.getX() + dx),
+            (int) (location.getY() + dy) + sup.getHeight() / 4 );
+        main.setVisible( true );
+        sup.setVisible( true );
+      }
+      else {
+        // Single keys need no tweaking and can be added to the container
+        // directly. The horizontal and vertical alignments
+        final var label = new AutofitLabel( value, LABEL_FONT, keyColour );
+        label.setVisible( false );
+        label.setHorizontalAlignment( CENTER );
+        label.setVerticalAlignment( CENTER );
+        container.removeAll();
+        container.add( label );
+        label.setVisible( true );
       }
     }
   }

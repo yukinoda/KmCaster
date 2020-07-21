@@ -37,15 +37,7 @@ import java.awt.*;
  * To center the key's label, we need to track the insets and padding. The
  * mouse images have neither insets nor padding.
  */
-public class KeyCapInsets {
-  /**
-   * Defines the amount of space between the 3D base of a key and the 3D
-   * top of the key; the vector graphic is a 2D projection and these values
-   * are specific to the projected sizes.
-   */
-  private final static Insets INSET_PROJECTED =
-      new Insets( 3, 7, 6, 7 );
-
+public final class KeyCapInsets {
   /**
    * Defines the padding around the inside of the key cap to give the letters
    * some whitespace.
@@ -53,25 +45,38 @@ public class KeyCapInsets {
   private final static Insets INSET_PADDING =
       new Insets( 4, 4, 4, 4 );
 
-  private final static Insets INSET_TOTAL =
-      new Insets(
-          INSET_PROJECTED.top + INSET_PADDING.top,
-          INSET_PROJECTED.left + INSET_PADDING.left,
-          INSET_PROJECTED.bottom + INSET_PADDING.bottom,
-          INSET_PROJECTED.right + INSET_PADDING.right
-      );
+  /**
+   * Includes safe zone and internal padding.
+   */
+  private final Insets mInsets;
+
+  /**
+   * Creates a new area for drawing on a key cap. This class will add an
+   * internal padding amount.
+   *
+   * @param insets The insets that correlate the "safe zone" for drawing
+   *               items on the key cap, without padding.
+   */
+  public KeyCapInsets( final Insets insets ) {
+    mInsets = new Insets(
+        insets.top + INSET_PADDING.top,
+        insets.left + INSET_PADDING.left,
+        insets.bottom + INSET_PADDING.bottom,
+        insets.right + INSET_PADDING.right
+    );
+  }
 
   /**
    * Scales the image insets and padding.
    */
-  public static Insets scale( final DimensionTuple factor ) {
+  public Insets scale( final DimensionTuple factor ) {
     final var wRatio = factor.getWidthRatio();
     final var hRatio = factor.getHeightRatio();
 
     return new Insets(
-        (int) (INSET_TOTAL.top * hRatio),
-        (int) (INSET_TOTAL.left * wRatio),
-        (int) (INSET_TOTAL.bottom * hRatio),
-        (int) (INSET_TOTAL.right * wRatio) );
+        (int) (mInsets.top * hRatio),
+        (int) (mInsets.left * wRatio),
+        (int) (mInsets.bottom * hRatio),
+        (int) (mInsets.right * wRatio) );
   }
 }

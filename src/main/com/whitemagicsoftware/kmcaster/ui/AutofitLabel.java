@@ -69,6 +69,7 @@ public final class AutofitLabel extends JLabel {
    */
   public AutofitLabel( final String text, final Font font, final Color color ) {
     super( text );
+    setDoubleBuffered( true );
     setFont( font );
     setForeground( color );
 

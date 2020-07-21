@@ -58,6 +58,24 @@ public class HardwareImages {
       KEY_REGULAR, "short"
   );
 
+  /**
+   * Defines the amount of space between around the vector graphic projection
+   * of a key. These values are specific to the projected sizes and must be
+   * measured while editing the vector graphic (e.g., using the ruler tool),
+   * rounded up then codified here. The insets will be scaled to fit the
+   * application window frame.
+   * <p>
+   * The shift key insets offset the safe area to the right of the up arrow
+   * icon.
+   * </p>
+   */
+  private final static Map<HardwareSwitch, Insets> SWITCH_INSETS = Map.of(
+      KEY_ALT, new Insets( 8, 11, 12, 11 ),
+      KEY_CTRL, new Insets( 8, 11, 12, 11 ),
+      KEY_SHIFT, new Insets( 5, 50, 9, 11 ),
+      KEY_REGULAR, new Insets( 3, 7, 6, 7 )
+  );
+
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
 
   private final Map<HardwareSwitch, HardwareComponent<HardwareState, Image>>
@@ -90,9 +108,10 @@ public class HardwareImages {
       final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
       final var imageUp = keyUpImage( FILE_NAME_PREFIXES.get( key ) );
       final var scale = imageDn.getValue();
+      final var insets = new KeyCapInsets( SWITCH_INSETS.get(key) );
+      final var scaledInsets = insets.scale( scale );
 
-      final var insets = KeyCapInsets.scale( scale );
-      final var hardwareComponent = createHardwareComponent( insets );
+      final var hardwareComponent = createHardwareComponent( scaledInsets );
 
       hardwareComponent.put( stateOn, imageDn.getKey() );
       hardwareComponent.put( stateOff, imageUp.getKey() );
