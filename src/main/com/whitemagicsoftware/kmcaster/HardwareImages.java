@@ -68,7 +68,7 @@ public class HardwareImages {
    * height constrains the width, so as long as the width is sufficiently
    * large, the application's window will adjust to fit.
    */
-  private final Dimension mDimension = new Dimension( 1024, 120 );
+  private final Dimension mDimension = new Dimension( 1024, 60 );
 
   public HardwareImages() {
     final var mouseStates = createHardwareComponent();

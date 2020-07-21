@@ -63,7 +63,7 @@ import static org.jnativehook.GlobalScreen.*;
  */
 @SuppressWarnings("unused")
 public class KmCaster extends JFrame {
-  private static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
+  public static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
   private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final float ARC = 8;
 
@@ -118,7 +118,7 @@ public class KmCaster extends JFrame {
   }
 
   private void initWindowContents() {
-    final var switchPanel = new JPanel();
+    final var switchPanel = new JPanel( true );
     switchPanel.setAlignmentX( CENTER_ALIGNMENT );
     switchPanel.setBackground( TRANSLUCENT );
 

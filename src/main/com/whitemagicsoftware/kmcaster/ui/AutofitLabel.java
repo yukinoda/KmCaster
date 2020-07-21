@@ -33,15 +33,35 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 
 import static java.awt.event.HierarchyEvent.PARENT_CHANGED;
+import static java.lang.Math.floor;
 
 /**
- * Responsible for changing the {@link JLabel}'s font size
+ * Responsible for changing a {@link JLabel}'s font size, dynamically. This
+ * requires a valid {@link Graphics} context in order to determine the ideal
+ * font point size for this component's size dimensions. The {@link Graphics}
+ * context is set when the component is added to another container.
  */
-public class AutofitLabel extends JLabel {
+public final class AutofitLabel extends JLabel {
 
   /**
    * Constructs an instance of {@link AutofitLabel} that will rescale itself
    * to the parent {@link Container}, automatically.
+   * <p>
+   * When this label is added to a container, it will appear immediately. If
+   * additional scaling is required, then:
+   * </p>
+   * <ol>
+   *   <li>call {@link #setVisible(boolean)} with {@code false};</li>
+   *   <li>add the label to its container;</li>
+   *   <li>perform the necessary size or location computations;</li>
+   *   <li>call {@link #setSize(Dimension)} to update the label;</li>
+   *   <li>then make the label visible again.</li>
+   * </ol>
+   * <p>
+   * Without following the prescribed steps, the label may display at an
+   * unexpected size.
+   * </p>
+   * </p>
    *
    * @param text  The text to write on the container's graphics context.
    * @param font  The font to use when writing the text.
@@ -53,35 +73,41 @@ public class AutofitLabel extends JLabel {
     setForeground( color );
 
     addHierarchyListener( e -> {
-      if( (e.getChangeFlags() & PARENT_CHANGED) != 0 ) {
-        if( getParent() == e.getChangedParent() ) {
-          rescale();
-        }
+      final var parent = getParent();
+
+      if( (e.getChangeFlags() & PARENT_CHANGED) != 0 &&
+          (e.getChangedParent() == parent) ) {
+        final var calculator = new BoundsCalculator( parent );
+
+        setSize( calculator.computeSize() );
+        setLocation( calculator.getLocation() );
       }
     } );
   }
 
   /**
-   * Rescales the constructed font to fit within the bounds of the parent
-   * {@link Container}. This must only be called after the parent
-   * {@link Container} has been set, otherwise there will be no
-   * {@link Graphics} context available to compute the maximum {@link Font}
-   * size that will fit the parent's {@link Rectangle} bounds.
+   * Note that {@link #setSize(Dimension)} eventually delegates to calling this
+   * method, so there's no need to override both. The {@link Graphics} context
+   * must be valid before calling this method.
+   *
+   * @param w The new width constraint.
+   * @param h The new height constraint.
+   */
+  @Override
+  public void setSize( final int w, final int h ) {
+    super.setSize( w, h );
+    rescale();
+  }
+
+  /**
+   * Rescales the constructed font to fit within the label's dimensions,
+   * governed by {@link #getWidth()} and {@link #getHeight()}. This must only
+   * be called after a {@link Graphics} context is available to compute the
+   * maximum {@link Font} size that will fit the label's {@link Rectangle}
+   * bounds.
    */
   private void rescale() {
-    final var component = getParent();
-    final var bounds = component.getBounds();
-    final var insets = component.getInsets();
-
-    bounds.x += insets.left;
-    bounds.y += insets.top;
-    bounds.width -= insets.left + insets.right;
-    bounds.height -= insets.top + insets.bottom;
-
-    setLocation( insets.left, insets.top );
-    setSize( bounds.width, bounds.height );
     setFont( computeScaledFont() );
-    setHorizontalAlignment( CENTER );
   }
 
   /**
@@ -108,8 +134,8 @@ public class AutofitLabel extends JLabel {
       scaledFont = scaledFont.deriveFont( scaledPt );
 
       final var layout = new TextLayout( text, scaledFont, frc );
-      final var fontWidthPx = layout.getVisibleAdvance();
       final var metrics = scaledFont.getLineMetrics( text, frc );
+      final var fontWidthPx = layout.getVisibleAdvance();
       final var fontHeightPx = metrics.getHeight();
 
       if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
@@ -123,7 +149,7 @@ public class AutofitLabel extends JLabel {
     }
 
     // Round down to guarantee fit.
-    return scaledFont.deriveFont( (float) Math.floor( scaledPt ) );
+    return scaledFont.deriveFont( (float) floor( scaledPt ) );
   }
 
   /**
@@ -133,6 +159,9 @@ public class AutofitLabel extends JLabel {
    * @return The parent's {@link Graphics2D} context.
    */
   private FontRenderContext getFontRenderContext() {
-    return ((Graphics2D) getGraphics()).getFontRenderContext();
+    final var graphics = getGraphics();
+    assert graphics != null;
+
+    return ((Graphics2D) graphics).getFontRenderContext();
   }
 }

@@ -29,6 +29,9 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import java.awt.*;
 
+import static java.lang.Math.*;
+import static java.lang.Math.min;
+
 /**
  * Provides the ability to scale a dimension in relation to another
  * dimension. The dimensions are unit-less.
@@ -46,6 +49,25 @@ public final class ScalableDimension extends Dimension {
   }
 
   /**
+   * Delegates construction to this class.
+   *
+   * @param w The width, rounded up to nearest integer.
+   * @param h The height, rounded up to nearest integer.
+   */
+  public ScalableDimension( final double w, final double h ) {
+    this( (int) ceil( w ), (int) ceil( h ) );
+  }
+
+  /**
+   * Delegates construction to this class.
+   *
+   * @param d Contains the width and height to use for this instance.
+   */
+  public ScalableDimension( final Dimension d ) {
+    this( d.getWidth(), d.getHeight() );
+  }
+
+  /**
    * Scales the given source {@link Dimension} to the destination
    * {@link Dimension}, maintaining the aspect ratio with respect to
    * the best fit.
@@ -55,15 +77,30 @@ public final class ScalableDimension extends Dimension {
    * maintaining the aspect ratio.
    */
   public Dimension scale( final Dimension dst ) {
-    final var srcWidth = getWidth();
-    final var srcHeight = getHeight();
+    assert dst != null;
 
-    // Determine the ratio that will have the best fit.
-    final var ratio = Math.min(
-        dst.getWidth() / srcWidth, dst.getHeight() / srcHeight
+    // Determine the ratio that has the best fit, then scale both dimensions
+    // with respect to said ratio.
+    return scale( min(
+        dst.getWidth() / getWidth(),
+        dst.getHeight() / getHeight()
+    ) );
+  }
+
+  /**
+   * Scale both dimensions according to some multiplication factor. Factors
+   * between 0 and 1 will return an instance of {@link Dimension} that is
+   * smaller than this instance.
+   *
+   * @param factor The factor for scaling, greater than or equal to zero.
+   * @return A new dimension with the width and height of this instance
+   * multiplied out by the given factor. The
+   */
+  public Dimension scale( final double factor ) {
+    assert factor >= 0;
+
+    return new ScalableDimension(
+        getWidth() * factor, getHeight() * factor
     );
-
-    // Scale both dimensions with respect to the best fit ratio.
-    return new Dimension( (int) (srcWidth * ratio), (int) (srcHeight * ratio) );
   }
 }

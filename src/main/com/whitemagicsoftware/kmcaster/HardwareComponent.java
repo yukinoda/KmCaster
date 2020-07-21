@@ -32,6 +32,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.whitemagicsoftware.kmcaster.ui.Constants.INSETS_EMPTY;
+
 /**
  * Responsible for drawing an image based on a state; the state can be
  * changed at any time.
@@ -39,11 +41,6 @@ import java.util.Map;
  * @param <S> The type of state associated with an image.
  */
 public class HardwareComponent<S, I extends Image> extends JComponent {
-  /**
-   * Default insets, has no padding.
-   */
-  private final static Insets INSETS_EMPTY =
-      new Insets( 0, 0, 0, 0 );
 
   private final Map<S, I> mStateImages = new HashMap<>();
 

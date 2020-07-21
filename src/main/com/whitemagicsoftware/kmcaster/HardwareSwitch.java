@@ -131,6 +131,18 @@ public enum HardwareSwitch {
   }
 
   /**
+   * Converts the switch name from to Title Case. This will only convert the
+   * first letter, leaving all remaining characters lowercase, even if there
+   * are multiple words in the name.
+   *
+   * @return The switch name with its first letter capitalized.
+   */
+  public String toTitleCase() {
+    final var s = toString().toLowerCase();
+    return Character.toTitleCase( s.charAt( 0 ) ) + s.substring( 1 );
+  }
+
+  /**
    * Returns the switch name.
    *
    * @return The switch name, not the enum name.

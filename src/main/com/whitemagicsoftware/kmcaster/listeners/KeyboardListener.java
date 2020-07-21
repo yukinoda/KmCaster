@@ -35,7 +35,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.lang.Boolean.FALSE;
@@ -52,27 +51,17 @@ public class KeyboardListener implements NativeKeyListener {
   private final static String KEY_TAB = "Tab ↹";
   private final static String KEY_ENTER = "Enter ⏎";
 
-  /**
-   * Defines larger-sized keys.
-   */
-  public final static Set<String> KEYS_MEDIUM = Set.of(
-      KEY_SPACE,
-      KEY_BACKSPACE,
-      KEY_TAB,
-      KEY_ENTER
-  );
-
   @SuppressWarnings("RedundantTypeArguments")
   private final static Map<Integer, String> KEY_CODES =
       Map.<Integer, String>ofEntries(
           entry( 32, KEY_SPACE ),
           entry( 33, "!" ),
-          entry( 34, "'" ),
+          entry( 34, "\"" ),
           entry( 35, "#" ),
           entry( 36, "$" ),
           entry( 37, "%" ),
           entry( 38, "&" ),
-          entry( 39, "\"" ),
+          entry( 39, "'" ),
           entry( 40, "(" ),
           entry( 41, ")" ),
           entry( 42, "*" ),
@@ -139,24 +128,34 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 65535, "Del" ),
           entry( 65506, "Shift" ),
           entry( 65407, "Num" ),
-          entry( 65456, "Num 0" ),
-          entry( 65436, "Num 1" ),
-          entry( 65433, "Num 2" ),
-          entry( 65435, "Num 3" ),
-          entry( 65430, "Num 4" ),
-          entry( 65437, "Num 5" ),
-          entry( 65432, "Num 6" ),
-          entry( 65429, "Num 7" ),
-          entry( 65431, "Num 8" ),
-          entry( 65434, "Num 9" ),
           entry( 65421, "Num ⏎" ),
+          entry( 65430, "Num ←" ),
+          entry( 65431, "Num ↑" ),
+          entry( 65432, "Num →" ),
+          entry( 65433, "Num ↓" ),
+          entry( 65429, "Num Home" ),
+          entry( 65434, "Num PgUp" ),
+          entry( 65435, "Num PgDn" ),
+          entry( 65436, "Num End" ),
+          entry( 65437, "Num Clear" ),
           entry( 65438, "Num Ins" ),
           entry( 65439, "Num Del" ),
+          entry( 65450, "Num *" ),
           entry( 65451, "Num +" ),
+          entry( 65452, "Num Sep" ),
           entry( 65453, "Num -" ),
           entry( 65454, "Num ." ),
           entry( 65455, "Num /" ),
-          entry( 65450, "Num *" ),
+          entry( 65456, "Num 0" ),
+          entry( 65457, "Num 1" ),
+          entry( 65458, "Num 2" ),
+          entry( 65459, "Num 3" ),
+          entry( 65460, "Num 4" ),
+          entry( 65461, "Num 5" ),
+          entry( 65462, "Num 6" ),
+          entry( 65463, "Num 7" ),
+          entry( 65464, "Num 8" ),
+          entry( 65465, "Num 9" ),
           entry( 65300, "Scrl" ),
           entry( 65509, "Caps" ),
           entry( 65377, "Print" ),
@@ -250,8 +249,8 @@ public class KeyboardListener implements NativeKeyListener {
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final HardwareSwitch key, final String o,
-                        final String n ) {
+  private void tryFire(
+      final HardwareSwitch key, final String o, final String n ) {
     if( !o.equals( n ) ) {
       mDispatcher.firePropertyChange( key.toString(), o, n );
     }
@@ -266,8 +265,8 @@ public class KeyboardListener implements NativeKeyListener {
    * @param o   Old property value.
    * @param n   New property value.
    */
-  private void tryFire( final HardwareSwitch key, final boolean o,
-                        final boolean n ) {
+  private void tryFire(
+      final HardwareSwitch key, final boolean o, final boolean n ) {
     tryFire( key, Boolean.toString( o ), Boolean.toString( n ) );
   }
 
