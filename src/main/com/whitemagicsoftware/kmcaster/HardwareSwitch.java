@@ -27,6 +27,8 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import java.util.NoSuchElementException;
+
 import static org.jnativehook.NativeInputEvent.*;
 
 /**
@@ -94,6 +96,15 @@ public enum HardwareSwitch {
   }
 
   /**
+   * Answers whether this hardware switch represents a keyboard key.
+   *
+   * @return {@code true} when this is a keyboard key.
+   */
+  public boolean isKeyboard() {
+    return name().startsWith( "KEY_" );
+  }
+
+  /**
    * Answers whether this hardware switch is pressed, but only applies to
    * keyboard modifier keys, not mouse buttons.
    *
@@ -120,7 +131,7 @@ public enum HardwareSwitch {
       }
     }
 
-    return KEY_REGULAR;
+    throw new NoSuchElementException( name );
   }
 
   /**
@@ -132,6 +143,11 @@ public enum HardwareSwitch {
     return new HardwareSwitch[]{KEY_ALT, KEY_CTRL, KEY_SHIFT, KEY_REGULAR};
   }
 
+  /**
+   * Returns a list of all mouse buttons.
+   *
+   * @return The complete list of mouse buttons.
+   */
   public static HardwareSwitch[] mouseSwitches() {
     return new HardwareSwitch[]{MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT};
   }

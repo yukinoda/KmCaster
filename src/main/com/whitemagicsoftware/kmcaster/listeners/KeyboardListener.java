@@ -31,8 +31,6 @@ import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,15 +40,20 @@ import static java.util.Map.entry;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
- * Responsible for sending property change events when the keyboard state
- * changes.
+ * Responsible for sending property change events for keyboard state changes.
  */
-public class KeyboardListener implements NativeKeyListener {
+public final class KeyboardListener
+    extends PropertyDispatcher<HardwareSwitch>
+    implements NativeKeyListener {
   private final static String KEY_SPACE = "Space";
   private final static String KEY_BACKSPACE = "Back ⌫";
   private final static String KEY_TAB = "Tab ↹";
   private final static String KEY_ENTER = "Enter ⏎";
 
+  /**
+   * The key is the raw key code return from the {@link NativeKeyEvent}, the
+   * value is the human-readable text to display on screen.
+   */
   @SuppressWarnings("RedundantTypeArguments")
   private final static Map<Integer, String> KEY_CODES =
       Map.<Integer, String>ofEntries(
@@ -113,10 +116,12 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 124, "|" ),
           entry( 125, "}" ),
           entry( 126, "~" ),
-          entry( 65288, KEY_BACKSPACE ),
           entry( 65056, KEY_TAB ),
           entry( 65289, KEY_TAB ),
           entry( 65293, KEY_ENTER ),
+          entry( 65288, KEY_BACKSPACE ),
+          entry( 65301, "SysRq" ),
+          entry( 65377, "Print" ),
           entry( 65361, "←" ),
           entry( 65362, "↑" ),
           entry( 65363, "→" ),
@@ -157,36 +162,21 @@ public class KeyboardListener implements NativeKeyListener {
           entry( 65464, "Num 8" ),
           entry( 65465, "Num 9" ),
           entry( 65300, "Scrl" ),
-          entry( 65509, "Caps" ),
-          entry( 65377, "Print" ),
-          entry( 65301, "SysRq" )
+          entry( 65509, "Caps" )
       );
 
   /**
-   * Stores the state of modifier keys.
+   * Stores the state of modifier keys. The contents of the map reflect the
+   * state of each switch, so the reference can be final but not its contents.
    */
-  private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
-
-  private final PropertyChangeSupport mDispatcher =
-      new PropertyChangeSupport( this );
+  private final Map<HardwareSwitch, Boolean> mSwitches = new HashMap<>();
 
   private String mRegularHeld = "";
 
   public KeyboardListener() {
-    mModifiers.put( KEY_ALT, false );
-    mModifiers.put( KEY_CTRL, false );
-    mModifiers.put( KEY_SHIFT, false );
-  }
-
-  public void addPropertyChangeListener(
-      final PropertyChangeListener listener ) {
-    mDispatcher.addPropertyChangeListener( listener );
-  }
-
-  @SuppressWarnings("unused")
-  public void removePropertyChangeListener(
-      final PropertyChangeListener listener ) {
-    mDispatcher.removePropertyChangeListener( listener );
+    mSwitches.put( KEY_ALT, false );
+    mSwitches.put( KEY_CTRL, false );
+    mSwitches.put( KEY_SHIFT, false );
   }
 
   @Override
@@ -218,7 +208,7 @@ public class KeyboardListener implements NativeKeyListener {
     boolean isModifier = false;
 
     // The key is regular iff its name does not match any modifier name.
-    for( final var key : mModifiers.keySet() ) {
+    for( final var key : mSwitches.keySet() ) {
       isModifier |= (key.isName( n ) || key.isName( o ));
     }
 
@@ -235,39 +225,11 @@ public class KeyboardListener implements NativeKeyListener {
    * @param e The keyboard event that was most recently triggered.
    */
   private void updateModifiers( final NativeKeyEvent e ) {
-    for( final var key : mModifiers.keySet() ) {
+    for( final var key : mSwitches.keySet() ) {
       final boolean down = key.isModifierPressed( e.getModifiers() );
-      tryFire( key, mModifiers.get( key ), down );
-      mModifiers.put( key, down );
+      tryFire( key, mSwitches.get( key ), down );
+      mSwitches.put( key, down );
     }
-  }
-
-  /**
-   * Called to fire the property change with the two given values differ.
-   *
-   * @param key The name of the property that has changed.
-   * @param o   Old property value.
-   * @param n   New property value.
-   */
-  private void tryFire(
-      final HardwareSwitch key, final String o, final String n ) {
-    if( !o.equals( n ) ) {
-      mDispatcher.firePropertyChange( key.toString(), o, n );
-    }
-  }
-
-  /**
-   * Delegates to {@link #tryFire(HardwareSwitch, String, String)} with
-   * {@link Boolean}
-   * values as strings.
-   *
-   * @param key The name of the property that has changed.
-   * @param o   Old property value.
-   * @param n   New property value.
-   */
-  private void tryFire(
-      final HardwareSwitch key, final boolean o, final boolean n ) {
-    tryFire( key, Boolean.toString( o ), Boolean.toString( n ) );
   }
 
   /**

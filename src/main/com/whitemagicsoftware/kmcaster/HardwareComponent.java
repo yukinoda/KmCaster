@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.INSETS_EMPTY;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
 
 /**
  * Responsible for drawing an image based on a state; the state can be
@@ -64,6 +65,8 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    */
   public HardwareComponent() {
     this( INSETS_EMPTY );
+    setBackground( TRANSPARENT );
+    setOpaque( false );
   }
 
   /**

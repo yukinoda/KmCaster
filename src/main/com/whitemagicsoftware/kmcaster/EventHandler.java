@@ -92,7 +92,10 @@ public class EventHandler implements PropertyChangeListener {
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
     updateSwitchState( switchState );
-    updateSwitchLabel( switchState );
+
+    if( hwSwitch.isKeyboard() ) {
+      updateSwitchLabel( switchState );
+    }
   }
 
   protected void updateSwitchState( final HardwareSwitchState switchState ) {

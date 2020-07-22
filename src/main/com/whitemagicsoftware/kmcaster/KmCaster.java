@@ -39,6 +39,8 @@ import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
+import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -63,8 +65,6 @@ import static org.jnativehook.GlobalScreen.*;
  */
 @SuppressWarnings("unused")
 public class KmCaster extends JFrame {
-  public static final Color TRANSPARENT = new Color( 0, 0, 0, 0 );
-  private static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
   private static final float ARC = 8;
 
   /**
@@ -143,10 +143,11 @@ public class KmCaster extends JFrame {
   }
 
   private void initMouseListener( final PropertyChangeListener listener ) {
-    final MouseListener mouseEventListener = new MouseListener();
-    addNativeMouseListener( mouseEventListener );
-    addNativeMouseMotionListener( mouseEventListener );
-    addNativeMouseWheelListener( mouseEventListener );
+    final MouseListener mouseListener = new MouseListener();
+    addNativeMouseListener( mouseListener );
+    addNativeMouseMotionListener( mouseListener );
+    addNativeMouseWheelListener( mouseListener );
+    mouseListener.addPropertyChangeListener( listener );
   }
 
   private void initKeyboardListener( final PropertyChangeListener listener ) {
