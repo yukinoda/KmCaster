@@ -64,16 +64,27 @@ public final class MouseListener
     }
   }
 
+  /**
+   * Unused.
+   *
+   * @param e Ignored.
+   */
   public void nativeMouseClicked( final NativeMouseEvent e ) {
-//    System.out.println( "Clicked # Times: " + e.getClickCount() );
-//    System.out.println( "Button clicked: " + e.getButton() );
   }
 
+  /**
+   * Unused.
+   *
+   * @param e Ignored.
+   */
   public void nativeMouseMoved( final NativeMouseEvent e ) {
-//      System.out.println( "Mouse Moved: " + e.getX() + ", " + e.getY() );
   }
 
+  /**
+   * Unused.
+   *
+   * @param e Ignored.
+   */
   public void nativeMouseDragged( final NativeMouseEvent e ) {
-//    System.out.println( "Mouse Dragged: " + e.getX() + ", " + e.getY() );
   }
 }

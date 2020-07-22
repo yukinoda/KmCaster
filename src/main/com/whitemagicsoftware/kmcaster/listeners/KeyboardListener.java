@@ -191,8 +191,28 @@ public final class KeyboardListener
     updateModifiers( e );
   }
 
+  /**
+   * Unused. Key up and key down are tracked separately from a typed key.
+   *
+   * @param e Ignored.
+   */
   @Override
   public void nativeKeyTyped( final NativeKeyEvent e ) {
+  }
+
+  /**
+   * Sets the initial state of the modifiers.
+   */
+  public void initModifiers() {
+    for( final var key : mSwitches.keySet() ) {
+      final var state = mSwitches.get( key );
+
+      // By default, the keys are all "false", so fire fake events indicating
+      // that has one has just transitioned to "false". This will cause the
+      // GUI to repaint with the text label affixed to each key, drawn in the
+      // released state. This happens before the frame is set to visible.
+      tryFire( key, !state, state );
+    }
   }
 
   /**

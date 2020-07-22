@@ -103,8 +103,8 @@ public class KmCaster extends JFrame {
   private void init() {
     initWindowFrame();
     initWindowContents();
-    initListeners();
     pack();
+    initListeners();
     setVisible( true );
   }
 
@@ -154,6 +154,7 @@ public class KmCaster extends JFrame {
     final KeyboardListener keyboardListener = new KeyboardListener();
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
+    keyboardListener.initModifiers();
   }
 
   /**

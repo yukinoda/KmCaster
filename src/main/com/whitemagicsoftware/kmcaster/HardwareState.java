@@ -37,6 +37,7 @@ public enum HardwareState {
    * Defines when a hardware switch is down.
    */
   SWITCH_PRESSED,
+
   /**
    * Defines when a hardware switch is up.
    */

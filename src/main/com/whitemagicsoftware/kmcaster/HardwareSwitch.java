@@ -131,6 +131,8 @@ public enum HardwareSwitch {
       }
     }
 
+    // This could be thrown when a mouse button is pressed that does not have
+    // a visual representation.
     throw new NoSuchElementException( name );
   }
 

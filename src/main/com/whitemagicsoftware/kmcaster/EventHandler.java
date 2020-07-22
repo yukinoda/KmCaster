@@ -91,6 +91,13 @@ public class EventHandler implements PropertyChangeListener {
 
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
+
+    // Clear the text before redrawing to prevent discord between the
+    // label colour and the hardware switch's background.
+    if( switchState.isSwitchState( SWITCH_RELEASED ) ) {
+      getHardwareComponent( switchState ).removeAll();
+    }
+
     updateSwitchState( switchState );
 
     if( hwSwitch.isKeyboard() ) {
@@ -112,10 +119,6 @@ public class EventHandler implements PropertyChangeListener {
     final var container = getHardwareComponent( state );
     final var keyValue = state.getValue();
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
-
-    if( state.isSwitchState( SWITCH_RELEASED ) ) {
-      container.removeAll();
-    }
 
     if( state.isModifier() ) {
       final var hwSwitch = state.getHardwareSwitch();

@@ -38,6 +38,7 @@ import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.APP_DIMENSIONS;
 import static java.lang.String.format;
 
 /**
@@ -81,13 +82,6 @@ public class HardwareImages {
       HardwareSwitch,
       HardwareComponent<HardwareSwitchState, Image>
       > mSwitches = new HashMap<>();
-
-  /**
-   * Images are scaled to these dimensions, maintaining aspect ratio. The
-   * height constrains the width, so as long as the width is sufficiently
-   * large, the application's window will adjust to fit.
-   */
-  private final Dimension mDimension = new Dimension( 1024, 90 );
 
   public HardwareImages() {
     final var mouseStates = createHardwareComponent();
@@ -163,8 +157,8 @@ public class HardwareImages {
 
     try {
       final var diagram = sRasterizer.loadDiagram( resource );
-      final var scale = sRasterizer.calculateScale( diagram, mDimension );
-      final var image = sRasterizer.rasterize( diagram, mDimension );
+      final var scale = sRasterizer.calculateScale( diagram, APP_DIMENSIONS );
+      final var image = sRasterizer.rasterize( diagram, APP_DIMENSIONS );
 
       return new Pair<>( image, scale );
     } catch( final Exception ex ) {
