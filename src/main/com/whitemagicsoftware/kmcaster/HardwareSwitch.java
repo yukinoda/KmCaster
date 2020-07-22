@@ -36,7 +36,9 @@ import static org.jnativehook.NativeInputEvent.*;
  * </p>
  */
 public enum HardwareSwitch {
-  MOUSE( "mouse" ),
+  MOUSE_LEFT( "1" ),
+  MOUSE_MIDDLE( "2" ),
+  MOUSE_RIGHT( "3" ),
   KEY_SHIFT( "shift", SHIFT_MASK ),
   KEY_CTRL( "ctrl", CTRL_MASK ),
   KEY_ALT( "alt", ALT_MASK ),
@@ -126,8 +128,12 @@ public enum HardwareSwitch {
    *
    * @return The complete list of keyboard keys.
    */
-  public static HardwareSwitch[] keyboardKeys() {
+  public static HardwareSwitch[] keyboardSwitches() {
     return new HardwareSwitch[]{KEY_ALT, KEY_CTRL, KEY_SHIFT, KEY_REGULAR};
+  }
+
+  public static HardwareSwitch[] mouseSwitches() {
+    return new HardwareSwitch[]{MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT};
   }
 
   /**

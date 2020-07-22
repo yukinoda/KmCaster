@@ -76,6 +76,8 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    *               what we'd expected to see visually for key cap text.
    */
   public HardwareComponent( final Insets insets ) {
+    assert insets != null;
+
     setDoubleBuffered( true );
     mInsets = insets;
   }
@@ -104,17 +106,17 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   }
 
   /**
-   * Associates a new (or existing) state with the given image. If the
-   * state already exists for the image, the image is updated for that
-   * state. After calling this method, the active state changes to the
-   * given state as a convenience.
+   * Associates a new (or existing) state with the given image. This sets
+   * changes the current state to the given state.
    *
    * @param state The state to associate with an image.
    * @param image The image to paint when the given state is selected.
    */
   public void put( final S state, final I image ) {
     getStateImages().put( state, image );
-    setState( state );
+
+    // No need to issue a repaint request, change the state directly.
+    mState = state;
   }
 
   /**

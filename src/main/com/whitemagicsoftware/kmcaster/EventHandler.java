@@ -36,10 +36,9 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
+import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
+import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static java.awt.Font.BOLD;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static java.lang.Math.abs;
 import static javax.swing.SwingConstants.CENTER;
 import static javax.swing.SwingConstants.TOP;
@@ -51,9 +50,6 @@ public class EventHandler implements PropertyChangeListener {
    * arbitrary, the font will be scaled dynamically to the window size.
    */
   private static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 32 );
-
-  private static final String KEY_UP = FALSE.toString();
-  private static final String KEY_DOWN = TRUE.toString();
 
   /**
    * Matches the shift-key arrow font colour when pressed.
@@ -68,9 +64,9 @@ public class EventHandler implements PropertyChangeListener {
   /**
    * Maps key pressed states to key cap title colours.
    */
-  private static final Map<String, Color> KEY_COLOURS = Map.of(
-      KEY_DOWN, COLOUR_KEY_DN,
-      KEY_UP, COLOUR_KEY_UP
+  private static final Map<HardwareState, Color> KEY_COLOURS = Map.of(
+      SWITCH_PRESSED, COLOUR_KEY_DN,
+      SWITCH_RELEASED, COLOUR_KEY_UP
   );
 
   private final HardwareImages mHardwareImages;
@@ -90,35 +86,37 @@ public class EventHandler implements PropertyChangeListener {
     final var switchName = e.getPropertyName();
     final var switchValue = e.getNewValue().toString();
 
-    // True indicates a modifier key was pressed; false indicates a key was
-    // released (doesn't matter what kind of key).
-    final var context =
-        (!KEY_UP.equals( switchValue ) && !KEY_DOWN.equals( switchValue ))
-            ? ANY_KEY
-            : switchValue;
+    final var hwSwitch = HardwareSwitch.valueFrom( switchName );
+    final var hwState = HardwareState.valueFrom( switchValue );
 
-    final var switchState = new HardwareState( switchName, context );
+    final var switchState = new HardwareSwitchState(
+        hwSwitch, hwState, switchValue );
     updateSwitchState( switchState );
-    updateSwitchLabel( switchState, switchValue );
+    updateSwitchLabel( switchState );
   }
 
-  protected void updateSwitchState( final HardwareState state ) {
-    final var component = getHardwareComponent( state );
-    component.setState( state );
+  protected void updateSwitchState( final HardwareSwitchState switchState ) {
+    final var component = getHardwareComponent( switchState );
+    component.setState( switchState );
   }
 
-  protected void updateSwitchLabel(
-      final HardwareState state, final String value ) {
+  /**
+   * Changes the text on labels when the state of a key changes.
+   *
+   * @param state The key that has changed.
+   */
+  protected void updateSwitchLabel( final HardwareSwitchState state ) {
     final var container = getHardwareComponent( state );
+    final var keyValue = state.getValue();
+    final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
 
-    if( KEY_UP.equals( value ) ) {
+    if( state.isSwitchState( SWITCH_RELEASED ) ) {
       container.removeAll();
     }
 
     if( state.isModifier() ) {
       final var hwSwitch = state.getHardwareSwitch();
       final var switchName = hwSwitch.toTitleCase();
-      final var keyColour = KEY_COLOURS.get( value );
 
       final var label = new AutofitLabel( switchName, LABEL_FONT, keyColour );
       label.setVisible( false );
@@ -128,10 +126,9 @@ public class EventHandler implements PropertyChangeListener {
       container.add( label );
       label.setVisible( true );
     }
-    else if( !KEY_UP.equals( value ) ) {
+    else if( state.isSwitchState( SWITCH_PRESSED ) ) {
       // A non-modifier key has been pressed.
-      final var index = value.indexOf( ' ' );
-      final var keyColour = KEY_COLOURS.get( KEY_DOWN );
+      final var index = keyValue.indexOf( ' ' );
 
       // If there's a space in the name, the text before the space is
       // positioned in the upper-left while the text afterwards takes up
@@ -144,8 +141,8 @@ public class EventHandler implements PropertyChangeListener {
         final var mainSize = contDimen.scale( .9f );
 
         final var s = new String[]{
-            value.substring( 0, index ),
-            value.substring( index + 1 )
+            keyValue.substring( 0, index ),
+            keyValue.substring( index + 1 )
         };
 
         // Label for "Num", "Back", "Tab", and other dual-labelled keys.
@@ -159,8 +156,7 @@ public class EventHandler implements PropertyChangeListener {
         main.setHorizontalAlignment( CENTER );
         main.setVerticalAlignment( CENTER );
 
-        // Keep removing then adding as close together as possible to minimize
-        // flicker.
+        // Keep removeAll/add operations close together to minimize flicker.
         container.removeAll();
         container.add( main );
         container.add( sup );
@@ -182,7 +178,7 @@ public class EventHandler implements PropertyChangeListener {
       else {
         // Single keys need no tweaking and can be added to the container
         // directly. The horizontal and vertical alignments
-        final var label = new AutofitLabel( value, LABEL_FONT, keyColour );
+        final var label = new AutofitLabel( keyValue, LABEL_FONT, keyColour );
         label.setVisible( false );
         label.setHorizontalAlignment( CENTER );
         label.setVerticalAlignment( CENTER );
@@ -193,8 +189,8 @@ public class EventHandler implements PropertyChangeListener {
     }
   }
 
-  private HardwareComponent<HardwareState, Image> getHardwareComponent(
-      final HardwareState state ) {
+  private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
+      final HardwareSwitchState state ) {
     return mHardwareImages.get( state.getHardwareSwitch() );
   }
 }

@@ -34,11 +34,10 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.HardwareState.ANY_KEY;
+import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
+import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
 import static java.lang.String.format;
 
 /**
@@ -78,8 +77,10 @@ public class HardwareImages {
 
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
 
-  private final Map<HardwareSwitch, HardwareComponent<HardwareState, Image>>
-      mSwitches = new HashMap<>();
+  private final Map<
+      HardwareSwitch,
+      HardwareComponent<HardwareSwitchState, Image>
+      > mSwitches = new HashMap<>();
 
   /**
    * Images are scaled to these dimensions, maintaining aspect ratio. The
@@ -90,25 +91,24 @@ public class HardwareImages {
 
   public HardwareImages() {
     final var mouseStates = createHardwareComponent();
+    final var mouseReleased = mouseImage( "0" );
 
-    for( int i = 1; i <= 3; i++ ) {
-      final var s = Integer.toString( i );
-      mouseStates.put( state( MOUSE, s ), mouseImage( s ) );
+    for( final var key : HardwareSwitch.mouseSwitches() ) {
+      final var stateOn = state( key, SWITCH_PRESSED );
+      final var stateOff = state( key, SWITCH_RELEASED );
+      final var imageDn = mouseImage( key.toString() );
+      mouseStates.put( stateOn, imageDn.getKey() );
+      mouseStates.put( stateOff, mouseReleased.getKey() );
+      mSwitches.put( key, mouseStates );
     }
 
-    mouseStates.put( state( MOUSE, "1-3" ), mouseImage( "1-3" ) );
-    mouseStates.put( state( MOUSE, FALSE.toString() ), mouseImage( "0" ) );
-    mSwitches.put( MOUSE, mouseStates );
-
-    for( final var key : HardwareSwitch.keyboardKeys() ) {
-      final var stateNameOn = key == KEY_REGULAR ? ANY_KEY : TRUE.toString();
-
-      final var stateOn = state( key, stateNameOn );
-      final var stateOff = state( key, FALSE.toString() );
+    for( final var key : HardwareSwitch.keyboardSwitches() ) {
+      final var stateOn = state( key, SWITCH_PRESSED );
+      final var stateOff = state( key, SWITCH_RELEASED );
       final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
       final var imageUp = keyUpImage( FILE_NAME_PREFIXES.get( key ) );
       final var scale = imageDn.getValue();
-      final var insets = new KeyCapInsets( SWITCH_INSETS.get(key) );
+      final var insets = new KeyCapInsets( SWITCH_INSETS.get( key ) );
       final var scaledInsets = insets.scale( scale );
 
       final var hardwareComponent = createHardwareComponent( scaledInsets );
@@ -120,30 +120,27 @@ public class HardwareImages {
     }
   }
 
-  private HardwareComponent<HardwareState, Image> createHardwareComponent() {
+  private HardwareComponent<HardwareSwitchState, Image> createHardwareComponent() {
     return new HardwareComponent<>();
   }
 
-  private HardwareComponent<HardwareState, Image> createHardwareComponent(
+  private HardwareComponent<HardwareSwitchState, Image> createHardwareComponent(
       final Insets insets ) {
     return new HardwareComponent<>( insets );
   }
 
-  public HardwareComponent<HardwareState, Image> get(
+  public HardwareComponent<HardwareSwitchState, Image> get(
       final HardwareSwitch hwSwitch ) {
     return mSwitches.get( hwSwitch );
   }
 
-  private HardwareState state(
-      final HardwareSwitch name, final String state ) {
-    return new HardwareState( name, state );
+  private HardwareSwitchState state(
+      final HardwareSwitch name, final HardwareState state ) {
+    return new HardwareSwitchState( name, state );
   }
 
-  private Image mouseImage( final String prefix ) {
-    final var imagePair =
-        createImage( format( "%s/%s", DIR_IMAGES_MOUSE, prefix ) );
-
-    return imagePair.getKey();
+  private Pair<Image, DimensionTuple> mouseImage( final String prefix ) {
+    return createImage( format( "%s/%s", DIR_IMAGES_MOUSE, prefix ) );
   }
 
   private Pair<Image, DimensionTuple> keyImage(

@@ -27,100 +27,34 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import static java.lang.Boolean.*;
+
 /**
  * Responsible for defining hardware switch states.
  */
-public class HardwareState {
-  public final static String ANY_KEY = "*";
+public enum HardwareState {
+  /**
+   * Defines when a hardware switch is down.
+   */
+  SWITCH_PRESSED,
+  /**
+   * Defines when a hardware switch is up.
+   */
+  SWITCH_RELEASED;
 
-  private final HardwareSwitch mHardwareSwitch;
-  private final String mHardwareStatus;
+  private final static String BOOLEAN_FALSE = FALSE.toString();
 
   /**
-   * Constructs a new instance that represents whether a key or mouse button
-   * was pressed.
+   * Returns the {@link HardwareState} that corresponds to the given
+   * state string. If the state string equals {@link Boolean#FALSE} (case
+   * is sensitive), then this will return {@link #SWITCH_RELEASED}. Any
+   * other value will return {@link #SWITCH_PRESSED}.
    *
-   * @param name           Name of a {@link HardwareSwitch} that represents
-   *                       the type of switch having the given status.
-   * @param hardwareStatus A value of {@link #ANY_KEY} means a regular key was
-   *                       pressed; otherwise, "true" or "false" indicate
-   *                       pressed or released, respectively.
+   * @param state The state to convert to an enumerated type.
+   * @return {@link #SWITCH_RELEASED} iff {@code state} equals "false";
+   * otherwise, {@link #SWITCH_PRESSED}.
    */
-  public HardwareState( final String name, final String hardwareStatus ) {
-    this( HardwareSwitch.valueFrom( name ), hardwareStatus );
-  }
-
-  /**
-   * Constructs a new instance that represents whether a key or mouse button
-   * was pressed.
-   *
-   * @param hardwareSwitch A {@link HardwareSwitch} that represents the type of
-   *                       switch having the given status.
-   * @param hardwareStatus A value of {@link #ANY_KEY} means a regular key was
-   *                       pressed; otherwise, "true" or "false" indicate
-   *                       pressed or released, respectively.
-   */
-  public HardwareState(
-      final HardwareSwitch hardwareSwitch, final String hardwareStatus ) {
-    assert hardwareSwitch != null;
-    assert valid( hardwareStatus );
-
-    mHardwareSwitch = hardwareSwitch;
-    mHardwareStatus = hardwareStatus;
-  }
-
-  /**
-   * Returns the physical switch containing its name.
-   *
-   * @return The {@link HardwareSwitch} having a switch-dependent state.
-   */
-  public HardwareSwitch getHardwareSwitch() {
-    return mHardwareSwitch;
-  }
-
-  /**
-   * Answers whether this is a modifier key.
-   *
-   * @return {@code true} when this is a modifier key.
-   */
-  public boolean isModifier() {
-    return mHardwareSwitch.isModifier();
-  }
-
-  /**
-   * Test whether the given state conforms to specification.
-   *
-   * @param state A value of "*' means a regular key was pressed; otherwise,
-   *              "true" or "false" indicate pressed or released, respectively.
-   * @return {@code true} The given {@code state} is a known value.
-   */
-  private boolean valid( final String state ) {
-    return ANY_KEY.equals( state ) ||
-        "true".equals( state ) ||
-        "false".equals( state );
-  }
-
-  @Override
-  public boolean equals( final Object o ) {
-    if( this == o ) {
-      return true;
-    }
-    if( o == null || getClass() != o.getClass() ) {
-      return false;
-    }
-
-    final HardwareState that = (HardwareState) o;
-
-    if( mHardwareSwitch != that.mHardwareSwitch ) {
-      return false;
-    }
-    return mHardwareStatus.equals( that.mHardwareStatus );
-  }
-
-  @Override
-  public int hashCode() {
-    int result = mHardwareSwitch.hashCode();
-    result = 31 * result + mHardwareStatus.hashCode();
-    return result;
+  public static HardwareState valueFrom( final String state ) {
+    return BOOLEAN_FALSE.equals( state ) ? SWITCH_RELEASED : SWITCH_PRESSED;
   }
 }
