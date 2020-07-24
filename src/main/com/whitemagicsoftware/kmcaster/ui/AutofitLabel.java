@@ -63,15 +63,13 @@ public final class AutofitLabel extends JLabel {
    * </p>
    * </p>
    *
-   * @param text  The text to write on the container's graphics context.
-   * @param font  The font to use when writing the text.
-   * @param color The colour to use when writing hte text.
+   * @param text The text to write on the container's graphics context.
+   * @param font The font to use when writing the text.
    */
-  public AutofitLabel( final String text, final Font font, final Color color ) {
+  public AutofitLabel( final String text, final Font font ) {
     super( text );
     setDoubleBuffered( true );
     setFont( font );
-    setForeground( color );
 
     addHierarchyListener( e -> {
       final var parent = getParent();
@@ -131,22 +129,26 @@ public final class AutofitLabel extends JLabel {
     var scaledFont = getFont();
     float scaledPt = scaledFont.getSize();
 
-    while( maxSizePt - minSizePt > 1f ) {
-      scaledFont = scaledFont.deriveFont( scaledPt );
+    // TextLayout cannot suffer null or empty values, so return the default
+    // font size if the label is cleared out.
+    if( text != null && !text.isEmpty() ) {
+      while( maxSizePt - minSizePt > 1f ) {
+        scaledFont = scaledFont.deriveFont( scaledPt );
 
-      final var layout = new TextLayout( text, scaledFont, frc );
-      final var metrics = scaledFont.getLineMetrics( text, frc );
-      final var fontWidthPx = layout.getVisibleAdvance();
-      final var fontHeightPx = metrics.getHeight();
+        final var layout = new TextLayout( text, scaledFont, frc );
+        final var metrics = scaledFont.getLineMetrics( text, frc );
+        final var fontWidthPx = layout.getVisibleAdvance();
+        final var fontHeightPx = metrics.getHeight();
 
-      if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
-        maxSizePt = scaledPt;
+        if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
+          maxSizePt = scaledPt;
+        }
+        else {
+          minSizePt = scaledPt;
+        }
+
+        scaledPt = (minSizePt + maxSizePt) / 2;
       }
-      else {
-        minSizePt = scaledPt;
-      }
-
-      scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
     // Round down to guarantee fit.

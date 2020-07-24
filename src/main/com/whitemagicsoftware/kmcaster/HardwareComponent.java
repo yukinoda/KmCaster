@@ -33,7 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.INSETS_EMPTY;
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
 
 /**
  * Responsible for drawing an image based on a state; the state can be
@@ -65,8 +64,6 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    */
   public HardwareComponent() {
     this( INSETS_EMPTY );
-    setBackground( TRANSPARENT );
-    setOpaque( false );
   }
 
   /**
@@ -102,10 +99,9 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   @Override
   protected void paintComponent( final Graphics graphics ) {
-    super.paintComponent( graphics );
-
-    final var g = (Graphics2D) graphics.create();
+    final var g = graphics.create();
     g.drawImage( getActiveImage(), 0, 0, this );
+    g.dispose();
   }
 
   /**
@@ -118,7 +114,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   public void put( final S state, final I image ) {
     getStateImages().put( state, image );
 
-    // No need to issue a repaint request, change the state directly.
+    // Change the state variable directly, no need to issue a repaint request.
     mState = state;
   }
 

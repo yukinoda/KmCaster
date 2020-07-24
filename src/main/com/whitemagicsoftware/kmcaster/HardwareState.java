@@ -43,7 +43,10 @@ public enum HardwareState {
    */
   SWITCH_RELEASED;
 
-  private final static String BOOLEAN_FALSE = FALSE.toString();
+  /**
+   * Convenience constant.
+   */
+  public final static String BOOLEAN_FALSE = FALSE.toString();
 
   /**
    * Returns the {@link HardwareState} that corresponds to the given

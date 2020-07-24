@@ -34,8 +34,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
-import static java.lang.Boolean.FALSE;
 import static java.util.Map.entry;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
@@ -187,7 +187,7 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    updateRegular( getDisplayText( e ), FALSE.toString() );
+    updateRegular( getDisplayText( e ), BOOLEAN_FALSE );
     updateModifiers( e );
   }
 
@@ -207,10 +207,10 @@ public final class KeyboardListener
     for( final var key : mSwitches.keySet() ) {
       final var state = mSwitches.get( key );
 
-      // By default, the keys are all "false", so fire fake events indicating
-      // that has one has just transitioned to "false". This will cause the
-      // GUI to repaint with the text label affixed to each key, drawn in the
-      // released state. This happens before the frame is set to visible.
+      // All modifiers keys are "false" by default, so firing fake transition
+      // events from "true" to "false" will cause the GUI to repaint with the
+      // text label affixed to each key, drawn in the released state. This
+      // happens before the frame is set to visible.
       tryFire( key, !state, state );
     }
   }

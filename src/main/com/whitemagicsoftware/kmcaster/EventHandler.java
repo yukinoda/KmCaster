@@ -92,12 +92,6 @@ public class EventHandler implements PropertyChangeListener {
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
 
-    // Clear the text before redrawing to prevent discord between the
-    // label colour and the hardware switch's background.
-    if( switchState.isSwitchState( SWITCH_RELEASED ) ) {
-      getHardwareComponent( switchState ).removeAll();
-    }
-
     updateSwitchState( switchState );
 
     if( hwSwitch.isKeyboard() ) {
@@ -121,16 +115,7 @@ public class EventHandler implements PropertyChangeListener {
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
 
     if( state.isModifier() ) {
-      final var hwSwitch = state.getHardwareSwitch();
-      final var switchName = hwSwitch.toTitleCase();
-
-      final var label = new AutofitLabel( switchName, LABEL_FONT, keyColour );
-      label.setVisible( false );
-      label.setHorizontalAlignment( CENTER );
-      label.setVerticalAlignment( CENTER );
-      container.removeAll();
-      container.add( label );
-      label.setVisible( true );
+      updateLabel( state, keyColour );
     }
     else if( state.isSwitchState( SWITCH_PRESSED ) ) {
       // A non-modifier key has been pressed.
@@ -152,13 +137,15 @@ public class EventHandler implements PropertyChangeListener {
         };
 
         // Label for "Num", "Back", "Tab", and other dual-labelled keys.
-        final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT, keyColour );
+        final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT );
         sup.setVisible( false );
+        sup.setForeground( keyColour );
         sup.setVerticalAlignment( TOP );
 
         // Label for number pad keys or icon glyphs.
-        final var main = new AutofitLabel( s[ 1 ], LABEL_FONT, keyColour );
+        final var main = new AutofitLabel( s[ 1 ], LABEL_FONT );
         main.setVisible( false );
+        main.setForeground( keyColour );
         main.setHorizontalAlignment( CENTER );
         main.setVerticalAlignment( CENTER );
 
@@ -182,21 +169,52 @@ public class EventHandler implements PropertyChangeListener {
         sup.setVisible( true );
       }
       else {
-        // Single keys need no tweaking and can be added to the container
-        // directly. The horizontal and vertical alignments
-        final var label = new AutofitLabel( keyValue, LABEL_FONT, keyColour );
-        label.setVisible( false );
-        label.setHorizontalAlignment( CENTER );
-        label.setVerticalAlignment( CENTER );
         container.removeAll();
-        container.add( label );
-        label.setVisible( true );
+        updateLabel( state, keyColour );
       }
+    }
+    else {
+      container.removeAll();
+    }
+  }
+
+  /**
+   * Creates the label if it does not already exist.
+   *
+   * @param state The state of the hardware switch to look up.
+   */
+  private void updateLabel(
+      final HardwareSwitchState state,
+      final Color keyColour ) {
+    final var container = getHardwareComponent( state );
+    final var value = state.getValue();
+    final AutofitLabel label;
+
+    if( container.getComponentCount() == 0 ) {
+      // Regular keys will have labels recreated each time to auto-fit the text.
+      label = new AutofitLabel( value, LABEL_FONT );
+      label.setHorizontalAlignment( CENTER );
+      label.setVerticalAlignment( CENTER );
+      label.setForeground( keyColour );
+      container.add( label );
+    }
+    else {
+      // Modifier keys can reuse labels.
+      label = (AutofitLabel) container.getComponent( 0 );
+      label.setForeground( keyColour );
+      label.setText( value );
     }
   }
 
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
       final HardwareSwitchState state ) {
     return mHardwareImages.get( state.getHardwareSwitch() );
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getName() + "{" +
+        "mHardwareImages=" + mHardwareImages +
+        '}';
   }
 }

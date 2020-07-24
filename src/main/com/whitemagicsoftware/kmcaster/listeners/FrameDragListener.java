@@ -59,8 +59,16 @@ public class FrameDragListener extends MouseAdapter {
   }
 
   public void mouseDragged( final MouseEvent e ) {
-    final Point dragCoordinates = e.getLocationOnScreen();
-    mFrame.setLocation( dragCoordinates.x - mCoordinates.x,
-                        dragCoordinates.y - mCoordinates.y );
+    // Race-condition guards.
+    final var frame = mFrame;
+    final var coordinates = mCoordinates;
+
+    // Used to calculate delta between current and previous mouse position.
+    final var dragCoordinates = e.getLocationOnScreen();
+
+    if( frame != null && coordinates != null ) {
+      frame.setLocation( dragCoordinates.x - coordinates.x,
+                         dragCoordinates.y - coordinates.y );
+    }
   }
 }

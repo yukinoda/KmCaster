@@ -30,8 +30,8 @@ package com.whitemagicsoftware.kmcaster;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGException;
 import com.kitfox.svg.SVGUniverse;
-import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
 import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
+import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -39,7 +39,7 @@ import java.net.URL;
 import java.util.Map;
 
 import static java.awt.RenderingHints.*;
-import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
+import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 
 /**
  * Responsible for converting SVG images into rasterized PNG images.
@@ -119,7 +119,7 @@ public class SvgRasterizer {
     final var scaled = tuple.getValue();
     final var wScaled = (int) scaled.getWidth();
     final var hScaled = (int) scaled.getHeight();
-    final var image = new BufferedImage( wScaled, hScaled, TYPE_INT_ARGB );
+    final var image = new BufferedImage( wScaled, hScaled, TYPE_4BYTE_ABGR );
     final var graphics = image.createGraphics();
     graphics.setRenderingHints( RENDERING_HINTS );
 

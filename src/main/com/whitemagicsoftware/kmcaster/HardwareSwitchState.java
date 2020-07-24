@@ -50,24 +50,24 @@ public class HardwareSwitchState {
    * Constructs a new instance that represents whether a key or mouse button
    * was pressed.
    *
-   * @param hardwareSwitch A {@link HardwareSwitch} that represents the type of
-   *                       switch having the given status.
-   * @param hardwareState  Defines whether the switch is pressed or released.
-   * @param value          The value associated with the switch in the given
-   *                       state. For example, this could be human-readable
-   *                       text representing a pressed key code.
+   * @param hwSwitch A {@link HardwareSwitch} that represents the type of
+   *                 switch having the given status.
+   * @param hwState  Defines whether the switch is pressed or released.
+   * @param value    The value associated with the switch in the given
+   *                 state. For example, this could be human-readable
+   *                 text representing a pressed key code.
    */
   public HardwareSwitchState(
-      final HardwareSwitch hardwareSwitch,
-      final HardwareState hardwareState,
+      final HardwareSwitch hwSwitch,
+      final HardwareState hwState,
       final String value ) {
-    assert hardwareSwitch != null;
-    assert hardwareState != null;
+    assert hwSwitch != null;
+    assert hwState != null;
     assert value != null;
 
-    mHardwareSwitch = hardwareSwitch;
-    mHardwareState = hardwareState;
-    mValue = value;
+    mHardwareSwitch = hwSwitch;
+    mHardwareState = hwState;
+    mValue = hwSwitch.isModifier() ? hwSwitch.toTitleCase() : value;
   }
 
   /**
@@ -130,5 +130,14 @@ public class HardwareSwitchState {
     int result = mHardwareSwitch.hashCode();
     result = 31 * result + mHardwareState.hashCode();
     return result;
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getName() + "{" +
+        "mHardwareSwitch=" + mHardwareSwitch +
+        ", mHardwareState=" + mHardwareState +
+        ", mValue='" + mValue + '\'' +
+        '}';
   }
 }

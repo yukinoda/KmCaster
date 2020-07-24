@@ -19,8 +19,7 @@ public class Constants {
   /**
    * Application dimensions in pixels. Images are scaled to these dimensions,
    * maintaining aspect ratio. The height constrains the width, so as long as
-   * the width is sufficiently large, the application's window will adjust to
-   * fit.
+   * the width is large enough, the application's window will adjust to fit.
    */
   public static final Dimension APP_DIMENSIONS = new Dimension( 1024, 90 );
 
