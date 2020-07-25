@@ -71,10 +71,12 @@ public class EventHandler implements PropertyChangeListener {
   @Override
   public void propertyChange( final PropertyChangeEvent e ) {
     final var switchName = e.getPropertyName();
-    final var switchValue = e.getNewValue().toString();
+    final var oldValue = e.getOldValue().toString();
+    final var newValue = e.getNewValue().toString();
+    final var switchValue = newValue.isEmpty() ? oldValue : newValue;
 
     final var hwSwitch = HardwareSwitch.valueFrom( switchName );
-    final var hwState = HardwareState.valueFrom( switchValue );
+    final var hwState = HardwareState.valueFrom( newValue );
 
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );

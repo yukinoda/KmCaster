@@ -55,8 +55,7 @@ public enum HardwareState {
    * other value will return {@link #SWITCH_PRESSED}.
    *
    * @param state The state to convert to an enumerated type.
-   * @return {@link #SWITCH_RELEASED} iff {@code state} equals "false";
-   * otherwise, {@link #SWITCH_PRESSED}.
+   * @return {@link #SWITCH_RELEASED} if the state is "false" or empty ("").
    */
   public static HardwareState valueFrom( final String state ) {
     return (BOOLEAN_FALSE.equals( state ) || state.isEmpty())
