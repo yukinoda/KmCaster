@@ -76,12 +76,16 @@ public abstract class PropertyDispatcher<P> {
   protected void fire( final P p, final String o, final String n ) {
     final var pName = p.toString();
     final var event = new PropertyChangeEvent( mDispatcher, pName, o, n );
-    mDispatcher.firePropertyChange( event );
+
+    for( final var listener : mDispatcher.getPropertyChangeListeners() ) {
+      listener.propertyChange( event );
+    }
   }
 
   /**
    * Delegates to {@link #fire(P, String, String)} with {@link Boolean} values
-   * as strings.
+   * as strings. If the old and new values are the same, this will not send
+   * the event.
    *
    * @param p Property name that has changed.
    * @param o Old property value.

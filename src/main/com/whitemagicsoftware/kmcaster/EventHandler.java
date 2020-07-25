@@ -34,9 +34,7 @@ import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
@@ -106,10 +104,6 @@ public class EventHandler implements PropertyChangeListener {
     final var component = getHardwareComponent( state );
     final var keyValue = state.getValue();
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
-
-//    if( state.isHardwareState( SWITCH_RELEASED ) ) {
-//      //System.out.println( "RELEASED: " + keyValue );
-//    }
 
     if( state.isModifier() ) {
       updateLabel( state, keyColour );

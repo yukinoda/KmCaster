@@ -324,6 +324,7 @@ public final class KeyboardListener
     final var oldCount = mModifiers.get( key );
     final var newCount = oldCount + increment;
 
+    // Only fire the event if the state has changed.
     tryFire( key, oldCount > 0, newCount > 0 );
     mModifiers.put( key, newCount );
   }
@@ -338,6 +339,7 @@ public final class KeyboardListener
     assert o != null;
     assert n != null;
 
+    // Always fire the event, which permits double-key taps.
     fire( KEY_REGULAR, o, n );
     mRegularHeld = n;
   }
