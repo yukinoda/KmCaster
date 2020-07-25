@@ -38,10 +38,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeListener;
-import java.util.logging.Level;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
+import static java.util.logging.Level.OFF;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
@@ -91,7 +91,6 @@ public class KmCaster extends JFrame {
     setUndecorated( true );
     setAlwaysOnTop( true );
     setBackground( TRANSLUCENT );
-    setShape( createShape() );
   }
 
   private void initWindowContents() {
@@ -134,17 +133,6 @@ public class KmCaster extends JFrame {
     keyboardListener.initModifiers();
   }
 
-  /**
-   * Returns the shape for the application's window frame.
-   *
-   * @return A rounded rectangle.
-   */
-  private Shape createShape() {
-    return new RoundRectangle2D.Double(
-        0, 0, getWidth(), getHeight(), 0, 0
-    );
-  }
-
   private EventHandler getEventHandler() {
     return mEventHandler;
   }
@@ -154,7 +142,7 @@ public class KmCaster extends JFrame {
    */
   private static void disableNativeHookLogger() {
     final var logger = getLogger( GlobalScreen.class.getPackage().getName() );
-    logger.setLevel( Level.OFF );
+    logger.setLevel( OFF );
     logger.setUseParentHandlers( false );
   }
 
