@@ -35,12 +35,14 @@ import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Stack;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.lang.Math.max;
 import static java.util.Map.entry;
+import static java.util.Optional.*;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
@@ -242,34 +244,33 @@ public final class KeyboardListener
   public void nativeKeyPressed( final NativeKeyEvent e ) {
     final var key = getKey( e );
 
-    if( key == null ) {
-      while( !mTimerStack.isEmpty() ) {
-        final var timer = mTimerStack.pop();
-        timer.stop();
-      }
+    key.ifPresentOrElse(
+        v -> updateModifier( v, 1 ),
+        () -> {
+          while( !mTimerStack.isEmpty() ) {
+            mTimerStack.pop().stop();
+          }
 
-      updateRegular( mRegularHeld, getDisplayText( e ) );
-    }
-    else {
-      updateModifier( key, 1 );
-    }
+          updateRegular( mRegularHeld, getDisplayText( e ) );
+        } );
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
     final var key = getKey( e );
 
-    if( key == null ) {
-      final var timer = delayedAction( mDelayRegular, ( action ) ->
-          updateRegular( getDisplayText( e ), BOOLEAN_FALSE )
-      );
+    key.ifPresentOrElse(
+        v -> delayedAction( mDelayModifier, ( action ) ->
+            updateModifier( v, -1 )
+        ),
+        () -> {
+          final var timer = delayedAction( mDelayRegular, ( action ) ->
+              updateRegular( getDisplayText( e ), BOOLEAN_FALSE )
+          );
 
-      mTimerStack.push( timer );
-    }
-    else {
-      delayedAction( mDelayModifier, ( action ) ->
-          updateModifier( key, -1 ) );
-    }
+          mTimerStack.push( timer );
+        }
+    );
   }
 
   /**
@@ -369,8 +370,8 @@ public final class KeyboardListener
    * @return The switch matching the raw key code, or {@code null} if the
    * raw key code does not represent a modifier.
    */
-  private HardwareSwitch getKey( final NativeKeyEvent e ) {
-    return mModifierCodes.get( e.getRawCode() );
+  private Optional<HardwareSwitch> getKey( final NativeKeyEvent e ) {
+    return ofNullable( mModifierCodes.get( e.getRawCode() ) );
   }
 
   @SuppressWarnings("unused")
