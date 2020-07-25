@@ -225,8 +225,11 @@ public final class KeyboardListener
    * pressed or released. The constructor initializes all modifier keys to
    * the released state because the native keyboard hook API does not offer
    * a way to query what keys are currently pressed.
+   *
+   * @param delayRegular  Milliseconds to wait before releasing a regular key.
+   * @param delayModifier Milliseconds to wait before releasing a modifier key.
    */
-  public KeyboardListener(final int delayRegular, final int delayModifier ) {
+  public KeyboardListener( final int delayRegular, final int delayModifier ) {
     mDelayRegular = delayRegular;
     mDelayModifier = delayModifier;
 
@@ -322,8 +325,7 @@ public final class KeyboardListener
    * @param key       A modifier key.
    * @param increment {@code -1} means released, {@code 1} means pressed.
    */
-  private void updateModifier(
-      final HardwareSwitch key, final int increment ) {
+  private void updateModifier( final HardwareSwitch key, final int increment ) {
     final var oldCount = mModifiers.get( key );
     final var newCount = max( oldCount + increment, 0 );
 
