@@ -104,7 +104,7 @@ public class KmCaster extends JFrame {
     initWindowFrame();
     initWindowContents();
     pack();
-    setResizable(false);
+    setResizable( false );
     initListeners();
     setVisible( true );
   }

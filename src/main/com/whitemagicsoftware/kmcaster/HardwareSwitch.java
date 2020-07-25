@@ -122,20 +122,6 @@ public enum HardwareSwitch {
   }
 
   /**
-   * Answers whether this hardware switch is pressed, but only applies to
-   * keyboard modifier keys, not mouse buttons.
-   *
-   * @param modifiers Bit set that indicates what modifier keys are pressed.
-   * @return {@code true} if this switch's modifier bit is set in the
-   * given {@code modifiers} value.
-   */
-  public boolean isModifierPressed( final int modifiers ) {
-    assert isModifier();
-
-    return (modifiers & mMask) != 0;
-  }
-
-  /**
    * Looks up the key that matches the given name, case-insensitively.
    *
    * @param name The name of the key to find in this enum.
@@ -163,6 +149,10 @@ public enum HardwareSwitch {
    */
   public static HardwareSwitch[] keyboardSwitches() {
     return new HardwareSwitch[]{KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_REGULAR};
+  }
+
+  public static HardwareSwitch[] modifierSwitches() {
+    return new HardwareSwitch[]{KEY_SHIFT, KEY_CTRL, KEY_ALT};
   }
 
   /**

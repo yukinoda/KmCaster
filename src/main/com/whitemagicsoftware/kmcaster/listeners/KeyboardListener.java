@@ -36,6 +36,7 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static java.lang.Math.max;
 import static java.util.Map.entry;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
@@ -54,9 +55,9 @@ public final class KeyboardListener
    * The key is the raw key code return from the {@link NativeKeyEvent}, the
    * value is the human-readable text to display on screen.
    */
-  @SuppressWarnings("RedundantTypeArguments")
+  @SuppressWarnings("JavacQuirks")
   private final static Map<Integer, String> KEY_CODES =
-      Map.<Integer, String>ofEntries(
+      Map.ofEntries(
           entry( 32, KEY_SPACE ),
           entry( 33, "!" ),
           entry( 34, "\"" ),
@@ -166,29 +167,50 @@ public final class KeyboardListener
       );
 
   /**
+   * Whether a modifier key state is pressed or released depends on the state
+   * of multiple keys (left and right). This map assigns the left and right
+   * key codes to the same modifier key so that the physical state can be
+   * represented by a single on-screen button (the logical state).
+   * <p>
+   * The 65511, 65512 are shifted alt key codes.
+   * </p>
+   */
+  private final Map<Integer, HardwareSwitch> mModifierCodes =
+      Map.ofEntries(
+          entry( 65505, KEY_SHIFT ),
+          entry( 65506, KEY_SHIFT ),
+          entry( 65507, KEY_CTRL ),
+          entry( 65508, KEY_CTRL ),
+          entry( 65511, KEY_ALT ),
+          entry( 65512, KEY_ALT ),
+          entry( 65513, KEY_ALT ),
+          entry( 65514, KEY_ALT )
+      );
+
+  /**
    * Stores the state of modifier keys. The contents of the map reflect the
    * state of each switch, so the reference can be final but not its contents.
    */
-  private final Map<HardwareSwitch, Boolean> mSwitches = new HashMap<>();
+  private final Map<HardwareSwitch, Integer> mModifiers = new HashMap<>();
 
   private String mRegularHeld = "";
 
   public KeyboardListener() {
-    mSwitches.put( KEY_ALT, false );
-    mSwitches.put( KEY_CTRL, false );
-    mSwitches.put( KEY_SHIFT, false );
+    for( final var key : HardwareSwitch.modifierSwitches() ) {
+      mModifiers.put( key, 0 );
+    }
   }
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
     updateRegular( mRegularHeld, getDisplayText( e ) );
-    updateModifiers( e );
+    updateModifier( e, 1 );
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
     updateRegular( getDisplayText( e ), BOOLEAN_FALSE );
-    updateModifiers( e );
+    updateModifier( e, -1 );
   }
 
   /**
@@ -204,14 +226,14 @@ public final class KeyboardListener
    * Sets the initial state of the modifiers.
    */
   public void initModifiers() {
-    for( final var key : mSwitches.keySet() ) {
-      final var state = mSwitches.get( key );
+    for( final var key : mModifiers.keySet() ) {
+      final var state = mModifiers.get( key );
 
       // All modifiers keys are "false" by default, so firing fake transition
       // events from "true" to "false" will cause the GUI to repaint with the
       // text label affixed to each key, drawn in the released state. This
       // happens before the frame is set to visible.
-      tryFire( key, !state, state );
+      tryFire( key, state == 0, state == 1 );
     }
   }
 
@@ -228,7 +250,7 @@ public final class KeyboardListener
     boolean isModifier = false;
 
     // The key is regular iff its name does not match any modifier name.
-    for( final var key : mSwitches.keySet() ) {
+    for( final var key : mModifiers.keySet() ) {
       isModifier |= (key.isName( n ) || key.isName( o ));
     }
 
@@ -240,15 +262,23 @@ public final class KeyboardListener
   }
 
   /**
-   * Notifies of any modifier state changes.
+   * Notifies of any modifier state changes. There's a bug whereby this
+   * method is never called by the native library when both Left/Right Ctrl
+   * keys are pressed followed by pressing either Shift key. Similarly,
+   * holding both Left/Right Shift keys followed by pressing either Ctrl key
+   * fails to call this method.
    *
    * @param e The keyboard event that was most recently triggered.
    */
-  private void updateModifiers( final NativeKeyEvent e ) {
-    for( final var key : mSwitches.keySet() ) {
-      final boolean down = key.isModifierPressed( e.getModifiers() );
-      tryFire( key, mSwitches.get( key ), down );
-      mSwitches.put( key, down );
+  private void updateModifier( final NativeKeyEvent e, final int increment ) {
+    final var key = mModifierCodes.get( e.getRawCode() );
+
+    if( key != null ) {
+      final var oldCount = mModifiers.get( key );
+      final var newCount = max( oldCount + increment, 0 );
+
+      tryFire( key, oldCount > 0, newCount > 0 );
+      mModifiers.put( key, newCount );
     }
   }
 
