@@ -98,7 +98,27 @@ public enum HardwareSwitch {
    * @return {@code true} when this is a keyboard key.
    */
   public boolean isKeyboard() {
-    return name().startsWith( "KEY_" );
+    return isPrefix( "KEY" );
+  }
+
+  /**
+   * Answers whether this hardware switch represents a mouse button.
+   *
+   * @return {@code true} when this is a mouse button.
+   */
+  public boolean isMouse() {
+    return isPrefix( "MOUSE" );
+  }
+
+  /**
+   * Answers whether the enum's name starts with the given string, using
+   * a case sensitive comparison.
+   *
+   * @param prefix The prefix to check against.
+   * @return {@code true} when the prefix matches the enumerated name.
+   */
+  private boolean isPrefix( final String prefix ) {
+    return name().startsWith( prefix );
   }
 
   /**

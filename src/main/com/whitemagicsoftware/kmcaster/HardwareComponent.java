@@ -100,10 +100,8 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   protected void paintComponent( final Graphics graphics ) {
     super.paintComponent( graphics );
 
-    final var g = (Graphics2D) graphics.create();
-    g.setComposite( AlphaComposite.Src );
-    g.drawImage( getActiveImage(), 0, 0, this );
-    g.dispose();
+    ((Graphics2D) graphics).setComposite( AlphaComposite.Src );
+    graphics.drawImage( getActiveImage(), 0, 0, this );
   }
 
   /**
@@ -137,7 +135,7 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
     return getStateImages().get( getState() );
   }
 
-  private S getState() {
+  public S getState() {
     return mState;
   }
 

@@ -41,6 +41,13 @@ public class TranslucentPanel extends JPanel {
     setOpaque( true );
   }
 
+  /**
+   * An alpha composite is required so that the "resting" mouse image (i.e.,
+   * no buttons pressed) will always be drawn such that any subsequent
+   * button presses will be drawn on top.
+   *
+   * @param g The graphics context to draw the translucent border upon.
+   */
   @Override
   public void paintComponent( final Graphics g ) {
     super.paintComponent( g );

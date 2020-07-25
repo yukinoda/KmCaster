@@ -120,7 +120,6 @@ public class KmCaster extends JFrame {
 
   private void initWindowContents() {
     final var panel = new TranslucentPanel();
-    panel.setAlignmentX( CENTER_ALIGNMENT );
 
     for( final var hwSwitch : HardwareSwitch.values() ) {
       final var component = mHardwareImages.get( hwSwitch );

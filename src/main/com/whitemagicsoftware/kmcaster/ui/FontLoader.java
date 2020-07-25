@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
+import static java.awt.GraphicsEnvironment.*;
 
 /**
  * Responsible for loading application-specific fonts into the local
@@ -54,7 +55,7 @@ public final class FontLoader {
    * Reads all fonts packaged with the application.
    */
   public static void initFonts() {
-    final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    final var ge = getLocalGraphicsEnvironment();
     final var rw = new ResourceWalker( FONT_GLOB );
 
     try {

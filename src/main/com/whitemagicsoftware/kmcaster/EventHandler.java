@@ -39,10 +39,13 @@ import java.util.Map;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static java.awt.Font.BOLD;
-import static java.lang.Math.abs;
 import static javax.swing.SwingConstants.CENTER;
 import static javax.swing.SwingConstants.TOP;
 
+/**
+ * Responsible for controlling the application state between the events
+ * and the view.
+ */
 public class EventHandler implements PropertyChangeListener {
   /**
    * DejaVu Sans is the only free, open, sans serif font that supports
@@ -110,14 +113,14 @@ public class EventHandler implements PropertyChangeListener {
    * @param state The key that has changed.
    */
   protected void updateSwitchLabel( final HardwareSwitchState state ) {
-    final var container = getHardwareComponent( state );
+    final var component = getHardwareComponent( state );
     final var keyValue = state.getValue();
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
 
     if( state.isModifier() ) {
       updateLabel( state, keyColour );
     }
-    else if( state.isSwitchState( SWITCH_PRESSED ) ) {
+    else if( state.isHardwareState( SWITCH_PRESSED ) ) {
       // A non-modifier key has been pressed.
       final var index = keyValue.indexOf( ' ' );
 
@@ -126,10 +129,10 @@ public class EventHandler implements PropertyChangeListener {
       // the remainder. This is used for number pad keys, backspace, enter,
       // tab, and a few others.
       if( index > 0 ) {
-        final var calculator = new BoundsCalculator( container );
-        final var contDimen = new ScalableDimension( calculator.computeSize() );
-        final var supSize = contDimen.scale( .6f );
-        final var mainSize = contDimen.scale( .9f );
+        final var calculator = new BoundsCalculator( component );
+        final var compDimen = new ScalableDimension( calculator.computeSize() );
+        final var supSize = compDimen.scale( .6f );
+        final var mainSize = compDimen.scale( .9f );
 
         final var s = new String[]{
             keyValue.substring( 0, index ),
@@ -150,31 +153,32 @@ public class EventHandler implements PropertyChangeListener {
         main.setVerticalAlignment( CENTER );
 
         // Keep removeAll/add operations close together to minimize flicker.
-        container.removeAll();
-        container.add( main );
-        container.add( sup );
+        component.removeAll();
+        component.add( main );
+        component.add( sup );
         main.setSize( mainSize );
         sup.setSize( supSize );
 
         // Center-align the main text with respect to the container.
         final var location = main.getLocation();
-        final var dx = abs( contDimen.getWidth() - main.getWidth() ) / 2;
-        final var dy = abs( contDimen.getHeight() - main.getHeight() ) / 2;
+        final var dx = (compDimen.getWidth() - main.getWidth()) / 2;
+        final var dy = (compDimen.getHeight() - main.getHeight()) / 2;
 
         // Shift the main text down a smidgen, relative to the superscript.
-        main.setLocation(
-            (int) (location.getX() + dx),
-            (int) (location.getY() + dy) + sup.getHeight() / 4 );
+        final var my = (int) (location.getY() + dy) + sup.getHeight() / 4;
+        final var mx = (int) (location.getX() + dx);
+
+        main.setLocation( mx, my );
         main.setVisible( true );
         sup.setVisible( true );
       }
       else {
-        container.removeAll();
+        component.removeAll();
         updateLabel( state, keyColour );
       }
     }
     else {
-      container.removeAll();
+      component.removeAll();
     }
   }
 
@@ -208,13 +212,10 @@ public class EventHandler implements PropertyChangeListener {
 
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
       final HardwareSwitchState state ) {
-    return mHardwareImages.get( state.getHardwareSwitch() );
+    return getHardwareImages().get( state.getHardwareSwitch() );
   }
 
-  @Override
-  public String toString() {
-    return getClass().getName() + "{" +
-        "mHardwareImages=" + mHardwareImages +
-        '}';
+  private HardwareImages getHardwareImages() {
+    return mHardwareImages;
   }
 }

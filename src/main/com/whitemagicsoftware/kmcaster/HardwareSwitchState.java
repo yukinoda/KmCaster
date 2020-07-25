@@ -87,7 +87,7 @@ public class HardwareSwitchState {
    * @return {@code true} when the given status matches the internal
    * {@link HardwareState} value.
    */
-  public boolean isSwitchState( final HardwareState hardwareState ) {
+  public boolean isHardwareState( final HardwareState hardwareState ) {
     return mHardwareState == hardwareState;
   }
 
