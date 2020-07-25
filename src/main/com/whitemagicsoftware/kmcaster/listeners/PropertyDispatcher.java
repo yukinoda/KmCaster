@@ -27,6 +27,7 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -63,29 +64,32 @@ public abstract class PropertyDispatcher<P> {
 
   /**
    * Called to fire the property change with the two given values differ.
+   * Normally events for the same old and new value are swallowed silently,
+   * which prevents double-key presses from bubbling up. Tracking double-key
+   * presses is used to increment a counter that is displayed on the key when
+   * the user continually types the same regular key.
    *
-   * @param p The property name that has changed.
+   * @param p Property name that has changed.
    * @param o Old property value.
    * @param n New property value.
    */
-  protected void tryFire(
-      final P p, final String o, final String n ) {
-    if( !o.equals( n ) ) {
-      mDispatcher.firePropertyChange( p.toString(), o, n );
-    }
+  protected void fire( final P p, final String o, final String n ) {
+    final var pName = p.toString();
+    final var event = new PropertyChangeEvent( mDispatcher, pName, o, n );
+    mDispatcher.firePropertyChange( event );
   }
 
   /**
-   * Delegates to {@link #tryFire(P, String, String)} with
-   * {@link Boolean}
-   * values as strings.
+   * Delegates to {@link #fire(P, String, String)} with {@link Boolean} values
+   * as strings.
    *
-   * @param p The property name that has changed.
+   * @param p Property name that has changed.
    * @param o Old property value.
    * @param n New property value.
    */
-  protected void tryFire(
-      final P p, final boolean o, final boolean n ) {
-    tryFire( p, Boolean.toString( o ), Boolean.toString( n ) );
+  protected void tryFire( final P p, final boolean o, final boolean n ) {
+    if( o != n ) {
+      fire( p, Boolean.toString( o ), Boolean.toString( n ) );
+    }
   }
 }

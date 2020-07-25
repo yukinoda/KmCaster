@@ -338,7 +338,7 @@ public final class KeyboardListener
     assert o != null;
     assert n != null;
 
-    tryFire( KEY_REGULAR, o, n );
+    fire( KEY_REGULAR, o, n );
     mRegularHeld = n;
   }
 
