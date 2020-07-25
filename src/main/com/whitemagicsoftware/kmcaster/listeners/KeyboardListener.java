@@ -31,8 +31,11 @@ import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
+import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
@@ -188,29 +191,98 @@ public final class KeyboardListener
       );
 
   /**
+   * Most recently pressed non-modifier key value, empty signifies release.
+   */
+  private String mRegularHeld = "";
+
+  /**
    * Stores the state of modifier keys. The contents of the map reflect the
    * state of each switch, so the reference can be final but not its contents.
+   * An integer is used because keyboards usually have two separate keys for
+   * each modifier, both can be pressed and released independently.
    */
   private final Map<HardwareSwitch, Integer> mModifiers = new HashMap<>();
 
-  private String mRegularHeld = "";
+  /**
+   * Informing the application of a key release is delayed so that the user
+   * interface will give the end user a momentary glance of what key was
+   * pressed before it is released. Without this delay the keys disappear
+   * as fast as a typist can type, which can be too quick to read as individual
+   * keystrokes.
+   * <p>
+   * Track the number of key release timers are running so that they can
+   * all be stopped to prevent releasing the key when another key has been
+   * pressed in the mean time.
+   * </p>
+   */
+  private final Stack<Timer> mTimerStack = new Stack<>();
 
+  /**
+   * Creates a keyboard listener that publishes events when keys are either
+   * pressed or released. The constructor initializes all modifier keys to
+   * the released state because the native keyboard hook API does not offer
+   * a way to query what keys are currently pressed.
+   */
   public KeyboardListener() {
-    for( final var key : HardwareSwitch.modifierSwitches() ) {
+    for( final var key : modifierSwitches() ) {
       mModifiers.put( key, 0 );
     }
   }
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
-    updateRegular( mRegularHeld, getDisplayText( e ) );
-    updateModifier( e, 1 );
+    final var key = getKey( e );
+
+    if( key == null ) {
+      while( !mTimerStack.isEmpty() ) {
+        final var timer = mTimerStack.pop();
+        timer.stop();
+      }
+
+      updateRegular( mRegularHeld, getDisplayText( e ) );
+    }
+    else {
+      updateModifier( key, 1 );
+    }
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    updateRegular( getDisplayText( e ), BOOLEAN_FALSE );
-    updateModifier( e, -1 );
+    final var regularDelay = 250;
+    final var modifierDelay = 100;
+
+    final var key = getKey( e );
+
+    if( key == null ) {
+      final var timer = delayedAction( regularDelay, ( action ) ->
+          updateRegular( getDisplayText( e ), BOOLEAN_FALSE )
+      );
+
+      mTimerStack.push( timer );
+    }
+    else {
+      delayedAction( modifierDelay, ( action ) ->
+          updateModifier( key, -1 ) );
+    }
+  }
+
+  /**
+   * Convenience method to start a one-time action at a relative time in
+   * the future.
+   *
+   * @param delay    When to perform the action.
+   * @param listener The listener that will perform some future action.
+   * @return The {@link Timer} that will perform a one-time action.
+   */
+  @SuppressWarnings("SameParameterValue")
+  private Timer delayedAction(
+      final int delay, final ActionListener listener ) {
+    final var timer = new Timer( delay, listener );
+
+    timer.setRepeats( false );
+    timer.start();
+
+    return timer;
   }
 
   /**
@@ -238,6 +310,25 @@ public final class KeyboardListener
   }
 
   /**
+   * Notifies of any modifier state changes. There's a bug whereby this
+   * method is never called by the native library when both Left/Right Ctrl
+   * keys are pressed followed by pressing either Shift key. Similarly,
+   * holding both Left/Right Shift keys followed by pressing either Ctrl key
+   * fails to call this method.
+   *
+   * @param key       A modifier key.
+   * @param increment {@code -1} means released, {@code 1} means pressed.
+   */
+  private void updateModifier(
+      final HardwareSwitch key, final int increment ) {
+    final var oldCount = mModifiers.get( key );
+    final var newCount = max( oldCount + increment, 0 );
+
+    tryFire( key, oldCount > 0, newCount > 0 );
+    mModifiers.put( key, newCount );
+  }
+
+  /**
    * State for a regular (non-modifier) key has changed.
    *
    * @param o Previous key value.
@@ -247,39 +338,8 @@ public final class KeyboardListener
     assert o != null;
     assert n != null;
 
-    boolean isModifier = false;
-
-    // The key is regular iff its name does not match any modifier name.
-    for( final var key : mModifiers.keySet() ) {
-      isModifier |= (key.isName( n ) || key.isName( o ));
-    }
-
-    // If it's not a modifier key, broadcast the regular value.
-    if( !isModifier ) {
-      tryFire( KEY_REGULAR, o, n );
-      mRegularHeld = n;
-    }
-  }
-
-  /**
-   * Notifies of any modifier state changes. There's a bug whereby this
-   * method is never called by the native library when both Left/Right Ctrl
-   * keys are pressed followed by pressing either Shift key. Similarly,
-   * holding both Left/Right Shift keys followed by pressing either Ctrl key
-   * fails to call this method.
-   *
-   * @param e The keyboard event that was most recently triggered.
-   */
-  private void updateModifier( final NativeKeyEvent e, final int increment ) {
-    final var key = mModifierCodes.get( e.getRawCode() );
-
-    if( key != null ) {
-      final var oldCount = mModifiers.get( key );
-      final var newCount = max( oldCount + increment, 0 );
-
-      tryFire( key, oldCount > 0, newCount > 0 );
-      mModifiers.put( key, newCount );
-    }
+    tryFire( KEY_REGULAR, o, n );
+    mRegularHeld = n;
   }
 
   /**
@@ -293,5 +353,23 @@ public final class KeyboardListener
     return KEY_CODES.getOrDefault(
         e.getRawCode(), getKeyText( e.getKeyCode() )
     );
+  }
+
+  /**
+   * Returns the modifier key that corresponds to the raw key code from
+   * the given event. This is necessary to ensure that both left and right
+   * modifier keys return the same {@link HardwareSwitch} value.
+   *
+   * @param e The event containing a raw key code to look up.
+   * @return The switch matching the raw key code, or {@code null} if the
+   * raw key code does not represent a modifier.
+   */
+  private HardwareSwitch getKey( final NativeKeyEvent e ) {
+    return mModifierCodes.get( e.getRawCode() );
+  }
+
+  @SuppressWarnings("unused")
+  private void log( final String s, final NativeKeyEvent e ) {
+    System.out.printf( "%s: %d %s%n", s, e.getRawCode(), getDisplayText( e ) );
   }
 }

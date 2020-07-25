@@ -21,7 +21,7 @@ public class Constants {
    * maintaining aspect ratio. The height constrains the width, so as long as
    * the width is large enough, the application's window will adjust to fit.
    */
-  public static final Dimension APP_DIMENSIONS = new Dimension( 1024, 256 );
+  public static final Dimension APP_DIMENSIONS = new Dimension( 1024, 100 );
 
   /**
    * Default insets, has no padding.
