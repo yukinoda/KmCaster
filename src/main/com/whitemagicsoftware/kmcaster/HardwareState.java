@@ -44,7 +44,7 @@ public enum HardwareState {
   SWITCH_RELEASED;
 
   /**
-   * Convenience constant.
+   * Convenience constant used to determine pressed or released state.
    */
   public final static String BOOLEAN_FALSE = FALSE.toString();
 
@@ -59,6 +59,8 @@ public enum HardwareState {
    * otherwise, {@link #SWITCH_PRESSED}.
    */
   public static HardwareState valueFrom( final String state ) {
-    return BOOLEAN_FALSE.equals( state ) ? SWITCH_RELEASED : SWITCH_PRESSED;
+    return (BOOLEAN_FALSE.equals( state ) || state.isEmpty())
+        ? SWITCH_RELEASED
+        : SWITCH_PRESSED;
   }
 }

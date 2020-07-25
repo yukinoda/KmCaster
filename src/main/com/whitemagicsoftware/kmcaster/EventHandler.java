@@ -38,7 +38,7 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
-import static java.awt.Font.BOLD;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static javax.swing.SwingConstants.CENTER;
 import static javax.swing.SwingConstants.TOP;
 
@@ -47,22 +47,6 @@ import static javax.swing.SwingConstants.TOP;
  * and the view.
  */
 public class EventHandler implements PropertyChangeListener {
-  /**
-   * DejaVu Sans is the only free, open, sans serif font that supports
-   * all the Unicode blocks used by the application. The font size is
-   * arbitrary, the font will be scaled dynamically to the window size.
-   */
-  private static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 32 );
-
-  /**
-   * Matches the shift-key arrow font colour when pressed.
-   */
-  private static final Color COLOUR_KEY_DN = new Color( 0x21, 0x21, 0x21 );
-
-  /**
-   * Matches the shift-key arrow font colour when released.
-   */
-  private static final Color COLOUR_KEY_UP = new Color( 0xE5, 0xE5, 0xE5 );
 
   /**
    * Maps key pressed states to key cap title colours.

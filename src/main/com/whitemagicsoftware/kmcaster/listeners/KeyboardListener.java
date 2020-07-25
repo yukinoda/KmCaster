@@ -38,7 +38,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 
-import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
 import static java.util.Optional.ofNullable;
@@ -260,7 +259,7 @@ public final class KeyboardListener
         ),
         () -> {
           final var timer = delayedAction( mDelayRegular, ( action ) ->
-              updateRegular( getDisplayText( e ), BOOLEAN_FALSE )
+              updateRegular( getDisplayText( e ), "" )
           );
 
           mTimerStack.push( timer );

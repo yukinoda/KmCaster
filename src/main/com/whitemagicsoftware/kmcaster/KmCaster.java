@@ -35,8 +35,6 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeListener;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
