@@ -65,30 +65,6 @@ import static org.jnativehook.GlobalScreen.*;
  */
 @SuppressWarnings("unused")
 public class KmCaster extends JFrame {
-  private static final float ARC = 8;
-
-  /**
-   * Fastest typing speed in words per minute.
-   */
-  private final static float TYPING_SPEED_WPM = 216f;
-
-  /**
-   * Fastest typing speed in words per second.
-   */
-  private final static float TYPING_SPEED_WPS = TYPING_SPEED_WPM / 60f;
-
-  /**
-   * Fastest typing speed in characters per second.
-   */
-  private final static float TYPING_SPEED_CPS = TYPING_SPEED_WPS * 5.1f;
-
-  /**
-   * Fastest typing speed in characters per millisecond, which will
-   * govern the speed that any pressed key remains visible before showing
-   * as released, even if the typist released the key sooner.
-   */
-  private final static float TYPING_SPEED_CPMS = TYPING_SPEED_CPS / 1000;
-
   private final HardwareImages mHardwareImages = new HardwareImages();
   private final EventHandler mEventHandler =
       new EventHandler( mHardwareImages );
@@ -165,7 +141,7 @@ public class KmCaster extends JFrame {
    */
   private Shape createShape() {
     return new RoundRectangle2D.Double(
-        0, 0, getWidth(), getHeight(), ARC, ARC
+        0, 0, getWidth(), getHeight(), 0, 0
     );
   }
 
