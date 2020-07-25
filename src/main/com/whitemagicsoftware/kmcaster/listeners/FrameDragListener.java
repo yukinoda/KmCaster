@@ -32,10 +32,19 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static java.awt.Cursor.MOVE_CURSOR;
+import static java.awt.Cursor.getPredefinedCursor;
+
 /**
  * Responsible for moving the window when the user drags it around the screen.
  */
 public class FrameDragListener extends MouseAdapter {
+  /**
+   *
+   */
+  private final static Cursor DRAGGING =
+      getPredefinedCursor( MOVE_CURSOR );
+
   /**
    * Observed for drag events.
    */
@@ -46,18 +55,40 @@ public class FrameDragListener extends MouseAdapter {
    */
   private Point mCoordinates;
 
+  /**
+   * Stores the previous cursor type when dragging so that it can be
+   * restored when the mouse button is released.
+   */
+  private Cursor mCursor;
+
   public FrameDragListener( final JFrame frame ) {
     mFrame = frame;
   }
 
+  /**
+   * Restores the state to before dragging started.
+   *
+   * @param e The mouse button release event.
+   */
+  @Override
   public void mouseReleased( final MouseEvent e ) {
+    // Race-condition guards.
+    final var frame = mFrame;
+    final var cursor = mCursor;
+
+    if( frame != null && cursor != null ) {
+      frame.setCursor( cursor );
+    }
+
     mCoordinates = null;
   }
 
+  @Override
   public void mousePressed( final MouseEvent e ) {
     mCoordinates = e.getPoint();
   }
 
+  @Override
   public void mouseDragged( final MouseEvent e ) {
     // Race-condition guards.
     final var frame = mFrame;
@@ -67,6 +98,13 @@ public class FrameDragListener extends MouseAdapter {
     final var dragCoordinates = e.getLocationOnScreen();
 
     if( frame != null && coordinates != null ) {
+      final var cursor = frame.getCursor();
+
+      if( cursor != DRAGGING ) {
+        mCursor = cursor;
+      }
+
+      frame.setCursor( DRAGGING );
       frame.setLocation( dragCoordinates.x - coordinates.x,
                          dragCoordinates.y - coordinates.y );
     }

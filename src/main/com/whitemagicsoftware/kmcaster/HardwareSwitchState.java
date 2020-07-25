@@ -131,13 +131,4 @@ public class HardwareSwitchState {
     result = 31 * result + mHardwareState.hashCode();
     return result;
   }
-
-  @Override
-  public String toString() {
-    return getClass().getName() + "{" +
-        "mHardwareSwitch=" + mHardwareSwitch +
-        ", mHardwareState=" + mHardwareState +
-        ", mValue='" + mValue + '\'' +
-        '}';
-  }
 }

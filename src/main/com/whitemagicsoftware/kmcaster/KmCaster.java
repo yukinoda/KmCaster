@@ -30,6 +30,7 @@ package com.whitemagicsoftware.kmcaster;
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
+import com.whitemagicsoftware.kmcaster.ui.TranslucentPanel;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
@@ -40,7 +41,6 @@ import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -104,6 +104,7 @@ public class KmCaster extends JFrame {
     initWindowFrame();
     initWindowContents();
     pack();
+    setResizable(false);
     initListeners();
     setVisible( true );
   }
@@ -113,21 +114,20 @@ public class KmCaster extends JFrame {
     setLocationRelativeTo( null );
     setUndecorated( true );
     setAlwaysOnTop( true );
-    setBackground( TRANSPARENT );
+    setBackground( TRANSLUCENT );
     setShape( createShape() );
   }
 
   private void initWindowContents() {
-    final var switchPanel = new JPanel( true );
-    switchPanel.setAlignmentX( CENTER_ALIGNMENT );
-    switchPanel.setBackground( TRANSLUCENT );
+    final var panel = new TranslucentPanel();
+    panel.setAlignmentX( CENTER_ALIGNMENT );
 
-    // Added using the enumerated type definition declaration order.
     for( final var hwSwitch : HardwareSwitch.values() ) {
-      switchPanel.add( mHardwareImages.get( hwSwitch ) );
+      final var component = mHardwareImages.get( hwSwitch );
+      panel.add( component );
     }
 
-    add( switchPanel );
+    getContentPane().add( panel );
   }
 
   private void initListeners() {

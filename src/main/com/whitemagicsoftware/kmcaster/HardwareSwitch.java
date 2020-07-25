@@ -33,9 +33,6 @@ import static org.jnativehook.NativeInputEvent.*;
 
 /**
  * Used for compile-time binding between change listeners input events.
- * <p>
- * The element declaration order dictates the on-screen order.
- * </p>
  */
 public enum HardwareSwitch {
   MOUSE_LEFT( "1" ),
@@ -138,11 +135,14 @@ public enum HardwareSwitch {
 
   /**
    * Returns a list of all keyboard keys.
+   * <p>
+   * The element declaration order dictates the on-screen order.
+   * </p>
    *
    * @return The complete list of keyboard keys.
    */
   public static HardwareSwitch[] keyboardSwitches() {
-    return new HardwareSwitch[]{KEY_ALT, KEY_CTRL, KEY_SHIFT, KEY_REGULAR};
+    return new HardwareSwitch[]{KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_REGULAR};
   }
 
   /**

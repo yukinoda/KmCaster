@@ -78,7 +78,6 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   public HardwareComponent( final Insets insets ) {
     assert insets != null;
 
-    setDoubleBuffered( true );
     mInsets = insets;
   }
 
@@ -99,7 +98,10 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   @Override
   protected void paintComponent( final Graphics graphics ) {
-    final var g = graphics.create();
+    super.paintComponent( graphics );
+
+    final var g = (Graphics2D) graphics.create();
+    g.setComposite( AlphaComposite.Src );
     g.drawImage( getActiveImage(), 0, 0, this );
     g.dispose();
   }
