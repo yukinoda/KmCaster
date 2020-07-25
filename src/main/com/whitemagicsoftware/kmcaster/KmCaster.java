@@ -40,7 +40,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.beans.PropertyChangeListener;
 import java.util.logging.Level;
 
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -150,7 +150,9 @@ public class KmCaster extends JFrame {
   }
 
   private void initKeyboardListener( final PropertyChangeListener listener ) {
-    final KeyboardListener keyboardListener = new KeyboardListener();
+    final KeyboardListener keyboardListener = new KeyboardListener(
+        DELAY_KEY_REGULAR, DELAY_KEY_MODIFIER
+    );
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();

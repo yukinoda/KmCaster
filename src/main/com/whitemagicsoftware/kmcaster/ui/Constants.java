@@ -29,6 +29,16 @@ public class Constants {
   public final static Insets INSETS_EMPTY = new Insets( 0, 0, 0, 0 );
 
   /**
+   * Milliseconds to wait before releasing (clearing) the regular key.
+   */
+  public final static int DELAY_KEY_REGULAR = 250;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) any modifier key.
+   */
+  public final static int DELAY_KEY_MODIFIER = 150;
+
+  /**
    * Private, empty constructor.
    */
   private Constants() {

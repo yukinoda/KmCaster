@@ -217,13 +217,19 @@ public final class KeyboardListener
    */
   private final Stack<Timer> mTimerStack = new Stack<>();
 
+  private final int mDelayRegular;
+  private final int mDelayModifier;
+
   /**
    * Creates a keyboard listener that publishes events when keys are either
    * pressed or released. The constructor initializes all modifier keys to
    * the released state because the native keyboard hook API does not offer
    * a way to query what keys are currently pressed.
    */
-  public KeyboardListener() {
+  public KeyboardListener(final int delayRegular, final int delayModifier ) {
+    mDelayRegular = delayRegular;
+    mDelayModifier = delayModifier;
+
     for( final var key : modifierSwitches() ) {
       mModifiers.put( key, 0 );
     }
@@ -248,20 +254,17 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    final var regularDelay = 250;
-    final var modifierDelay = 100;
-
     final var key = getKey( e );
 
     if( key == null ) {
-      final var timer = delayedAction( regularDelay, ( action ) ->
+      final var timer = delayedAction( mDelayRegular, ( action ) ->
           updateRegular( getDisplayText( e ), BOOLEAN_FALSE )
       );
 
       mTimerStack.push( timer );
     }
     else {
-      delayedAction( modifierDelay, ( action ) ->
+      delayedAction( mDelayModifier, ( action ) ->
           updateModifier( key, -1 ) );
     }
   }
