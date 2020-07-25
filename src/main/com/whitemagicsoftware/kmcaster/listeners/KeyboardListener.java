@@ -40,9 +40,8 @@ import java.util.Stack;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.BOOLEAN_FALSE;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
-import static java.lang.Math.max;
 import static java.util.Map.entry;
-import static java.util.Optional.*;
+import static java.util.Optional.ofNullable;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
@@ -242,10 +241,8 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
-    final var key = getKey( e );
-
-    key.ifPresentOrElse(
-        v -> updateModifier( v, 1 ),
+    getKey( e ).ifPresentOrElse(
+        keyValue -> updateModifier( keyValue, 1 ),
         () -> {
           while( !mTimerStack.isEmpty() ) {
             mTimerStack.pop().stop();
@@ -257,11 +254,9 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    final var key = getKey( e );
-
-    key.ifPresentOrElse(
-        v -> delayedAction( mDelayModifier, ( action ) ->
-            updateModifier( v, -1 )
+    getKey( e ).ifPresentOrElse(
+        keyValue -> delayedAction( mDelayModifier, ( action ) ->
+            updateModifier( keyValue, -1 )
         ),
         () -> {
           final var timer = delayedAction( mDelayRegular, ( action ) ->
@@ -328,7 +323,7 @@ public final class KeyboardListener
    */
   private void updateModifier( final HardwareSwitch key, final int increment ) {
     final var oldCount = mModifiers.get( key );
-    final var newCount = max( oldCount + increment, 0 );
+    final var newCount = oldCount + increment;
 
     tryFire( key, oldCount > 0, newCount > 0 );
     mModifiers.put( key, newCount );
