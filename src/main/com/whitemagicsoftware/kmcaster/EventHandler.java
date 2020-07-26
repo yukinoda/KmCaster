@@ -30,6 +30,7 @@ package com.whitemagicsoftware.kmcaster;
 import com.whitemagicsoftware.kmcaster.ui.AutofitLabel;
 import com.whitemagicsoftware.kmcaster.ui.BoundsCalculator;
 import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
+import com.whitemagicsoftware.kmcaster.util.ConsecutiveEventCounter;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -104,11 +105,16 @@ public class EventHandler implements PropertyChangeListener {
     final var component = getHardwareComponent( state );
     final var keyValue = state.getValue();
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
+    final var pressed = state.isHardwareState( SWITCH_PRESSED );
 
     if( state.isModifier() ) {
       updateLabel( state, keyColour );
+
+      if( pressed ) {
+        mKeyCounter.reset();
+      }
     }
-    else if( state.isHardwareState( SWITCH_PRESSED ) ) {
+    else if( pressed ) {
       // A non-modifier key has been pressed.
 
       // Determine whether there are separate parts for the key label.

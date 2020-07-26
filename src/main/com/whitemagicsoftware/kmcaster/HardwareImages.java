@@ -28,6 +28,7 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
+import com.whitemagicsoftware.kmcaster.ui.PaddedInsets;
 import com.whitemagicsoftware.kmcaster.util.Pair;
 
 import java.awt.*;
@@ -102,7 +103,7 @@ public class HardwareImages {
       final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
       final var imageUp = keyUpImage( FILE_NAME_PREFIXES.get( key ) );
       final var scale = imageDn.getValue();
-      final var insets = new KeyCapInsets( SWITCH_INSETS.get( key ) );
+      final var insets = new PaddedInsets( SWITCH_INSETS.get( key ) );
       final var scaledInsets = insets.scale( scale );
 
       final var hardwareComponent = createHardwareComponent( scaledInsets );

@@ -25,9 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster;
-
-import com.whitemagicsoftware.kmcaster.ui.DimensionTuple;
+package com.whitemagicsoftware.kmcaster.ui;
 
 import java.awt.*;
 
@@ -37,7 +35,7 @@ import java.awt.*;
  * To center the key's label, we need to track the insets and padding. The
  * mouse images have neither insets nor padding.
  */
-public final class KeyCapInsets {
+public final class PaddedInsets {
   /**
    * Defines the padding around the inside of the key cap to give the letters
    * some whitespace.
@@ -57,7 +55,7 @@ public final class KeyCapInsets {
    * @param insets The insets that correlate the "safe zone" for drawing
    *               items on the key cap, without padding.
    */
-  public KeyCapInsets( final Insets insets ) {
+  public PaddedInsets( final Insets insets ) {
     mInsets = new Insets(
         insets.top + INSET_PADDING.top,
         insets.left + INSET_PADDING.left,

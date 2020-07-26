@@ -68,7 +68,6 @@ public final class AutofitLabel extends JLabel {
    */
   public AutofitLabel( final String text, final Font font ) {
     super( text );
-    setDoubleBuffered( true );
     setFont( font );
 
     addHierarchyListener( e -> {
@@ -162,9 +161,6 @@ public final class AutofitLabel extends JLabel {
    * @return The parent's {@link Graphics2D} context.
    */
   private FontRenderContext getFontRenderContext() {
-    final var graphics = getGraphics();
-    assert graphics != null;
-
-    return ((Graphics2D) graphics).getFontRenderContext();
+    return ((Graphics2D) getGraphics()).getFontRenderContext();
   }
 }

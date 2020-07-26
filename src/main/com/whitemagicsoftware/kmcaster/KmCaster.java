@@ -36,6 +36,8 @@ import org.jnativehook.NativeHookException;
 
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
@@ -89,6 +91,9 @@ public class KmCaster extends JFrame {
     setUndecorated( true );
     setAlwaysOnTop( true );
     setBackground( TRANSLUCENT );
+
+    // Prevent tabbing to non-existent components.
+    setFocusTraversalKeysEnabled( false );
   }
 
   private void initWindowContents() {
@@ -149,7 +154,8 @@ public class KmCaster extends JFrame {
    *
    * @param args Unused.
    */
-  public static void main( final String[] args ) throws NativeHookException {
+  public static void main( final String[] args )
+      throws NativeHookException, IOException, URISyntaxException {
     initFonts();
     disableNativeHookLogger();
     registerNativeHook();

@@ -25,15 +25,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.whitemagicsoftware.kmcaster;
+package com.whitemagicsoftware.kmcaster.util;
 
 /**
- * Responsible for formatting a string that represents a particular count.
- * When the count exceeds the limit, the string representation shows that
- * the number of tallied events exceeds the limit. The string representation
- * is empty if fewer than two equal consecutive values are tallied.
+ * Responsible for formatting a string that represents whether consecutive
+ * events have happened. When the event count exceeds a given limit, the
+ * string representation shows that the number of tallied events exceeds the
+ * limit. If fewer than two consecutive values are tallied, {@link #toString()}
+ * returns the empty string.
  * <p>
- * If the new value is not the same as the old value, the tally is reset.
+ * If the new event value is not the same as the old value, the tally is reset.
  * </p>
  */
 public class ConsecutiveEventCounter<Event> {
@@ -44,7 +45,7 @@ public class ConsecutiveEventCounter<Event> {
 
   /**
    * Increments when a repeated event is encountered, resets to 1 when the chain
-   * of consecutive events is broken.
+   * of consecutive events is broken or {@link #reset()} is called.
    */
   private int mCount = 1;
 
@@ -82,11 +83,18 @@ public class ConsecutiveEventCounter<Event> {
   }
 
   /**
+   * Resets the internal counter to 1 (i.e., indicates no consecutive events).
+   */
+  public void reset() {
+    mCount = 1;
+  }
+
+  /**
    * Returns a formatted string to indicate the number of times that the
    * given event has been applied in succession. If the number of times is
    * fewer than two, this will return the empty string.
    *
-   * @return A formatted string that includes the tally.
+   * @return A formatted string that includes the consecutive event tally.
    */
   @Override
   public String toString() {

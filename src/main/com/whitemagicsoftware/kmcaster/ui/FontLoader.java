@@ -27,16 +27,15 @@
  */
 package com.whitemagicsoftware.kmcaster.ui;
 
-import com.whitemagicsoftware.kmcaster.KmCaster;
-
 import java.awt.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
-import static java.awt.GraphicsEnvironment.*;
+import static java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment;
 
 /**
  * Responsible for loading application-specific fonts into the local
@@ -54,34 +53,30 @@ public final class FontLoader {
   /**
    * Reads all fonts packaged with the application.
    */
-  public static void initFonts() {
+  public static void initFonts() throws IOException, URISyntaxException {
     final var ge = getLocalGraphicsEnvironment();
     final var rw = new ResourceWalker( FONT_GLOB );
 
-    try {
-      rw.walk(
-          FONT_DIRECTORY, path -> {
-            final var uri = path.toUri();
-            final var filename = path.toString();
+    rw.walk(
+        FONT_DIRECTORY, path -> {
+          final var uri = path.toUri();
+          final var filename = path.toString();
 
-            try( final var is = openFont( uri, filename ) ) {
-              final var font = Font.createFont( Font.TRUETYPE_FONT, is );
+          try( final var is = openFont( uri, filename ) ) {
+            final var font = Font.createFont( Font.TRUETYPE_FONT, is );
 
-              ge.registerFont( font.deriveFont( font.getAttributes() ) );
-            } catch( final Exception e ) {
-              rethrow( e );
-            }
+            ge.registerFont( font.deriveFont( font.getAttributes() ) );
+          } catch( final Exception e ) {
+            rethrow( e );
           }
-      );
-    } catch( final Exception e ) {
-      rethrow( e );
-    }
+        }
+    );
   }
 
   private static InputStream openFont( final URI uri, final String filename )
       throws IOException {
     return uri.getScheme().equals( "jar" )
-        ? KmCaster.class.getResourceAsStream( filename )
+        ? FontLoader.class.getResourceAsStream( filename )
         : new FileInputStream( filename );
   }
 }
