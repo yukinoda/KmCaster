@@ -126,9 +126,11 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    */
   public void setState( final S state ) {
     assert state != null;
-    mState = state;
 
-    repaint();
+    if( !state.equals( mState ) ) {
+      mState = state;
+      repaint();
+    }
   }
 
   private Image getActiveImage() {

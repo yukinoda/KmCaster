@@ -59,15 +59,6 @@ public final class ScalableDimension extends Dimension {
   }
 
   /**
-   * Delegates construction to this class.
-   *
-   * @param d Contains the width and height to use for this instance.
-   */
-  public ScalableDimension( final Dimension d ) {
-    this( d.getWidth(), d.getHeight() );
-  }
-
-  /**
    * Scales the given source {@link Dimension} to the destination
    * {@link Dimension}, maintaining the aspect ratio with respect to
    * the best fit.

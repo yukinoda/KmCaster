@@ -47,14 +47,15 @@ public class BoundsCalculator {
    * Returns the total width and height of an area that is safe for
    * writing on the {@link Container} parameter provided during construction.
    *
-   * @return The width and height of the {@link Container}'s safe area, based
-   * on the {@link Container}'s bounded dimensions and insets.
+   * @return The {@link Container}'s safe area, based on the
+   * {@link Container}'s bounded dimensions and insets.
    */
-  public Dimension computeSize() {
+  public Rectangle getBounds() {
     final var container = getContainer();
     final var insets = getInsets();
 
-    return new Dimension(
+    return new Rectangle(
+        insets.left, insets.top,
         container.getWidth() - (insets.left + insets.right),
         container.getHeight() - (insets.top + insets.bottom)
     );
@@ -62,11 +63,6 @@ public class BoundsCalculator {
 
   public Insets getInsets() {
     return mContainer.getInsets();
-  }
-
-  public Point getLocation() {
-    final var insets = getInsets();
-    return new Point( insets.left, insets.top );
   }
 
   private Container getContainer() {

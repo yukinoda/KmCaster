@@ -76,9 +76,10 @@ public final class AutofitLabel extends JLabel {
       if( (e.getChangeFlags() & PARENT_CHANGED) != 0 &&
           (e.getChangedParent() == parent) ) {
         final var calculator = new BoundsCalculator( parent );
+        final var bounds = calculator.getBounds();
 
-        setSize( calculator.computeSize() );
-        setLocation( calculator.getLocation() );
+        setSize( bounds.width, bounds.height );
+        setLocation( bounds.x, bounds.y );
       }
     } );
   }
@@ -124,7 +125,7 @@ public final class AutofitLabel extends JLabel {
     final var dstHeightPx = getHeight();
 
     var minSizePt = 1f;
-    var maxSizePt = 200f;
+    var maxSizePt = 100f;
     var scaledFont = getFont();
     float scaledPt = scaledFont.getSize();
 

@@ -102,8 +102,6 @@ public class EventHandler implements PropertyChangeListener {
    * @param state The key that has changed.
    */
   protected void updateSwitchLabel( final HardwareSwitchState state ) {
-    final var component = getHardwareComponent( state );
-    final var keyValue = state.getValue();
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
     final var pressed = state.isHardwareState( SWITCH_PRESSED );
 
@@ -114,90 +112,96 @@ public class EventHandler implements PropertyChangeListener {
         mKeyCounter.reset();
       }
     }
-    else if( pressed ) {
-      // A non-modifier key has been pressed.
+    else {
+      final var component = getHardwareComponent( state );
+      final var keyValue = state.getValue();
 
-      // Determine whether there are separate parts for the key label.
-      final var index = keyValue.indexOf( ' ' );
+      if( pressed ) {
+        // A non-modifier key has been pressed.
+        System.out.println( "KEY PRESSED: " + keyValue );
 
-      final var calculator = new BoundsCalculator( component );
-      final var compDimen = new ScalableDimension( calculator.computeSize() );
+        // Determine whether there are separate parts for the key label.
+        final var index = keyValue.indexOf( ' ' );
 
-      // If there's a space in the name, the text before the space is
-      // positioned in the upper-left while the text afterwards takes up
-      // the remainder. This is used for number pad keys, backspace, enter,
-      // tab, and a few others.
-      if( index > 0 ) {
-        final var supSize = compDimen.scale( .6f );
-        final var mainSize = compDimen.scale( .9f );
+        final var calculator = new BoundsCalculator( component );
+        final var bounds = calculator.getBounds();
+        final var compDimen = new ScalableDimension( bounds.width, bounds.height );
 
-        final var s = new String[]{
-            keyValue.substring( 0, index ),
-            keyValue.substring( index + 1 )
-        };
+        // If there's a space in the name, the text before the space is
+        // positioned in the upper-left while the text afterwards takes up
+        // the remainder. This is used for number pad keys, backspace, enter,
+        // tab, and a few others.
+        if( index > 0 ) {
+          final var supSize = compDimen.scale( .6f );
+          final var mainSize = compDimen.scale( .9f );
 
-        // Label for "Num", "Back", "Tab", and other dual-labelled keys.
-        final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT );
-        sup.setVisible( false );
-        sup.setForeground( keyColour );
-        sup.setVerticalAlignment( TOP );
+          final var s = new String[]{
+              keyValue.substring( 0, index ),
+              keyValue.substring( index + 1 )
+          };
 
-        // Label for number pad keys or icon glyphs.
-        final var main = new AutofitLabel( s[ 1 ], LABEL_FONT );
-        main.setVisible( false );
-        main.setForeground( keyColour );
-        main.setHorizontalAlignment( CENTER );
-        main.setVerticalAlignment( CENTER );
+          // Label for "Num", "Back", "Tab", and other dual-labelled keys.
+          final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT );
+          sup.setVisible( false );
+          sup.setForeground( keyColour );
+          sup.setVerticalAlignment( TOP );
 
-        // Keep removeAll/add operations close together to minimize flicker.
-        component.removeAll();
-        component.add( main );
-        component.add( sup );
-        main.setSize( mainSize );
-        sup.setSize( supSize );
+          // Label for number pad keys or icon glyphs.
+          final var main = new AutofitLabel( s[ 1 ], LABEL_FONT );
+          main.setVisible( false );
+          main.setForeground( keyColour );
+          main.setHorizontalAlignment( CENTER );
+          main.setVerticalAlignment( CENTER );
 
-        // Center-align the main text with respect to the container.
-        final var location = main.getLocation();
-        final var dx = (compDimen.getWidth() - main.getWidth()) / 2;
-        final var dy = (compDimen.getHeight() - main.getHeight()) / 2;
+          // Keep removeAll/add operations close together to minimize flicker.
+          component.removeAll();
+          component.add( main );
+          component.add( sup );
+          main.setSize( mainSize );
+          sup.setSize( supSize );
 
-        // Shift the main text down a smidgen, relative to the superscript.
-        final var my = (int) (location.getY() + dy) + sup.getHeight() / 4;
-        final var mx = (int) (location.getX() + dx);
+          // Center-align the main text with respect to the container.
+          final var location = main.getLocation();
+          final var dx = (compDimen.getWidth() - main.getWidth()) / 2;
+          final var dy = (compDimen.getHeight() - main.getHeight()) / 2;
 
-        main.setLocation( mx, my );
-        main.setVisible( true );
-        sup.setVisible( true );
+          // Shift the main text down a smidgen, relative to the superscript.
+          final var my = (int) (location.getY() + dy) + sup.getHeight() / 4;
+          final var mx = (int) (location.getX() + dx);
+
+          main.setLocation( mx, my );
+          main.setVisible( true );
+          sup.setVisible( true );
+        }
+        else {
+          component.removeAll();
+          updateLabel( state, keyColour );
+        }
+
+        // Track the consecutive key presses for this value.
+        if( mKeyCounter.apply( keyValue ) ) {
+          final var count = mKeyCounter.toString();
+          final var tallySize = compDimen.scale( .25f );
+
+          final var tally = new AutofitLabel( count, LABEL_FONT );
+          tally.setVisible( false );
+          component.add( tally );
+
+          tally.setSize( tallySize );
+          tally.setVerticalAlignment( TOP );
+          tally.setHorizontalAlignment( RIGHT );
+
+          // Get the upper-left point, accounting for padding and insets.
+          final var tx = bounds.x + compDimen.getWidth() - tally.getWidth();
+          final var ty = bounds.y;
+
+          tally.setLocation( (int)tx, ty );
+          tally.setVisible( true );
+        }
       }
       else {
         component.removeAll();
-        updateLabel( state, keyColour );
       }
-
-      // Track the consecutive key presses for this value.
-      if( mKeyCounter.apply( keyValue ) ) {
-        final var count = mKeyCounter.toString();
-        final var tallySize = compDimen.scale( .25f );
-
-        final var tally = new AutofitLabel( count, LABEL_FONT );
-        tally.setVisible( false );
-        component.add( tally );
-
-        tally.setSize( tallySize );
-        tally.setVerticalAlignment( TOP );
-        tally.setHorizontalAlignment( RIGHT );
-
-        // Get the upper-left point, accounting for padding and insets.
-        final var ul = calculator.getLocation();
-        final var tx = (int) (ul.x + compDimen.getWidth() - tally.getWidth());
-        final var ty = ul.y;
-
-        tally.setLocation( tx, ty );
-        tally.setVisible( true );
-      }
-    }
-    else {
-      component.removeAll();
     }
   }
 
@@ -211,19 +215,19 @@ public class EventHandler implements PropertyChangeListener {
       final Color keyColour ) {
     final var container = getHardwareComponent( state );
     final var value = state.getValue();
-    final AutofitLabel label;
 
     if( container.getComponentCount() == 0 ) {
       // Regular keys will have labels recreated each time to auto-fit the text.
-      label = new AutofitLabel( value, LABEL_FONT );
+      final var label = new AutofitLabel( value, LABEL_FONT );
+      label.setVisible( false );
       label.setHorizontalAlignment( CENTER );
-      label.setVerticalAlignment( CENTER );
       label.setForeground( keyColour );
       container.add( label );
+      label.setVisible( true );
     }
     else {
       // Modifier keys can reuse labels.
-      label = (AutofitLabel) container.getComponent( 0 );
+      final var label = (AutofitLabel) container.getComponent( 0 );
       label.setForeground( keyColour );
       label.setText( value );
     }
