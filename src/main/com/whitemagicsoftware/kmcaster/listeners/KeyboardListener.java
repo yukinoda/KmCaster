@@ -41,6 +41,7 @@ import java.util.Stack;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
 import static java.util.Optional.ofNullable;
+import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
@@ -247,7 +248,9 @@ public final class KeyboardListener
             mTimerStack.pop().stop();
           }
 
-          updateRegular( mRegularHeld, getDisplayText( e ) );
+          invokeLater(
+              () -> updateRegular( mRegularHeld, getDisplayText( e ) )
+          );
         } );
   }
 
@@ -259,7 +262,9 @@ public final class KeyboardListener
         ),
         () -> {
           final var timer = delayedAction( mDelayRegular, ( action ) ->
-              updateRegular( getDisplayText( e ), "" )
+              invokeLater(
+                  () -> updateRegular( getDisplayText( e ), "" )
+              )
           );
 
           mTimerStack.push( timer );

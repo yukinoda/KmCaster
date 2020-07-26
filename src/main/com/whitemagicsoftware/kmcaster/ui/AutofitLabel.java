@@ -29,8 +29,6 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
 
 import static java.awt.event.HierarchyEvent.PARENT_CHANGED;
 import static java.lang.Math.floor;
@@ -117,50 +115,36 @@ public final class AutofitLabel extends JLabel {
    * string within the bounds of the given {@link Rectangle}.
    */
   private Font computeScaledFont() {
-    final var frc = getFontRenderContext();
     final var text = getText();
+    final var graphics = getGraphics();
 
     final var dstWidthPx = getWidth();
     final var dstHeightPx = getHeight();
 
-    var minSizePt = 1f;
-    var maxSizePt = 100f;
+    var minSizePt = 1;
+    var maxSizePt = 100;
     var scaledFont = getFont();
-    float scaledPt = scaledFont.getSize();
+    var scaledPt = scaledFont.getSize();
 
-    // TextLayout cannot suffer null or empty values, so return the default
-    // font size if the label is cleared out.
-    if( text != null && !text.isEmpty() ) {
-      while( maxSizePt - minSizePt > 1f ) {
-        scaledFont = scaledFont.deriveFont( scaledPt );
+    while( maxSizePt - minSizePt > 1 ) {
+      scaledFont = scaledFont.deriveFont( (float) scaledPt );
 
-        final var layout = new TextLayout( text, scaledFont, frc );
-        final var metrics = scaledFont.getLineMetrics( text, frc );
-        final var fontWidthPx = layout.getVisibleAdvance();
-        final var fontHeightPx = metrics.getHeight();
+      final var fm = getFontMetrics( scaledFont );
+      final var bounds = fm.getStringBounds( text, graphics );
+      final var fontWidthPx = (int) bounds.getWidth();
+      final var fontHeightPx = (int) bounds.getHeight();
 
-        if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
-          maxSizePt = scaledPt;
-        }
-        else {
-          minSizePt = scaledPt;
-        }
-
-        scaledPt = (minSizePt + maxSizePt) / 2;
+      if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
+        maxSizePt = scaledPt;
       }
+      else {
+        minSizePt = scaledPt;
+      }
+
+      scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
     // Round down to guarantee fit.
     return scaledFont.deriveFont( (float) floor( scaledPt ) );
-  }
-
-  /**
-   * Gets the {@link FontRenderContext} for the parent {@link Container}'s
-   * {@link Graphics} context, casting it to a {@link Graphics2D} context.
-   *
-   * @return The parent's {@link Graphics2D} context.
-   */
-  private FontRenderContext getFontRenderContext() {
-    return ((Graphics2D) getGraphics()).getFontRenderContext();
   }
 }

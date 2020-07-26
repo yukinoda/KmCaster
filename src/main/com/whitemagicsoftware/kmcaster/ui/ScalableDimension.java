@@ -68,8 +68,6 @@ public final class ScalableDimension extends Dimension {
    * maintaining the aspect ratio.
    */
   public Dimension scale( final Dimension dst ) {
-    assert dst != null;
-
     // Determine the ratio that has the best fit, then scale both dimensions
     // with respect to said ratio.
     return scale( min(
@@ -88,8 +86,6 @@ public final class ScalableDimension extends Dimension {
    * multiplied out by the given factor. The
    */
   public Dimension scale( final double factor ) {
-    assert factor >= 0;
-
     return new ScalableDimension(
         getWidth() * factor, getHeight() * factor
     );

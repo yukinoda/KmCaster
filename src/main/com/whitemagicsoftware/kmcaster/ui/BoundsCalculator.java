@@ -37,8 +37,8 @@ import java.awt.*;
 public final class BoundsCalculator {
 
   /**
-   * Returns the total width and height of an area that is safe for
-   * writing on the {@link Container} parameter provided during construction.
+   * Returns the safe area for writing on the {@link Container} parameter
+   * provided during construction.
    *
    * @return The {@link Container}'s safe area, based on the
    * {@link Container}'s bounded dimensions and insets.

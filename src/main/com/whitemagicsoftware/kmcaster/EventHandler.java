@@ -103,21 +103,18 @@ public class EventHandler implements PropertyChangeListener {
    */
   protected void updateSwitchLabel( final HardwareSwitchState state ) {
     final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
-    final var pressed = state.isHardwareState( SWITCH_PRESSED );
 
     if( state.isModifier() ) {
       updateLabel( state, keyColour );
 
-      if( pressed ) {
-        mKeyCounter.reset();
-      }
+      mKeyCounter.reset();
     }
     else {
       final var component = getHardwareComponent( state );
       final var keyValue = state.getValue();
 
       // A non-modifier key has been pressed.
-      if( pressed ) {
+      if( state.isHardwareState( SWITCH_PRESSED ) ) {
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
@@ -133,23 +130,19 @@ public class EventHandler implements PropertyChangeListener {
           final var supSize = compDimen.scale( .6f );
           final var mainSize = compDimen.scale( .9f );
 
-          final var s = new String[]{
-              keyValue.substring( 0, index ),
-              keyValue.substring( index + 1 )
-          };
-
           // Label for "Num", "Back", "Tab", and other dual-labelled keys.
-          final var sup = new AutofitLabel( s[ 0 ], LABEL_FONT );
+          final var sup = new AutofitLabel(
+              keyValue.substring( 0, index ), LABEL_FONT );
           sup.setVisible( false );
           sup.setForeground( keyColour );
           sup.setVerticalAlignment( TOP );
 
           // Label for number pad keys or icon glyphs.
-          final var main = new AutofitLabel( s[ 1 ], LABEL_FONT );
+          final var main = new AutofitLabel(
+              keyValue.substring( index + 1 ), LABEL_FONT );
           main.setVisible( false );
           main.setForeground( keyColour );
           main.setHorizontalAlignment( CENTER );
-          main.setVerticalAlignment( CENTER );
 
           // Keep removeAll/add operations close together to minimize flicker.
           component.removeAll();

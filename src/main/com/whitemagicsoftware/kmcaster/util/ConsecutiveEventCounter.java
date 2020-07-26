@@ -87,6 +87,7 @@ public class ConsecutiveEventCounter<Event> {
    */
   public void reset() {
     mCount = 1;
+    mPrevious = null;
   }
 
   /**

@@ -54,6 +54,8 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
    */
   private final Insets mInsets;
 
+  private Dimension mPreferredSize;
+
   /**
    * Constructs a new {@link HardwareComponent} without an initial state. The
    * initial state must be set by calling {@link #setState(Object)}
@@ -83,12 +85,9 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
 
   @Override
   public Dimension getPreferredSize() {
-    // Race-condition guard.
-    final var image = getActiveImage();
-
-    return new Dimension(
-        image.getWidth( null ), image.getHeight( null )
-    );
+    return mPreferredSize == null
+        ? mPreferredSize = calcPreferredSize()
+        : mPreferredSize;
   }
 
   @Override
@@ -133,12 +132,21 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
     }
   }
 
-  private Image getActiveImage() {
-    return getStateImages().get( getState() );
-  }
-
   public S getState() {
     return mState;
+  }
+
+  private Dimension calcPreferredSize() {
+    // Race-condition guard.
+    final var image = getActiveImage();
+
+    return new Dimension(
+        image.getWidth( null ), image.getHeight( null )
+    );
+  }
+
+  private Image getActiveImage() {
+    return getStateImages().get( getState() );
   }
 
   private Map<S, I> getStateImages() {
