@@ -35,6 +35,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Help.Ansi.Style;
 
 import javax.swing.*;
 import java.awt.*;
@@ -49,6 +50,7 @@ import static java.util.logging.Level.OFF;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
+import static picocli.CommandLine.Help.ColorScheme;
 import static picocli.CommandLine.Option;
 
 /**
@@ -94,7 +96,8 @@ public class KmCaster extends JFrame implements Callable<Integer> {
    */
   @Option(
       names = {"-a", "--delay-alphanum"},
-      description = "Delay for releasing non-modifier keys (${DEFAULT-VALUE} milliseconds)",
+      description = "Delay for releasing non-modifier keys (${DEFAULT-VALUE} " +
+          "milliseconds)",
       paramLabel = "delay",
       defaultValue = "250"
   )
@@ -105,7 +108,8 @@ public class KmCaster extends JFrame implements Callable<Integer> {
    */
   @Option(
       names = {"-m", "--delay-modifier"},
-      description = "Delay for releasing modifier keys (${DEFAULT-VALUE} milliseconds)",
+      description = "Delay for releasing modifier keys (${DEFAULT-VALUE} " +
+          "milliseconds)",
       paramLabel = "delay",
       defaultValue = "150"
   )
@@ -190,6 +194,17 @@ public class KmCaster extends JFrame implements Callable<Integer> {
     logger.setUseParentHandlers( false );
   }
 
+  private static ColorScheme createColourScheme() {
+    return new ColorScheme.Builder()
+        .commands( Style.bold )
+        .options( Style.fg_blue, Style.bold )
+        .parameters( Style.fg_blue )
+        .optionParams( Style.italic )
+        .errors( Style.fg_red, Style.bold )
+        .stackTraces( Style.italic )
+        .build();
+  }
+
   /**
    * Main entry point.
    *
@@ -205,9 +220,11 @@ public class KmCaster extends JFrame implements Callable<Integer> {
       Thread.yield();
     }
 
+    final var kc = new KmCaster();
+    final var cli = new CommandLine( kc );
+    cli.setColorScheme( createColourScheme() );
+
     invokeLater( () -> {
-      final var kc = new KmCaster();
-      final var cli = new CommandLine( kc );
       final var exitCode = cli.execute( args );
       final var parseResult = cli.getParseResult();
 
