@@ -39,8 +39,7 @@ import java.util.Map;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
-import static javax.swing.SwingConstants.CENTER;
-import static javax.swing.SwingConstants.TOP;
+import static javax.swing.SwingConstants.*;
 
 /**
  * Responsible for controlling the application state between the events
@@ -93,7 +92,8 @@ public class EventHandler implements PropertyChangeListener {
     component.setState( switchState );
   }
 
-
+  private final ConsecutiveEventCounter<String> mKeyCounter =
+      new ConsecutiveEventCounter<>( 9 );
 
   /**
    * Changes the text on labels when the state of a key changes.
@@ -110,15 +110,18 @@ public class EventHandler implements PropertyChangeListener {
     }
     else if( state.isHardwareState( SWITCH_PRESSED ) ) {
       // A non-modifier key has been pressed.
+
+      // Determine whether there are separate parts for the key label.
       final var index = keyValue.indexOf( ' ' );
+
+      final var calculator = new BoundsCalculator( component );
+      final var compDimen = new ScalableDimension( calculator.computeSize() );
 
       // If there's a space in the name, the text before the space is
       // positioned in the upper-left while the text afterwards takes up
       // the remainder. This is used for number pad keys, backspace, enter,
       // tab, and a few others.
       if( index > 0 ) {
-        final var calculator = new BoundsCalculator( component );
-        final var compDimen = new ScalableDimension( calculator.computeSize() );
         final var supSize = compDimen.scale( .6f );
         final var mainSize = compDimen.scale( .9f );
 
@@ -163,6 +166,28 @@ public class EventHandler implements PropertyChangeListener {
       else {
         component.removeAll();
         updateLabel( state, keyColour );
+      }
+
+      // Track the consecutive key presses for this value.
+      if( mKeyCounter.apply( keyValue ) ) {
+        final var count = mKeyCounter.toString();
+        final var tallySize = compDimen.scale( .25f );
+
+        final var tally = new AutofitLabel( count, LABEL_FONT );
+        tally.setVisible( false );
+        component.add( tally );
+
+        tally.setSize( tallySize );
+        tally.setVerticalAlignment( TOP );
+        tally.setHorizontalAlignment( RIGHT );
+
+        // Get the upper-left point, accounting for padding and insets.
+        final var ul = calculator.getLocation();
+        final var tx = (int) (ul.x + compDimen.getWidth() - tally.getWidth());
+        final var ty = ul.y;
+
+        tally.setLocation( tx, ty );
+        tally.setVisible( true );
       }
     }
     else {
