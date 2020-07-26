@@ -39,7 +39,6 @@ import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.exceptions.Rethrowable.rethrow;
-import static com.whitemagicsoftware.kmcaster.ui.Constants.APP_DIMENSIONS;
 import static java.lang.String.format;
 
 /**
@@ -79,12 +78,16 @@ public class HardwareImages {
 
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
 
+  private final Dimension mAppDimensions;
+
   private final Map<
       HardwareSwitch,
       HardwareComponent<HardwareSwitchState, Image>
       > mSwitches = new HashMap<>();
 
-  public HardwareImages() {
+  public HardwareImages( final Dimension appDimensions ) {
+    mAppDimensions = appDimensions;
+
     final var mouseStates = createHardwareComponent();
     final var mouseReleased = mouseImage( "0" );
 
@@ -157,9 +160,9 @@ public class HardwareImages {
     final var resource = format( "%s.svg", path );
 
     try {
-      final var diagram = sRasterizer.loadDiagram( resource );
-      final var scale = sRasterizer.calculateScale( diagram, APP_DIMENSIONS );
-      final var image = sRasterizer.rasterize( diagram, APP_DIMENSIONS );
+      final var d = sRasterizer.loadDiagram( resource );
+      final var scale = sRasterizer.calculateScale( d, getAppDimensions() );
+      final var image = sRasterizer.rasterize( d, getAppDimensions() );
 
       return new Pair<>( image, scale );
     } catch( final Exception ex ) {
@@ -168,5 +171,9 @@ public class HardwareImages {
 
     final var msg = format( "Missing resource %s", resource );
     throw new RuntimeException( msg );
+  }
+
+  private Dimension getAppDimensions() {
+    return mAppDimensions;
   }
 }

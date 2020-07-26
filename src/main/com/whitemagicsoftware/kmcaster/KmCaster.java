@@ -33,8 +33,10 @@ import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import com.whitemagicsoftware.kmcaster.ui.TranslucentPanel;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
+import picocli.CommandLine.Command;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -47,7 +49,7 @@ import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
 
 /**
- * This class is responsible for logging key presses and mouse clicks on the
+ * This class is responsible for casting key presses and mouse clicks on the
  * screen. While there is a plethora of software out here that does this,
  * none meet all the following criteria: small size, easily positioned,
  * show single key stroke or chord, shows left/right mouse clicks, shows
@@ -63,17 +65,40 @@ import static org.jnativehook.GlobalScreen.*;
  *   <li>Check the value column for use_compositing.</li>
  * </ol>
  */
-@SuppressWarnings("unused")
+@Command(
+    name = "KmCaster",
+    mixinStandardHelpOptions = true,
+    description = "Displays key presses and mouse clicks on the screen."
+)
 public class KmCaster extends JFrame {
-  private final HardwareImages mHardwareImages = new HardwareImages();
-  private final EventHandler mEventHandler =
-      new EventHandler( mHardwareImages );
 
   /**
-   * Empty constructor; create an instance then call {@link #init()} from
-   * within the {@link SwingUtilities#invokeLater(Runnable)} thread.
+   * Application dimensions in pixels. Images are scaled to these dimensions,
+   * maintaining aspect ratio. The height constrains the width, so as long as
+   * the width is large enough, the application's window will adjust to fit.
+   */
+  public static final Dimension APP_DIMENSIONS = new Dimension( 1024, 70 );
+
+  /**
+   * Milliseconds to wait before releasing (clearing) the regular key.
+   */
+  public final static int DELAY_KEY_REGULAR = 250;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) any modifier key.
+   */
+  public final static int DELAY_KEY_MODIFIER = 150;
+
+  private final HardwareImages mHardwareImages;
+  private final EventHandler mEventHandler;
+
+  /**
+   * Create an instance then call {@link #init()} from within the
+   * {@link SwingUtilities#invokeLater(Runnable)} thread.
    */
   public KmCaster() {
+    mHardwareImages = new HardwareImages( APP_DIMENSIONS );
+    mEventHandler = new EventHandler( mHardwareImages );
   }
 
   private void init() {

@@ -11,6 +11,9 @@ repositories {
 }
 
 dependencies {
+  // Command-line parsing
+  implementation 'info.picocli:picocli:4.4.0'
+
   // SVG
   implementation fileTree(include: ['**/*.jar'], dir: 'libs')
 
