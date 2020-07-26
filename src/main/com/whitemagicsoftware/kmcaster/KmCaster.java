@@ -33,6 +33,7 @@ import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import com.whitemagicsoftware.kmcaster.ui.TranslucentPanel;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import javax.swing.*;
@@ -40,13 +41,15 @@ import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.concurrent.Callable;
 
-import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
+import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Level.OFF;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
+import static picocli.CommandLine.Option;
 
 /**
  * This class is responsible for casting key presses and mouse clicks on the
@@ -70,43 +73,60 @@ import static org.jnativehook.GlobalScreen.*;
     mixinStandardHelpOptions = true,
     description = "Displays key presses and mouse clicks on the screen."
 )
-public class KmCaster extends JFrame {
+@SuppressWarnings("FieldMayBeFinal")
+public class KmCaster extends JFrame implements Callable<Integer> {
 
   /**
-   * Application dimensions in pixels. Images are scaled to these dimensions,
-   * maintaining aspect ratio. The height constrains the width, so as long as
-   * the width is large enough, the application's window will adjust to fit.
+   * Application height in pixels. Images are scaled to this height, maintaining
+   * aspect ratio. The height constrains the width, so as long as the width
+   * is large enough, the application's window will adjust to fit.
    */
-  public static final Dimension APP_DIMENSIONS = new Dimension( 1024, 70 );
+  @Option(
+      names = {"-s", "--size"},
+      description = "Application size (${DEFAULT-VALUE} pixels)",
+      paramLabel = "height",
+      defaultValue = "100"
+  )
+  private int mHeight = 100;
 
   /**
    * Milliseconds to wait before releasing (clearing) the regular key.
    */
-  public final static int DELAY_KEY_REGULAR = 250;
+  @Option(
+      names = {"-a", "--delay-alphanum"},
+      description = "Delay for releasing non-modifier keys (${DEFAULT-VALUE} milliseconds)",
+      paramLabel = "delay",
+      defaultValue = "250"
+  )
+  private int mDelayKeyRegular = 250;
 
   /**
    * Milliseconds to wait before releasing (clearing) any modifier key.
    */
-  public final static int DELAY_KEY_MODIFIER = 150;
-
-  private final HardwareImages mHardwareImages;
-  private final EventHandler mEventHandler;
+  @Option(
+      names = {"-m", "--delay-modifier"},
+      description = "Delay for releasing modifier keys (${DEFAULT-VALUE} milliseconds)",
+      paramLabel = "delay",
+      defaultValue = "150"
+  )
+  private int mDelayKeyModifier = 150;
 
   /**
-   * Create an instance then call {@link #init()} from within the
-   * {@link SwingUtilities#invokeLater(Runnable)} thread.
+   * Empty constructor so that command line arguments may be parsed.
    */
   public KmCaster() {
-    mHardwareImages = new HardwareImages( APP_DIMENSIONS );
-    mEventHandler = new EventHandler( mHardwareImages );
   }
 
   private void init() {
+    final var appDimension = new Dimension( 1024 + mHeight, mHeight );
+    final var hardwareImages = new HardwareImages( appDimension );
+    final var eventHandler = new EventHandler( hardwareImages );
+
     initWindowFrame();
-    initWindowContents();
+    initWindowContents( hardwareImages );
     pack();
     setResizable( false );
-    initListeners();
+    initListeners( eventHandler );
     setVisible( true );
   }
 
@@ -121,21 +141,21 @@ public class KmCaster extends JFrame {
     setFocusTraversalKeysEnabled( false );
   }
 
-  private void initWindowContents() {
+  private void initWindowContents( final HardwareImages hardwareImages ) {
     final var panel = new TranslucentPanel();
 
     for( final var hwSwitch : HardwareSwitch.values() ) {
-      final var component = mHardwareImages.get( hwSwitch );
+      final var component = hardwareImages.get( hwSwitch );
       panel.add( component );
     }
 
     getContentPane().add( panel );
   }
 
-  private void initListeners() {
+  private void initListeners( final EventHandler eventHandler ) {
     initWindowDragListener( this );
-    initMouseListener( getEventHandler() );
-    initKeyboardListener( getEventHandler() );
+    initMouseListener( eventHandler );
+    initKeyboardListener( eventHandler );
   }
 
   private void initWindowDragListener( final JFrame listener ) {
@@ -154,15 +174,11 @@ public class KmCaster extends JFrame {
 
   private void initKeyboardListener( final PropertyChangeListener listener ) {
     final KeyboardListener keyboardListener = new KeyboardListener(
-        DELAY_KEY_REGULAR, DELAY_KEY_MODIFIER
+        mDelayKeyRegular, mDelayKeyModifier
     );
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();
-  }
-
-  private EventHandler getEventHandler() {
-    return mEventHandler;
   }
 
   /**
@@ -189,7 +205,21 @@ public class KmCaster extends JFrame {
       Thread.yield();
     }
 
-    final var kc = new KmCaster();
-    invokeLater( kc::init );
+    invokeLater( () -> {
+      final var kc = new KmCaster();
+      final var cli = new CommandLine( kc );
+      final var exitCode = cli.execute( args );
+      final var parseResult = cli.getParseResult();
+
+      if( parseResult.isUsageHelpRequested() ) {
+        System.exit( exitCode );
+      }
+    } );
+  }
+
+  @Override
+  public Integer call() {
+    init();
+    return 0;
   }
 }
