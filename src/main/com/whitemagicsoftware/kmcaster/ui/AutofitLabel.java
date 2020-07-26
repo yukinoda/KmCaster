@@ -75,8 +75,7 @@ public final class AutofitLabel extends JLabel {
 
       if( (e.getChangeFlags() & PARENT_CHANGED) != 0 &&
           (e.getChangedParent() == parent) ) {
-        final var calculator = new BoundsCalculator( parent );
-        final var bounds = calculator.getBounds();
+        final var bounds = BoundsCalculator.getBounds( parent );
 
         setSize( bounds.width, bounds.height );
         setLocation( bounds.x, bounds.y );

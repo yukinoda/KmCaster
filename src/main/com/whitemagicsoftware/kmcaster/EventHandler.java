@@ -116,16 +116,14 @@ public class EventHandler implements PropertyChangeListener {
       final var component = getHardwareComponent( state );
       final var keyValue = state.getValue();
 
+      // A non-modifier key has been pressed.
       if( pressed ) {
-        // A non-modifier key has been pressed.
-        System.out.println( "KEY PRESSED: " + keyValue );
-
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
-        final var calculator = new BoundsCalculator( component );
-        final var bounds = calculator.getBounds();
-        final var compDimen = new ScalableDimension( bounds.width, bounds.height );
+        final var bounds = BoundsCalculator.getBounds( component );
+        final var compDimen = new ScalableDimension(
+            bounds.width, bounds.height );
 
         // If there's a space in the name, the text before the space is
         // positioned in the upper-left while the text afterwards takes up
@@ -195,7 +193,7 @@ public class EventHandler implements PropertyChangeListener {
           final var tx = bounds.x + compDimen.getWidth() - tally.getWidth();
           final var ty = bounds.y;
 
-          tally.setLocation( (int)tx, ty );
+          tally.setLocation( (int) tx, ty );
           tally.setVisible( true );
         }
       }

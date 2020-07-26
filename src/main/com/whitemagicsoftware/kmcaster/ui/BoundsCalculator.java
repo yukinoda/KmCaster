@@ -34,14 +34,7 @@ import java.awt.*;
  * a given {@link Container}. The safe region is computed using the
  * {@link Container}'s bounds {@link Rectangle} and {@link Insets}.
  */
-public class BoundsCalculator {
-  private final Container mContainer;
-
-  public BoundsCalculator( final Container container ) {
-    assert container != null;
-
-    mContainer = container;
-  }
+public final class BoundsCalculator {
 
   /**
    * Returns the total width and height of an area that is safe for
@@ -50,22 +43,13 @@ public class BoundsCalculator {
    * @return The {@link Container}'s safe area, based on the
    * {@link Container}'s bounded dimensions and insets.
    */
-  public Rectangle getBounds() {
-    final var container = getContainer();
-    final var insets = getInsets();
+  public static Rectangle getBounds( final Container container ) {
+    final var insets = container.getInsets();
 
     return new Rectangle(
         insets.left, insets.top,
         container.getWidth() - (insets.left + insets.right),
         container.getHeight() - (insets.top + insets.bottom)
     );
-  }
-
-  public Insets getInsets() {
-    return mContainer.getInsets();
-  }
-
-  private Container getContainer() {
-    return mContainer;
   }
 }
