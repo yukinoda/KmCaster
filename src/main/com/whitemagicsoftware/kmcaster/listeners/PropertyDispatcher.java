@@ -40,6 +40,14 @@ import java.beans.PropertyChangeSupport;
  *            event to any listeners.
  */
 public abstract class PropertyDispatcher<P> {
+  /**
+   * Calling {@link PropertyChangeSupport#getPropertyChangeListeners()} creates
+   * a new list every time. Calls to add listeners are only performed during
+   * setup, so this is a micro-optimization to avoid recreating the list on
+   * each event fired.
+   */
+  private PropertyChangeListener[] mListeners;
+
   private final PropertyChangeSupport mDispatcher =
       new PropertyChangeSupport( this );
 
@@ -54,12 +62,7 @@ public abstract class PropertyDispatcher<P> {
   public void addPropertyChangeListener(
       final PropertyChangeListener listener ) {
     mDispatcher.addPropertyChangeListener( listener );
-  }
-
-  @SuppressWarnings("unused")
-  public void removePropertyChangeListener(
-      final PropertyChangeListener listener ) {
-    mDispatcher.removePropertyChangeListener( listener );
+    mListeners = mDispatcher.getPropertyChangeListeners();
   }
 
   /**
@@ -77,7 +80,7 @@ public abstract class PropertyDispatcher<P> {
     final var pName = p.toString();
     final var event = new PropertyChangeEvent( mDispatcher, pName, o, n );
 
-    for( final var listener : mDispatcher.getPropertyChangeListeners() ) {
+    for( final var listener : mListeners ) {
       listener.propertyChange( event );
     }
   }

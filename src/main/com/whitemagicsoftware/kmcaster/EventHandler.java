@@ -102,7 +102,8 @@ public class EventHandler implements PropertyChangeListener {
    * @param state The key that has changed.
    */
   protected void updateSwitchLabel( final HardwareSwitchState state ) {
-    final var keyColour = KEY_COLOURS.get( state.getHardwareState() );
+    final var hwState = state.getHardwareState();
+    final var keyColour = KEY_COLOURS.get( hwState );
 
     if( state.isModifier() ) {
       updateLabel( state, keyColour );
@@ -114,7 +115,7 @@ public class EventHandler implements PropertyChangeListener {
       final var keyValue = state.getValue();
 
       // A non-modifier key has been pressed.
-      if( state.isHardwareState( SWITCH_PRESSED ) ) {
+      if( hwState == SWITCH_PRESSED ) {
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
