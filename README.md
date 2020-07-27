@@ -12,3 +12,9 @@ This program displays keyboard and mouse events for the purpose of screencasting
 * accurate modifier key states; and
 * works with emulation software (e.g., [Sikuli](http://sikulix.com/)).
 
+# Comparison
+
+The following video compares KmCaster to [key-mon](https://github.com/critiqjo/key-mon):
+
+![KmCaster Demo](images/kmcaster-01.gif "Comparison Video")
+
