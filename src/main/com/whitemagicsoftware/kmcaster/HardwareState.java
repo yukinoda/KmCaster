@@ -50,9 +50,9 @@ public enum HardwareState {
 
   /**
    * Returns the {@link HardwareState} that corresponds to the given
-   * state string. If the state string equals {@link Boolean#FALSE} (case
-   * is sensitive), then this will return {@link #SWITCH_RELEASED}. Any
-   * other value will return {@link #SWITCH_PRESSED}.
+   * state string. If the state equals {@link Boolean#FALSE} (case is
+   * sensitive) or is empty, then this will return {@link #SWITCH_RELEASED},
+   * otherwise {@link #SWITCH_PRESSED}.
    *
    * @param state The state to convert to an enumerated type.
    * @return {@link #SWITCH_RELEASED} if the state is "false" or empty ("").

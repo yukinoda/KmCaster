@@ -119,6 +119,7 @@ public class KmCaster extends JFrame implements Callable<Integer> {
    * Empty constructor so that command line arguments may be parsed.
    */
   public KmCaster() {
+    super( KmCaster.class.getSimpleName() );
   }
 
   private void init() {
@@ -206,6 +207,17 @@ public class KmCaster extends JFrame implements Callable<Integer> {
   }
 
   /**
+   * Invoked after the command-line arguments are parsed.
+   *
+   * @return Exit level zero.
+   */
+  @Override
+  public Integer call() {
+    init();
+    return 0;
+  }
+
+  /**
    * Main entry point.
    *
    * @param args Unused.
@@ -221,22 +233,16 @@ public class KmCaster extends JFrame implements Callable<Integer> {
     }
 
     final var kc = new KmCaster();
-    final var cli = new CommandLine( kc );
-    cli.setColorScheme( createColourScheme() );
+    final var parser = new CommandLine( kc );
+    parser.setColorScheme( createColourScheme() );
 
     invokeLater( () -> {
-      final var exitCode = cli.execute( args );
-      final var parseResult = cli.getParseResult();
+      final var exitCode = parser.execute( args );
+      final var parseResult = parser.getParseResult();
 
       if( parseResult.isUsageHelpRequested() ) {
         System.exit( exitCode );
       }
     } );
-  }
-
-  @Override
-  public Integer call() {
-    init();
-    return 0;
   }
 }

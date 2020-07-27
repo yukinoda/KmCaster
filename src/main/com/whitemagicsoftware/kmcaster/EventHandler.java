@@ -214,6 +214,8 @@ public class EventHandler implements PropertyChangeListener {
       else {
         component.removeAll();
       }
+
+      component.paintImmediately( component.getBounds()) ;
     }
   }
 

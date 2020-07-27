@@ -30,7 +30,6 @@ package com.whitemagicsoftware.kmcaster.ui;
 import javax.swing.*;
 import java.awt.*;
 
-import static java.awt.Toolkit.getDefaultToolkit;
 import static java.awt.event.HierarchyEvent.PARENT_CHANGED;
 import static java.lang.Math.floor;
 
@@ -66,6 +65,7 @@ public final class AutofitLabel extends JLabel {
    */
   public AutofitLabel( final String text, final Font font ) {
     super( text );
+    setDoubleBuffered( true );
     setFont( font );
 
     addHierarchyListener( e -> {
@@ -73,10 +73,7 @@ public final class AutofitLabel extends JLabel {
 
       if( (e.getChangeFlags() & PARENT_CHANGED) != 0 &&
           (e.getChangedParent() == parent) ) {
-        final var bounds = BoundsCalculator.getBounds( parent );
-
-        setSize( bounds.width, bounds.height );
-        setLocation( bounds.x, bounds.y );
+        setBounds( BoundsCalculator.getBounds( parent ) );
       }
     } );
   }
@@ -85,24 +82,22 @@ public final class AutofitLabel extends JLabel {
    * Note that {@link #setSize(Dimension)} eventually delegates to calling this
    * method, so there's no need to override both. The {@link Graphics} context
    * must be valid before calling this method.
-   *
-   * @param w The new width constraint.
-   * @param h The new height constraint.
-   */
-  @Override
-  public void setSize( final int w, final int h ) {
-    super.setSize( w, h );
-    rescale();
-  }
-
-  /**
+   * <p>
    * Rescales the constructed font to fit within the label's dimensions,
    * governed by {@link #getWidth()} and {@link #getHeight()}. This must only
    * be called after a {@link Graphics} context is available to compute the
    * maximum {@link Font} size that will fit the label's {@link Rectangle}
    * bounds.
+   * </p>
+   *
+   * @param x The new horizontal position.
+   * @param y The new horizontal position.
+   * @param w The new width constraint.
+   * @param h The new height constraint.
    */
-  private void rescale() {
+  @Override
+  public void setBounds( final int x, final int y, final int w, final int h ) {
+    super.setBounds( x, y, w, h );
     setFont( computeScaledFont() );
     paintImmediately( getBounds() );
   }
@@ -123,7 +118,7 @@ public final class AutofitLabel extends JLabel {
     final var dstHeightPx = getHeight();
 
     var minSizePt = 1;
-    var maxSizePt = 100;
+    var maxSizePt = 200;
     var scaledFont = getFont();
     var scaledPt = scaledFont.getSize();
 
