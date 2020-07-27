@@ -41,7 +41,6 @@ import java.util.Stack;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
 import static java.util.Optional.ofNullable;
-import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
@@ -176,7 +175,7 @@ public final class KeyboardListener
    * key codes to the same modifier key so that the physical state can be
    * represented by a single on-screen button (the logical state).
    * <p>
-   * The 65511, 65512 are shifted alt key codes.
+   * The 65511, 65512 are shifted alt key codes (a.k.a. the meta key).
    * </p>
    */
   private final Map<Integer, HardwareSwitch> mModifierCodes =
@@ -248,9 +247,7 @@ public final class KeyboardListener
             mTimerStack.pop().stop();
           }
 
-          invokeLater(
-              () -> updateRegular( mRegularHeld, getDisplayText( e ) )
-          );
+          updateRegular( mRegularHeld, getDisplayText( e ) );
         } );
   }
 
@@ -262,10 +259,7 @@ public final class KeyboardListener
         ),
         () -> {
           final var timer = delayedAction( mDelayRegular, ( action ) ->
-              invokeLater(
-                  () -> updateRegular( getDisplayText( e ), "" )
-              )
-          );
+              updateRegular( getDisplayText( e ), "" ) );
 
           mTimerStack.push( timer );
         }
@@ -322,7 +316,7 @@ public final class KeyboardListener
    * holding both Left/Right Shift keys followed by pressing either Ctrl key
    * fails to call this method.
    *
-   * @param key       A modifier key.
+   * @param key       Must be a modifier key.
    * @param increment {@code -1} means released, {@code 1} means pressed.
    */
   private void updateModifier( final HardwareSwitch key, final int increment ) {
@@ -373,10 +367,5 @@ public final class KeyboardListener
    */
   private Optional<HardwareSwitch> getKey( final NativeKeyEvent e ) {
     return ofNullable( mModifierCodes.get( e.getRawCode() ) );
-  }
-
-  @SuppressWarnings("unused")
-  private void log( final String s, final NativeKeyEvent e ) {
-    System.out.printf( "%s: %d %s%n", s, e.getRawCode(), getDisplayText( e ) );
   }
 }

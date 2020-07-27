@@ -30,6 +30,7 @@ package com.whitemagicsoftware.kmcaster.ui;
 import javax.swing.*;
 import java.awt.*;
 
+import static java.awt.Toolkit.getDefaultToolkit;
 import static java.awt.event.HierarchyEvent.PARENT_CHANGED;
 import static java.lang.Math.floor;
 
@@ -58,7 +59,6 @@ public final class AutofitLabel extends JLabel {
    * <p>
    * Without following the prescribed steps, the label may display at an
    * unexpected size.
-   * </p>
    * </p>
    *
    * @param text The text to write on the container's graphics context.
@@ -104,6 +104,7 @@ public final class AutofitLabel extends JLabel {
    */
   private void rescale() {
     setFont( computeScaledFont() );
+    paintImmediately( getBounds() );
   }
 
   /**
@@ -143,6 +144,8 @@ public final class AutofitLabel extends JLabel {
 
       scaledPt = (minSizePt + maxSizePt) / 2;
     }
+
+    graphics.dispose();
 
     // Round down to guarantee fit.
     return scaledFont.deriveFont( (float) floor( scaledPt ) );

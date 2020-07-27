@@ -40,7 +40,9 @@ import java.util.Map;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
+import static java.awt.Toolkit.getDefaultToolkit;
 import static javax.swing.SwingConstants.*;
+import static javax.swing.SwingUtilities.invokeLater;
 
 /**
  * Responsible for controlling the application state between the events
@@ -70,6 +72,24 @@ public class EventHandler implements PropertyChangeListener {
    */
   @Override
   public void propertyChange( final PropertyChangeEvent e ) {
+    invokeLater(
+        () -> {
+          update( e );
+
+          // Prevent collapsing multiple paint events.
+          getDefaultToolkit().sync();
+        }
+    );
+  }
+
+  /**
+   * Called to update the user interface after a keyboard or mouse event
+   * has fired. This must be invoked from Swing's event dispatch thread.
+   *
+   * @param e Contains the identifier for the switch, its previous value,
+   *          and its new value.
+   */
+  private void update( final PropertyChangeEvent e ) {
     final var switchName = e.getPropertyName();
     final var oldValue = e.getOldValue().toString();
     final var newValue = e.getNewValue().toString();
