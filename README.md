@@ -26,12 +26,13 @@ The following video compares KmCaster to [key-mon](https://github.com/critiqjo/k
 
 [OpenJDK](https://bell-sw.com/pages/downloads/#/java-14-current) version 14.0.1 or newer.
 
-## Java Version
+## Linux Java Version
 
-Depending on the distribution, Java 14 can be installed using:
+Depending on the Linux distribution, Java 14 can be installed using:
 
 ```
 sudo apt install openjdk-14-jdk
+sudo pacman -S jdk-openjdk
 ```
 
 Switching from earlier versions of Java to Java 14 can be accomplished using one of the following:
