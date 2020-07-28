@@ -99,9 +99,10 @@ public class ConsecutiveEventCounter<Event> {
    */
   @Override
   public String toString() {
-    // Race-condition guard.
+    // Race-condition guards.
     final var count = mCount;
+    final var limit = mLimit;
     final var s = Integer.toString( count );
-    return count > 1 ? (count < mLimit ? "×" + s : mLimit + "+") : "";
+    return count > 1 ? (count < limit ? "×" + s : limit + "+") : "";
   }
 }

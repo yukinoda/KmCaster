@@ -24,7 +24,22 @@ The following video compares KmCaster to [key-mon](https://github.com/critiqjo/k
 
 # Requirements
 
-Java 14.
+[OpenJDK](https://bell-sw.com/pages/downloads/#/java-14-current) version 14.0.1 or newer.
+
+## Java Version
+
+Depending on the distribution, Java 14 can be installed using:
+
+```
+sudo apt install openjdk-14-jdk
+```
+
+Switching from earlier versions of Java to Java 14 can be accomplished using one of the following:
+
+```
+sudo update-alternatives --config java
+sudo archlinux-java set java-14-openjdk
+```
 
 # Download
 
