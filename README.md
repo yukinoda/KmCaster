@@ -35,7 +35,7 @@ sudo apt install openjdk-14-jdk
 sudo pacman -S jdk-openjdk
 ```
 
-Switching from earlier versions of Java to Java 14 can be accomplished issuing one of the following commands in a terminal:
+Switching from earlier versions of Java to Java 14 can be accomplished by issuing one of the following commands in a terminal:
 
 ```
 sudo update-alternatives --config java
