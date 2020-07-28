@@ -28,14 +28,14 @@ The following video compares KmCaster to [key-mon](https://github.com/critiqjo/k
 
 ## Linux Java Version
 
-Depending on the Linux distribution, Java 14 can be installed using:
+Depending on the Linux distribution, Java 14 can be installed by issuing one of the following commands in a terminal:
 
 ```
 sudo apt install openjdk-14-jdk
 sudo pacman -S jdk-openjdk
 ```
 
-Switching from earlier versions of Java to Java 14 can be accomplished using one of the following:
+Switching from earlier versions of Java to Java 14 can be accomplished issuing one of the following commands in a terminal:
 
 ```
 sudo update-alternatives --config java
