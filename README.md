@@ -15,6 +15,7 @@ This program displays keyboard and mouse events for the purpose of screencasting
 ## Alternatives
 
 * [QKeysOnScreen](https://github.com/ctrlcctrlv/QKeysOnScreen)
+* [screenkey](https://www.thregr.org/~wavexx/software/screenkey)
 
 # Comparison
 
