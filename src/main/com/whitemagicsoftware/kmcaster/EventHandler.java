@@ -282,11 +282,7 @@ public class EventHandler implements PropertyChangeListener {
 
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
       final HardwareSwitchState state ) {
-    return getHardwareImages().get( state.getHardwareSwitch() );
-  }
-
-  private HardwareImages getHardwareImages() {
-    return mHardwareImages;
+    return mHardwareImages.get( state.getHardwareSwitch() );
   }
 
   private AutofitLabel getLabel( final LabelConfig config ) {
