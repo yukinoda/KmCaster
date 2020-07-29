@@ -39,6 +39,11 @@ import static java.lang.Math.floor;
 public final class AutofitLabel extends JLabel {
 
   /**
+   * Lazily initialized to the parent's container's safe drawing area.
+   */
+  private Rectangle mParentBounds;
+
+  /**
    * Constructs an instance of {@link AutofitLabel} that can rescale itself
    * relative to either the parent {@link Container} or a given dimension.
    *
@@ -63,7 +68,7 @@ public final class AutofitLabel extends JLabel {
     setSize( width, height );
     setFont( computeScaledFont() );
 
-    final var bounds = BoundsCalculator.getBounds( getParent() );
+    final var bounds = getParentBounds();
 
     // LEFT by default.
     int x = bounds.x;
@@ -95,12 +100,23 @@ public final class AutofitLabel extends JLabel {
   }
 
   /**
+   * Scales the dimensions of the label to fit its parent's boundaries,
+   * then multiplying the value by the given factor.
+   *
+   * @param factor The scaling coefficient value.
+   */
+  public void transform( final float factor ) {
+    final var compDimen = new ScalableDimension( getParentBounds() );
+    transform( compDimen.scale( factor ) );
+  }
+
+  /**
    * Scales the dimensions of the label to fit its parent's boundaries, while
    * maintaining the aspect ratio, then relocate the label with respect to
    * the vertical and horizontal alignment.
    */
   public void transform() {
-    final var bounds = BoundsCalculator.getBounds( getParent() );
+    final var bounds = getParentBounds();
     transform( bounds.width, bounds.height );
   }
 
@@ -134,7 +150,7 @@ public final class AutofitLabel extends JLabel {
     while( maxSizePt - minSizePt > 1 ) {
       scaledFont = scaledFont.deriveFont( (float) scaledPt );
 
-      final var bounds = getBounds( text, scaledFont, g );
+      final var bounds = getTextExtents( text, scaledFont, g );
       final var fontWidthPx = (int) bounds.getWidth();
       final var fontHeightPx = (int) bounds.getHeight();
 
@@ -154,8 +170,8 @@ public final class AutofitLabel extends JLabel {
     scaledFont = scaledFont.deriveFont( (float) floor( scaledPt ) );
 
     // Recompute the bounds of the label based on the text extents that fit.
-    final var bounds = getBounds( text, scaledFont, g );
-    setSize( (int) bounds.getWidth(), (int) bounds.getHeight() );
+    final var extents = getTextExtents( text, scaledFont, g );
+    setSize( (int) extents.getWidth(), (int) extents.getHeight() );
 
     return scaledFont;
   }
@@ -168,8 +184,36 @@ public final class AutofitLabel extends JLabel {
    * @param graphics Graphics context needed for calculating the text extents.
    * @return Text width and height.
    */
-  private Rectangle2D getBounds(
+  private Rectangle2D getTextExtents(
       final String text, final Font font, final Graphics graphics ) {
     return getFontMetrics( font ).getStringBounds( text, graphics );
+  }
+
+  /**
+   * Returns the bounds of the parent component, accounting for insets.
+   *
+   * @return The parent's safe drawing area.
+   */
+  private Rectangle getParentBounds() {
+    return mParentBounds == null
+        ? mParentBounds = getBounds( getParent() )
+        : mParentBounds;
+  }
+
+  /**
+   * Returns the safe area for writing on the {@link Container} parameter
+   * provided during construction.
+   *
+   * @return The {@link Container}'s safe area, based on the
+   * {@link Container}'s bounded dimensions and insets.
+   */
+  public static Rectangle getBounds( final Container container ) {
+    final var insets = container.getInsets();
+
+    return new Rectangle(
+        insets.left, insets.top,
+        container.getWidth() - (insets.left + insets.right),
+        container.getHeight() - (insets.top + insets.bottom)
+    );
   }
 }

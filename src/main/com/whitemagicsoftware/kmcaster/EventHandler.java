@@ -28,8 +28,6 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.ui.AutofitLabel;
-import com.whitemagicsoftware.kmcaster.ui.BoundsCalculator;
-import com.whitemagicsoftware.kmcaster.ui.ScalableDimension;
 import com.whitemagicsoftware.kmcaster.util.ConsecutiveEventCounter;
 
 import java.awt.*;
@@ -224,10 +222,6 @@ public class EventHandler implements PropertyChangeListener {
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
-        final var component = getHardwareComponent( state );
-        final var bounds = BoundsCalculator.getBounds( component );
-        final var compDimen = new ScalableDimension( bounds );
-
         // If there's a space in the name, the text before the space is
         // positioned in the upper-left while the text afterwards takes up
         // the remainder. This is used for number pad keys, backspace, enter,
@@ -235,11 +229,11 @@ public class EventHandler implements PropertyChangeListener {
         if( index > 0 ) {
           // Label for "Num", "Back", "Tab", and other dual-labelled keys.
           sup.setText( keyValue.substring( 0, index ) );
-          sup.transform( compDimen.scale( .6f ) );
+          sup.transform( .6f );
 
           // Label for number pad keys or icon glyphs.
           main.setText( keyValue.substring( index + 1 ) );
-          main.transform( compDimen.scale( .9f ) );
+          main.transform( .9f );
 
           // Shift the main label down away from the superscript.
           final var mainLoc = main.getLocation();
@@ -257,7 +251,7 @@ public class EventHandler implements PropertyChangeListener {
           final var tally = getLabel( LabelConfig.LABEL_REGULAR_COUNTER );
 
           tally.setText( mKeyCounter.toString() );
-          tally.transform( compDimen.scale( .25f ) );
+          tally.transform( .25f );
           tally.setVisible( true );
         }
       }
