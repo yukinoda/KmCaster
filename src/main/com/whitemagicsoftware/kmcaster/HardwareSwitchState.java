@@ -37,9 +37,8 @@ public class HardwareSwitchState {
   private final String mValue;
 
   /**
-   * Delegates to
-   * {@link #HardwareSwitchState(HardwareSwitch, HardwareState, String)} using
-   * an empty string for the value.
+   * Calls {@link #HardwareSwitchState(HardwareSwitch, HardwareState, String)}
+   * using an empty string for the value.
    */
   public HardwareSwitchState(
       final HardwareSwitch hardwareSwitch, final HardwareState hardwareState ) {
@@ -80,18 +79,6 @@ public class HardwareSwitchState {
   }
 
   /**
-   * Answers whether the {@link HardwareState} is in the given state.
-   *
-   * @param hardwareState The status to compare against the
-   *                      {@link HardwareState}.
-   * @return {@code true} when the given status matches the internal
-   * {@link HardwareState} value.
-   */
-  public boolean isHardwareState( final HardwareState hardwareState ) {
-    return mHardwareState == hardwareState;
-  }
-
-  /**
    * Returns the physical switch containing its name.
    *
    * @return The {@link HardwareSwitch} having a switch-dependent state.
@@ -127,8 +114,6 @@ public class HardwareSwitchState {
 
   @Override
   public int hashCode() {
-    int result = mHardwareSwitch.hashCode();
-    result = 31 * result + mHardwareState.hashCode();
-    return result;
+    return 31 * mHardwareSwitch.hashCode() + mHardwareState.hashCode();
   }
 }

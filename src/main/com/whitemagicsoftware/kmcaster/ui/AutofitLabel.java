@@ -29,77 +29,79 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
-import static java.awt.event.HierarchyEvent.PARENT_CHANGED;
 import static java.lang.Math.floor;
 
 /**
- * Responsible for changing a {@link JLabel}'s font size, dynamically. This
- * requires a valid {@link Graphics} context in order to determine the ideal
- * font point size for this component's size dimensions. The {@link Graphics}
- * context is set when the component is added to another container.
+ * Responsible for changing a {@link JLabel}'s font size, dynamically.
  */
 public final class AutofitLabel extends JLabel {
 
   /**
-   * Constructs an instance of {@link AutofitLabel} that will rescale itself
-   * to the parent {@link Container}, automatically.
-   * <p>
-   * When this label is added to a container, it will appear immediately. If
-   * additional scaling is required, then:
-   * </p>
-   * <ol>
-   *   <li>call {@link #setVisible(boolean)} with {@code false};</li>
-   *   <li>add the label to its container;</li>
-   *   <li>perform the necessary size or location computations;</li>
-   *   <li>call {@link #setSize(Dimension)} to update the label;</li>
-   *   <li>then make the label visible again.</li>
-   * </ol>
-   * <p>
-   * Without following the prescribed steps, the label may display at an
-   * unexpected size.
-   * </p>
+   * Constructs an instance of {@link AutofitLabel} that can rescale itself
+   * relative to either the parent {@link Container} or a given dimension.
    *
    * @param text The text to write on the container's graphics context.
    * @param font The font to use when writing the text.
    */
   public AutofitLabel( final String text, final Font font ) {
     super( text );
-    setDoubleBuffered( true );
     setFont( font );
-
-    addHierarchyListener( e -> {
-      final var parent = getParent();
-
-      if( (e.getChangeFlags() & PARENT_CHANGED) != 0 &&
-          (e.getChangedParent() == parent) ) {
-        setBounds( BoundsCalculator.getBounds( parent ) );
-      }
-    } );
   }
 
   /**
-   * Note that {@link #setSize(Dimension)} eventually delegates to calling this
-   * method, so there's no need to override both. The {@link Graphics} context
-   * must be valid before calling this method.
-   * <p>
-   * Rescales the constructed font to fit within the label's dimensions,
-   * governed by {@link #getWidth()} and {@link #getHeight()}. This must only
-   * be called after a {@link Graphics} context is available to compute the
-   * maximum {@link Font} size that will fit the label's {@link Rectangle}
-   * bounds.
-   * </p>
+   * Scales the dimensions of the label to fit within the given width and
+   * height, while maintaining the aspect ratio; relocates the label relative
+   * to the bounds of the container, honouring {@link #getVerticalAlignment()}
+   * and {@link #getHorizontalAlignment()}.
    *
-   * @param x The new horizontal position.
-   * @param y The new horizontal position.
-   * @param w The new width constraint.
-   * @param h The new height constraint.
+   * @param width  The maximum label width.
+   * @param height The maximum label height.
    */
-  @Override
-  public void setBounds( final int x, final int y, final int w, final int h ) {
-    super.setBounds( x, y, w, h );
+  public void transform( final int width, final int height ) {
+    setSize( width, height );
     setFont( computeScaledFont() );
-    paintImmediately( getBounds() );
+
+    final var bounds = BoundsCalculator.getBounds( getParent() );
+
+    // LEFT by default.
+    int x = bounds.x;
+
+    // TOP by default.
+    int y = bounds.y;
+
+    switch( getHorizontalAlignment() ) {
+      case CENTER -> x += (bounds.getWidth() - getWidth()) / 2;
+      case RIGHT -> x += (bounds.getWidth() - getWidth());
+    }
+
+    switch( getVerticalAlignment() ) {
+      case CENTER -> y += (bounds.getHeight() - getHeight()) / 2;
+      case BOTTOM -> y += (bounds.getHeight() - getHeight());
+    }
+
+    setLocation( x, y );
+  }
+
+  /**
+   * Convenience method to scale to the given dimensions then relocate the
+   * label with respect to the vertical and horizontal alignment.
+   *
+   * @param dimension The maximum label width and height.
+   */
+  public void transform( final Dimension dimension ) {
+    transform( dimension.width, dimension.height );
+  }
+
+  /**
+   * Scales the dimensions of the label to fit its parent's boundaries, while
+   * maintaining the aspect ratio, then relocate the label with respect to
+   * the vertical and horizontal alignment.
+   */
+  public void transform() {
+    final var bounds = BoundsCalculator.getBounds( getParent() );
+    transform( bounds.width, bounds.height );
   }
 
   /**
@@ -111,22 +113,28 @@ public final class AutofitLabel extends JLabel {
    * string within the bounds of the given {@link Rectangle}.
    */
   private Font computeScaledFont() {
-    final var text = getText();
-    final var graphics = getGraphics();
+    final var g = getGraphics();
 
+    if( g == null ) {
+      return getFont();
+    }
+
+    final var text = getText();
     final var dstWidthPx = getWidth();
     final var dstHeightPx = getHeight();
 
-    var minSizePt = 1;
-    var maxSizePt = 200;
+    // Derived using a binary search algorithm to minimize text width lookups.
     var scaledFont = getFont();
+
+    // Using the scaledPt as a relative max size reduces the iterations by two.
     var scaledPt = scaledFont.getSize();
+    var minSizePt = 1;
+    var maxSizePt = scaledPt * 2;
 
     while( maxSizePt - minSizePt > 1 ) {
       scaledFont = scaledFont.deriveFont( (float) scaledPt );
 
-      final var fm = getFontMetrics( scaledFont );
-      final var bounds = fm.getStringBounds( text, graphics );
+      final var bounds = getBounds( text, scaledFont, g );
       final var fontWidthPx = (int) bounds.getWidth();
       final var fontHeightPx = (int) bounds.getHeight();
 
@@ -140,9 +148,28 @@ public final class AutofitLabel extends JLabel {
       scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
-    graphics.dispose();
+    g.dispose();
 
     // Round down to guarantee fit.
-    return scaledFont.deriveFont( (float) floor( scaledPt ) );
+    scaledFont = scaledFont.deriveFont( (float) floor( scaledPt ) );
+
+    // Recompute the bounds of the label based on the text extents that fit.
+    final var bounds = getBounds( text, scaledFont, g );
+    setSize( (int) bounds.getWidth(), (int) bounds.getHeight() );
+
+    return scaledFont;
+  }
+
+  /**
+   * Helper method to determine the width and height of the text.
+   *
+   * @param text     Text having a width and height to derive.
+   * @param font     Font used to render the next.
+   * @param graphics Graphics context needed for calculating the text extents.
+   * @return Text width and height.
+   */
+  private Rectangle2D getBounds(
+      final String text, final Font font, final Graphics graphics ) {
+    return getFontMetrics( font ).getStringBounds( text, graphics );
   }
 }

@@ -51,11 +51,12 @@ public class Constants {
   public final static Insets INSETS_EMPTY = new Insets( 0, 0, 0, 0 );
 
   /**
-   * DejaVu Sans is the only free, open, sans serif font that supports
-   * all the Unicode blocks used by the application. The font size is
-   * arbitrary, the font will be scaled dynamically to the window size.
+   * DejaVu Sans is the only free, open, sans serif font that supports all
+   * the Unicode blocks used by the application. The font size will be scaled
+   * dynamically to the window size, but should be sufficiently large for the
+   * autofit functionality to scale down as required.
    */
-  public static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 32 );
+  public static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 100 );
 
   /**
    * Matches the shift-key arrow font colour when pressed.

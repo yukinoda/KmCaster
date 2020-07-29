@@ -70,9 +70,9 @@ public class HardwareImages {
    * </p>
    */
   private final static Map<HardwareSwitch, Insets> SWITCH_INSETS = Map.of(
-      KEY_ALT, new Insets( 8, 11, 12, 11 ),
-      KEY_CTRL, new Insets( 8, 11, 12, 11 ),
-      KEY_SHIFT, new Insets( 5, 50, 9, 11 ),
+      KEY_ALT, new Insets( 10, 11, 12, 11 ),
+      KEY_CTRL, new Insets( 10, 11, 12, 11 ),
+      KEY_SHIFT, new Insets( 10, 50, 12, 11 ),
       KEY_REGULAR, new Insets( 3, 7, 6, 7 )
   );
 

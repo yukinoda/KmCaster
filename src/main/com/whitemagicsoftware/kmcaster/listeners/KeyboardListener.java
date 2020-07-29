@@ -33,14 +33,13 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Stack;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
-import static java.util.Optional.ofNullable;
 import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
@@ -215,7 +214,7 @@ public final class KeyboardListener
    * pressed in the mean time.
    * </p>
    */
-  private final Stack<Timer> mTimerStack = new Stack<>();
+  private final Deque<Timer> mTimers = new LinkedList<>();
 
   private final int mDelayRegular;
   private final int mDelayModifier;
@@ -240,30 +239,35 @@ public final class KeyboardListener
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
-    getKey( e ).ifPresentOrElse(
-        keyValue -> updateModifier( keyValue, 1 ),
-        () -> {
-          while( !mTimerStack.isEmpty() ) {
-            mTimerStack.pop().stop();
-          }
+    final var modifierKey = getModifierKey( e );
 
-          updateRegular( mRegularHeld, getDisplayText( e ) );
-        } );
+    if( modifierKey == null ) {
+      while( !mTimers.isEmpty() ) {
+        mTimers.pop().stop();
+      }
+
+      updateRegular( mRegularHeld, getDisplayText( e ) );
+    }
+    else {
+      updateModifier( modifierKey, 1 );
+    }
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    getKey( e ).ifPresentOrElse(
-        keyValue -> delayedAction( mDelayModifier, ( action ) ->
-            updateModifier( keyValue, -1 )
-        ),
-        () -> {
-          final var timer = delayedAction( mDelayRegular, ( action ) ->
-              updateRegular( getDisplayText( e ), "" ) );
+    final var modifierKey = getModifierKey( e );
 
-          mTimerStack.push( timer );
-        }
-    );
+    if( modifierKey == null ) {
+      final var timer = delayedAction( mDelayRegular, ( action ) ->
+          updateRegular( getDisplayText( e ), "" ) );
+
+      mTimers.push( timer );
+    }
+    else {
+      delayedAction( mDelayModifier, ( action ) ->
+          updateModifier( modifierKey, -1 )
+      );
+    }
   }
 
   /**
@@ -283,15 +287,6 @@ public final class KeyboardListener
     timer.start();
 
     return timer;
-  }
-
-  /**
-   * Unused. Key up and key down are tracked separately from a typed key.
-   *
-   * @param e Ignored.
-   */
-  @Override
-  public void nativeKeyTyped( final NativeKeyEvent e ) {
   }
 
   /**
@@ -365,7 +360,16 @@ public final class KeyboardListener
    * @return The switch matching the raw key code, or {@code null} if the
    * raw key code does not represent a modifier.
    */
-  private Optional<HardwareSwitch> getKey( final NativeKeyEvent e ) {
-    return ofNullable( mModifierCodes.get( e.getRawCode() ) );
+  private HardwareSwitch getModifierKey( final NativeKeyEvent e ) {
+    return mModifierCodes.get( e.getRawCode() );
+  }
+
+  /**
+   * Unused. Key up and key down are tracked separately from a typed key.
+   *
+   * @param e Ignored.
+   */
+  @Override
+  public void nativeKeyTyped( final NativeKeyEvent e ) {
   }
 }

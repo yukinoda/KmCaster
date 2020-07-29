@@ -29,7 +29,7 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import java.awt.*;
 
-import static java.lang.Math.*;
+import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 
 /**
@@ -37,6 +37,15 @@ import static java.lang.Math.min;
  * dimension. The dimensions are unit-less.
  */
 public final class ScalableDimension extends Dimension {
+
+  /**
+   * Delegates construction to the superclass.
+   *
+   * @param r The dimension's width and height.
+   */
+  public ScalableDimension( final Rectangle r ) {
+    super( r.width, r.height );
+  }
 
   /**
    * Delegates construction to the superclass.

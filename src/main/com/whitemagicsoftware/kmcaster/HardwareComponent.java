@@ -96,11 +96,8 @@ public class HardwareComponent<S, I extends Image> extends JComponent {
   }
 
   @Override
-  protected void paintComponent( final Graphics graphics ) {
-    super.paintComponent( graphics );
-
-    ((Graphics2D) graphics).setComposite( AlphaComposite.Src );
-    graphics.drawImage( getActiveImage(), 0, 0, this );
+  protected void paintComponent( final Graphics g ) {
+    g.drawImage( getActiveImage(), 0, 0, this );
   }
 
   /**

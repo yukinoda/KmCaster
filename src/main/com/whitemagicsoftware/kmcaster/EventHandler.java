@@ -36,9 +36,11 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Map;
+import java.util.Optional;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static java.awt.Toolkit.getDefaultToolkit;
 import static javax.swing.SwingConstants.*;
@@ -51,6 +53,65 @@ import static javax.swing.SwingUtilities.invokeLater;
 public class EventHandler implements PropertyChangeListener {
 
   /**
+   * Used for initializing the {@link AutofitLabel} instances.
+   */
+  private enum LabelConfig {
+    LABEL_SHIFT( KEY_SHIFT, CENTER, CENTER ),
+    LABEL_CTRL( KEY_CTRL, CENTER, CENTER ),
+    LABEL_ALT( KEY_ALT, CENTER, CENTER ),
+    LABEL_REGULAR( KEY_REGULAR, CENTER, CENTER ),
+    LABEL_REGULAR_NUM_MAIN( CENTER, CENTER ),
+    LABEL_REGULAR_NUM_SUPERSCRIPT( TOP, LEFT ),
+    LABEL_REGULAR_COUNTER( TOP, RIGHT );
+
+    private final HardwareSwitch mHardwareSwitch;
+    private final int mHorizontalAlign;
+    private final int mVerticalAlign;
+
+    LabelConfig( final int vAlign, final int hAlign ) {
+      this( null, vAlign, hAlign );
+    }
+
+    LabelConfig(
+        final HardwareSwitch hwSwitch, final int vAlign, final int hAlign ) {
+      mHardwareSwitch = hwSwitch;
+      mVerticalAlign = vAlign;
+      mHorizontalAlign = hAlign;
+    }
+
+    private Optional<HardwareSwitch> getHardwareSwitch() {
+      return Optional.ofNullable( mHardwareSwitch );
+    }
+
+    private int getHorizontalAlign() {
+      return mHorizontalAlign;
+    }
+
+    private int getVerticalAlign() {
+      return mVerticalAlign;
+    }
+
+    /**
+     * Returns a blank space when no {@link HardwareSwitch} is assigned.
+     *
+     * @return The title case version of the hardware switch, or a space if
+     * there is no direct correlation.
+     */
+    private String toTitleCase() {
+      return mHardwareSwitch == null ? " " : mHardwareSwitch.toTitleCase();
+    }
+
+    /**
+     * Returns the number of values in the enumeration.
+     *
+     * @return {@link #values()}.length.
+     */
+    private static int size() {
+      return values().length;
+    }
+  }
+
+  /**
    * Maps key pressed states to key cap title colours.
    */
   private static final Map<HardwareState, Color> KEY_COLOURS = Map.of(
@@ -59,9 +120,27 @@ public class EventHandler implements PropertyChangeListener {
   );
 
   private final HardwareImages mHardwareImages;
+  private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
 
   public EventHandler( final HardwareImages hardwareImages ) {
     mHardwareImages = hardwareImages;
+
+    final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
+
+    for( final var config : LabelConfig.values() ) {
+      final var label = new AutofitLabel( config.toTitleCase(), LABEL_FONT );
+
+      label.setVerticalAlignment( config.getVerticalAlign() );
+      label.setHorizontalAlignment( config.getHorizontalAlign() );
+      label.setForeground( keyColour );
+
+      mLabels[ config.ordinal() ] = label;
+
+      config.getHardwareSwitch().ifPresentOrElse(
+          s -> mHardwareImages.get( s ).add( label ),
+          () -> mHardwareImages.get( KEY_REGULAR ).add( label )
+      );
+    }
   }
 
   /**
@@ -123,10 +202,12 @@ public class EventHandler implements PropertyChangeListener {
    */
   protected void updateSwitchLabel( final HardwareSwitchState state ) {
     final var hwState = state.getHardwareState();
-    final var keyColour = KEY_COLOURS.get( hwState );
+
+    getLabel( LabelConfig.LABEL_REGULAR ).setVisible( false );
+    getLabel( LabelConfig.LABEL_REGULAR_COUNTER ).setVisible( false );
 
     if( state.isModifier() ) {
-      updateLabel( state, keyColour );
+      updateLabel( state );
 
       mKeyCounter.reset();
     }
@@ -134,14 +215,18 @@ public class EventHandler implements PropertyChangeListener {
       final var component = getHardwareComponent( state );
       final var keyValue = state.getValue();
 
+      final var sup = getLabel( LabelConfig.LABEL_REGULAR_NUM_SUPERSCRIPT );
+      final var main = getLabel( LabelConfig.LABEL_REGULAR_NUM_MAIN );
+      main.setVisible( false );
+      sup.setVisible( false );
+
       // A non-modifier key has been pressed.
       if( hwState == SWITCH_PRESSED ) {
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
         final var bounds = BoundsCalculator.getBounds( component );
-        final var compDimen = new ScalableDimension(
-            bounds.width, bounds.height );
+        final var compDimen = new ScalableDimension( bounds );
 
         // If there's a space in the name, the text before the space is
         // positioned in the upper-left while the text afterwards takes up
@@ -152,99 +237,52 @@ public class EventHandler implements PropertyChangeListener {
           final var mainSize = compDimen.scale( .9f );
 
           // Label for "Num", "Back", "Tab", and other dual-labelled keys.
-          final var sup = new AutofitLabel(
-              keyValue.substring( 0, index ), LABEL_FONT );
-          sup.setVisible( false );
-          sup.setForeground( keyColour );
-          sup.setVerticalAlignment( TOP );
+          sup.setText( keyValue.substring( 0, index ) );
+          sup.transform( supSize );
 
           // Label for number pad keys or icon glyphs.
-          final var main = new AutofitLabel(
-              keyValue.substring( index + 1 ), LABEL_FONT );
-          main.setVisible( false );
-          main.setForeground( keyColour );
-          main.setHorizontalAlignment( CENTER );
+          main.setText( keyValue.substring( index + 1 ) );
+          main.transform( mainSize );
 
-          // Keep removeAll/add operations close together to minimize flicker.
-          component.removeAll();
-          component.add( main );
-          component.add( sup );
-          main.setSize( mainSize );
-          sup.setSize( supSize );
+          // Shift the main label down away from the superscript.
+          final var mainLoc = main.getLocation();
+          main.setLocation( mainLoc.x, mainLoc.y + (sup.getHeight() / 3) );
 
-          // Center-align the main text with respect to the container.
-          final var location = main.getLocation();
-          final var dx = (compDimen.getWidth() - main.getWidth()) / 2;
-          final var dy = (compDimen.getHeight() - main.getHeight()) / 2;
-
-          // Shift the main text down a smidgen, relative to the superscript.
-          final var my = (int) (location.getY() + dy) + sup.getHeight() / 4;
-          final var mx = (int) (location.getX() + dx);
-
-          main.setLocation( mx, my );
           main.setVisible( true );
           sup.setVisible( true );
         }
         else {
-          component.removeAll();
-          updateLabel( state, keyColour );
+          updateLabel( state );
         }
 
         // Track the consecutive key presses for this value.
         if( mKeyCounter.apply( keyValue ) ) {
           final var count = mKeyCounter.toString();
+          final var tally = getLabel( LabelConfig.LABEL_REGULAR_COUNTER );
           final var tallySize = compDimen.scale( .25f );
 
-          final var tally = new AutofitLabel( count, LABEL_FONT );
-          tally.setVisible( false );
-          component.add( tally );
-
-          tally.setSize( tallySize );
-          tally.setVerticalAlignment( TOP );
-          tally.setHorizontalAlignment( RIGHT );
-
-          // Get the upper-left point, accounting for padding and insets.
-          final var tx = bounds.x + compDimen.getWidth() - tally.getWidth();
-          final var ty = bounds.y;
-
-          tally.setLocation( (int) tx, ty );
+          tally.setText( count );
+          tally.transform( tallySize );
           tally.setVisible( true );
         }
       }
-      else {
-        component.removeAll();
-      }
-
-      component.paintImmediately( component.getBounds()) ;
     }
   }
 
   /**
-   * Creates the label if it does not already exist.
+   * Changes the text label and colour for the given state.
    *
    * @param state The state of the hardware switch to look up.
    */
-  private void updateLabel(
-      final HardwareSwitchState state,
-      final Color keyColour ) {
+  private void updateLabel( final HardwareSwitchState state ) {
     final var container = getHardwareComponent( state );
-    final var value = state.getValue();
+    final var label = (AutofitLabel) container.getComponent( 0 );
 
-    if( container.getComponentCount() == 0 ) {
-      // Regular keys will have labels recreated each time to auto-fit the text.
-      final var label = new AutofitLabel( value, LABEL_FONT );
-      label.setVisible( false );
-      label.setHorizontalAlignment( CENTER );
-      label.setForeground( keyColour );
-      container.add( label );
-      label.setVisible( true );
-    }
-    else {
-      // Modifier keys can reuse labels.
-      final var label = (AutofitLabel) container.getComponent( 0 );
-      label.setForeground( keyColour );
-      label.setText( value );
-    }
+    label.setVisible( false );
+    label.setForeground( KEY_COLOURS.get( state.getHardwareState() ) );
+    label.setText( state.getValue() );
+    label.transform();
+    label.setVisible( true );
   }
 
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
@@ -254,5 +292,9 @@ public class EventHandler implements PropertyChangeListener {
 
   private HardwareImages getHardwareImages() {
     return mHardwareImages;
+  }
+
+  private AutofitLabel getLabel( final LabelConfig config ) {
+    return mLabels[ config.ordinal() ];
   }
 }
