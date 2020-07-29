@@ -212,19 +212,19 @@ public class EventHandler implements PropertyChangeListener {
       mKeyCounter.reset();
     }
     else {
-      final var component = getHardwareComponent( state );
-      final var keyValue = state.getValue();
-
-      final var sup = getLabel( LabelConfig.LABEL_REGULAR_NUM_SUPERSCRIPT );
+      // Hide any previously displayed labels.
       final var main = getLabel( LabelConfig.LABEL_REGULAR_NUM_MAIN );
+      final var sup = getLabel( LabelConfig.LABEL_REGULAR_NUM_SUPERSCRIPT );
       main.setVisible( false );
       sup.setVisible( false );
 
-      // A non-modifier key has been pressed.
       if( hwState == SWITCH_PRESSED ) {
+        final var keyValue = state.getValue();
+
         // Determine whether there are separate parts for the key label.
         final var index = keyValue.indexOf( ' ' );
 
+        final var component = getHardwareComponent( state );
         final var bounds = BoundsCalculator.getBounds( component );
         final var compDimen = new ScalableDimension( bounds );
 
@@ -233,16 +233,13 @@ public class EventHandler implements PropertyChangeListener {
         // the remainder. This is used for number pad keys, backspace, enter,
         // tab, and a few others.
         if( index > 0 ) {
-          final var supSize = compDimen.scale( .6f );
-          final var mainSize = compDimen.scale( .9f );
-
           // Label for "Num", "Back", "Tab", and other dual-labelled keys.
           sup.setText( keyValue.substring( 0, index ) );
-          sup.transform( supSize );
+          sup.transform( compDimen.scale( .6f ) );
 
           // Label for number pad keys or icon glyphs.
           main.setText( keyValue.substring( index + 1 ) );
-          main.transform( mainSize );
+          main.transform( compDimen.scale( .9f ) );
 
           // Shift the main label down away from the superscript.
           final var mainLoc = main.getLocation();
@@ -257,12 +254,10 @@ public class EventHandler implements PropertyChangeListener {
 
         // Track the consecutive key presses for this value.
         if( mKeyCounter.apply( keyValue ) ) {
-          final var count = mKeyCounter.toString();
           final var tally = getLabel( LabelConfig.LABEL_REGULAR_COUNTER );
-          final var tallySize = compDimen.scale( .25f );
 
-          tally.setText( count );
-          tally.transform( tallySize );
+          tally.setText( mKeyCounter.toString() );
+          tally.transform( compDimen.scale( .25f ) );
           tally.setVisible( true );
         }
       }
