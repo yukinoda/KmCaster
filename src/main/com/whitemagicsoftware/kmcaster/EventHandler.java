@@ -48,7 +48,7 @@ import static javax.swing.SwingUtilities.invokeLater;
  * Responsible for controlling the application state between the events
  * and the view.
  */
-public class EventHandler implements PropertyChangeListener {
+public final class EventHandler implements PropertyChangeListener {
 
   /**
    * Used for initializing the {@link AutofitLabel} instances.

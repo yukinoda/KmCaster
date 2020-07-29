@@ -38,7 +38,7 @@ import static java.util.Collections.emptyMap;
 /**
  * Responsible for finding file resources.
  */
-public class ResourceWalker {
+public final class ResourceWalker {
   private final PathMatcher mPathMatcher;
 
   public ResourceWalker( final String glob ) {

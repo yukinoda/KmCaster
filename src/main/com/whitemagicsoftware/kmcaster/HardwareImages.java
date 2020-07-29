@@ -46,7 +46,7 @@ import static java.lang.String.format;
  * images. The images provide an on-screen interface that indicate to the user
  * what key or mouse events have been triggered.
  */
-public class HardwareImages {
+public final class HardwareImages {
   private final static String DIR_IMAGES = "/images";
   private final static String DIR_IMAGES_KEYBOARD = DIR_IMAGES + "/key";
   private final static String DIR_IMAGES_MOUSE = DIR_IMAGES + "/mouse";

@@ -36,7 +36,7 @@ import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
 /**
  * Renders a panel---and its borders---as a translucent colour.
  */
-public class TranslucentPanel extends JPanel {
+public final class TranslucentPanel extends JPanel {
   public TranslucentPanel() {
     setOpaque( true );
   }

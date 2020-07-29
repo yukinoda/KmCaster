@@ -76,7 +76,7 @@ import static picocli.CommandLine.Option;
     description = "Displays key presses and mouse clicks on the screen."
 )
 @SuppressWarnings("FieldMayBeFinal")
-public class KmCaster extends JFrame implements Callable<Integer> {
+public final class KmCaster extends JFrame implements Callable<Integer> {
 
   /**
    * Application height in pixels. Images are scaled to this height, maintaining

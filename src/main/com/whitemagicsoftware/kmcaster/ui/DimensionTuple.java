@@ -34,7 +34,7 @@ import java.awt.*;
 /**
  * Convenience class for pairing two dimensions together.
  */
-public class DimensionTuple extends Pair<Dimension, Dimension> {
+public final class DimensionTuple extends Pair<Dimension, Dimension> {
   /**
    * Associates a new {@link Dimension} tuple.
    *

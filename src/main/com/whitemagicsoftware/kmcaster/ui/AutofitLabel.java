@@ -195,9 +195,11 @@ public final class AutofitLabel extends JLabel {
    * @return The parent's safe drawing area.
    */
   private Rectangle getParentBounds() {
-    return mParentBounds == null
-        ? mParentBounds = getBounds( getParent() )
-        : mParentBounds;
+    final var bounds = mParentBounds;
+
+    return bounds == null
+        ? mParentBounds = calculateBounds( getParent() )
+        : bounds;
   }
 
   /**
@@ -207,7 +209,7 @@ public final class AutofitLabel extends JLabel {
    * @return The {@link Container}'s safe area, based on the
    * {@link Container}'s bounded dimensions and insets.
    */
-  public static Rectangle getBounds( final Container container ) {
+  public static Rectangle calculateBounds( final Container container ) {
     final var insets = container.getInsets();
 
     return new Rectangle(

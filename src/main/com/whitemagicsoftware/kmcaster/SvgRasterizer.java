@@ -44,7 +44,7 @@ import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 /**
  * Responsible for converting SVG images into rasterized PNG images.
  */
-public class SvgRasterizer {
+public final class SvgRasterizer {
   public final static Map<Object, Object> RENDERING_HINTS = Map.of(
       KEY_ANTIALIASING,
       VALUE_ANTIALIAS_ON,

@@ -40,7 +40,7 @@ import static com.whitemagicsoftware.kmcaster.ui.Constants.INSETS_EMPTY;
  *
  * @param <S> The type of state associated with an image.
  */
-public class HardwareComponent<S, I extends Image> extends JComponent {
+public final class HardwareComponent<S, I extends Image> extends JComponent {
 
   private final Map<S, I> mStateImages = new HashMap<>();
 

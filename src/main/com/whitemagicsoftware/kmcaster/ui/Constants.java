@@ -34,7 +34,7 @@ import static java.awt.Font.BOLD;
 /**
  * Responsible for containing shared constants required by the GUI.
  */
-public class Constants {
+public final class Constants {
   /**
    * Use with {@code setOpaque( false )}.
    */

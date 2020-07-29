@@ -37,7 +37,7 @@ package com.whitemagicsoftware.kmcaster.util;
  * If the new event value is not the same as the old value, the tally is reset.
  * </p>
  */
-public class ConsecutiveEventCounter<Event> {
+public final class ConsecutiveEventCounter<Event> {
   /**
    * Previous event in the event chain, used to decide when the sequence breaks.
    */

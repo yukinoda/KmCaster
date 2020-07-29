@@ -31,7 +31,7 @@ package com.whitemagicsoftware.kmcaster;
  * Responsible for capturing the state of a hardware switch, which includes the
  * hardware switch's value (if any).
  */
-public class HardwareSwitchState {
+public final class HardwareSwitchState {
   private final HardwareSwitch mHardwareSwitch;
   private final HardwareState mHardwareState;
   private final String mValue;
