@@ -28,20 +28,21 @@
 package com.whitemagicsoftware.kmcaster;
 
 import com.whitemagicsoftware.kmcaster.ui.AutofitLabel;
+import com.whitemagicsoftware.kmcaster.ui.ResetTimer;
 import com.whitemagicsoftware.kmcaster.util.ConsecutiveEventCounter;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.KEY_REGULAR;
+import static com.whitemagicsoftware.kmcaster.LabelConfig.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static java.awt.Toolkit.getDefaultToolkit;
-import static javax.swing.SwingConstants.*;
 import static javax.swing.SwingUtilities.invokeLater;
 
 /**
@@ -49,65 +50,6 @@ import static javax.swing.SwingUtilities.invokeLater;
  * and the view.
  */
 public final class EventHandler implements PropertyChangeListener {
-
-  /**
-   * Used for initializing the {@link AutofitLabel} instances.
-   */
-  private enum LabelConfig {
-    LABEL_SHIFT( KEY_SHIFT, CENTER, CENTER ),
-    LABEL_CTRL( KEY_CTRL, CENTER, CENTER ),
-    LABEL_ALT( KEY_ALT, CENTER, CENTER ),
-    LABEL_REGULAR( KEY_REGULAR, CENTER, CENTER ),
-    LABEL_REGULAR_NUM_MAIN( CENTER, CENTER ),
-    LABEL_REGULAR_NUM_SUPERSCRIPT( TOP, LEFT ),
-    LABEL_REGULAR_COUNTER( TOP, RIGHT );
-
-    private final HardwareSwitch mHardwareSwitch;
-    private final int mHorizontalAlign;
-    private final int mVerticalAlign;
-
-    LabelConfig( final int vAlign, final int hAlign ) {
-      this( null, vAlign, hAlign );
-    }
-
-    LabelConfig(
-        final HardwareSwitch hwSwitch, final int vAlign, final int hAlign ) {
-      mHardwareSwitch = hwSwitch;
-      mVerticalAlign = vAlign;
-      mHorizontalAlign = hAlign;
-    }
-
-    private Optional<HardwareSwitch> getHardwareSwitch() {
-      return Optional.ofNullable( mHardwareSwitch );
-    }
-
-    private int getHorizontalAlign() {
-      return mHorizontalAlign;
-    }
-
-    private int getVerticalAlign() {
-      return mVerticalAlign;
-    }
-
-    /**
-     * Returns a blank space when no {@link HardwareSwitch} is assigned.
-     *
-     * @return The title case version of the hardware switch, or a space if
-     * there is no direct correlation.
-     */
-    private String toTitleCase() {
-      return mHardwareSwitch == null ? " " : mHardwareSwitch.toTitleCase();
-    }
-
-    /**
-     * Returns the number of values in the enumeration.
-     *
-     * @return {@link #values()}.length.
-     */
-    private static int size() {
-      return values().length;
-    }
-  }
 
   /**
    * Maps key pressed states to key cap title colours.
@@ -119,8 +61,12 @@ public final class EventHandler implements PropertyChangeListener {
 
   private final HardwareImages mHardwareImages;
   private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
+  private final Map<HardwareSwitch, ResetTimer> mTimers = new HashMap<>();
 
-  public EventHandler( final HardwareImages hardwareImages ) {
+  public EventHandler(
+      final HardwareImages hardwareImages,
+      final int regularDelay,
+      final int modifierDelay ) {
     mHardwareImages = hardwareImages;
 
     final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
@@ -138,6 +84,12 @@ public final class EventHandler implements PropertyChangeListener {
           s -> mHardwareImages.get( s ).add( label ),
           () -> mHardwareImages.get( KEY_REGULAR ).add( label )
       );
+    }
+
+    for( final var key : HardwareSwitch.keyboardSwitches() ) {
+      final var delay = key.isModifier() ? modifierDelay : regularDelay;
+
+      mTimers.put( key, new ResetTimer( delay ) );
     }
   }
 
@@ -178,10 +130,23 @@ public final class EventHandler implements PropertyChangeListener {
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
 
-    updateSwitchState( switchState );
-
     if( hwSwitch.isKeyboard() ) {
-      updateSwitchLabel( switchState );
+      final var timer = getTimer( hwSwitch );
+
+      if( hwState == SWITCH_RELEASED ) {
+        timer.addActionListener( ( event ) -> {
+          updateSwitchState( switchState );
+          updateSwitchLabel( switchState );
+        } );
+      }
+      else {
+        timer.stop();
+        updateSwitchState( switchState );
+        updateSwitchLabel( switchState );
+      }
+    }
+    else {
+      updateSwitchState( switchState );
     }
   }
 
@@ -198,11 +163,9 @@ public final class EventHandler implements PropertyChangeListener {
    *
    * @param state The key that has changed.
    */
-  protected void updateSwitchLabel( final HardwareSwitchState state ) {
+  protected synchronized void updateSwitchLabel(
+      final HardwareSwitchState state ) {
     final var hwState = state.getHardwareState();
-
-    getLabel( LabelConfig.LABEL_REGULAR ).setVisible( false );
-    getLabel( LabelConfig.LABEL_REGULAR_COUNTER ).setVisible( false );
 
     if( state.isModifier() ) {
       updateLabel( state );
@@ -211,8 +174,13 @@ public final class EventHandler implements PropertyChangeListener {
     }
     else {
       // Hide any previously displayed labels.
-      final var main = getLabel( LabelConfig.LABEL_REGULAR_NUM_MAIN );
-      final var sup = getLabel( LabelConfig.LABEL_REGULAR_NUM_SUPERSCRIPT );
+      getLabel( LABEL_REGULAR ).setVisible( false );
+
+      final var main = getLabel( LABEL_REGULAR_NUM_MAIN );
+      final var sup = getLabel( LABEL_REGULAR_NUM_SUPERSCRIPT );
+      final var tally = getLabel( LABEL_REGULAR_COUNTER );
+
+      tally.setVisible( false );
       main.setVisible( false );
       sup.setVisible( false );
 
@@ -248,8 +216,6 @@ public final class EventHandler implements PropertyChangeListener {
 
         // Track the consecutive key presses for this value.
         if( mKeyCounter.apply( keyValue ) ) {
-          final var tally = getLabel( LabelConfig.LABEL_REGULAR_COUNTER );
-
           tally.setText( mKeyCounter.toString() );
           tally.transform( .25f );
           tally.setVisible( true );
@@ -281,5 +247,9 @@ public final class EventHandler implements PropertyChangeListener {
 
   private AutofitLabel getLabel( final LabelConfig config ) {
     return mLabels[ config.ordinal() ];
+  }
+
+  private ResetTimer getTimer( final HardwareSwitch hwSwitch ) {
+    return mTimers.get( hwSwitch );
   }
 }

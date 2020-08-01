@@ -33,9 +33,7 @@ import org.jnativehook.keyboard.NativeKeyListener;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
-import java.util.Deque;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
@@ -203,35 +201,12 @@ public final class KeyboardListener
   private final Map<HardwareSwitch, Integer> mModifiers = new HashMap<>();
 
   /**
-   * Informing the application of a key release is delayed so that the user
-   * interface will give the end user a momentary glance of what key was
-   * pressed before it is released. Without this delay the keys disappear
-   * as fast as a typist can type, which can be too quick to read as individual
-   * keystrokes.
-   * <p>
-   * Track the number of key release timers are running so that they can
-   * all be stopped to prevent releasing the key when another key has been
-   * pressed in the mean time.
-   * </p>
-   */
-  private final Deque<Timer> mTimers = new LinkedList<>();
-
-  private final int mDelayRegular;
-  private final int mDelayModifier;
-
-  /**
    * Creates a keyboard listener that publishes events when keys are either
    * pressed or released. The constructor initializes all modifier keys to
    * the released state because the native keyboard hook API does not offer
    * a way to query what keys are currently pressed.
-   *
-   * @param delayRegular  Milliseconds to wait before releasing a regular key.
-   * @param delayModifier Milliseconds to wait before releasing a modifier key.
    */
-  public KeyboardListener( final int delayRegular, final int delayModifier ) {
-    mDelayRegular = delayRegular;
-    mDelayModifier = delayModifier;
-
+  public KeyboardListener() {
     for( final var key : modifierSwitches() ) {
       mModifiers.put( key, 0 );
     }
@@ -242,10 +217,6 @@ public final class KeyboardListener
     final var modifierKey = getModifierKey( e );
 
     if( modifierKey == null ) {
-      while( !mTimers.isEmpty() ) {
-        mTimers.pop().stop();
-      }
-
       updateRegular( mRegularHeld, getDisplayText( e ) );
     }
     else {
@@ -253,20 +224,17 @@ public final class KeyboardListener
     }
   }
 
+  final Object mMutex = new Object();
+
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
     final var modifierKey = getModifierKey( e );
 
     if( modifierKey == null ) {
-      final var timer = delayedAction( mDelayRegular, ( action ) ->
-          updateRegular( getDisplayText( e ), "" ) );
-
-      mTimers.push( timer );
+      updateRegular( getDisplayText( e ), "" );
     }
     else {
-      delayedAction( mDelayModifier, ( action ) ->
-          updateModifier( modifierKey, -1 )
-      );
+      updateModifier( modifierKey, -1 );
     }
   }
 

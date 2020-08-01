@@ -125,7 +125,8 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
   private void init() {
     final var appDimension = new Dimension( 1024 + mHeight, mHeight );
     final var hardwareImages = new HardwareImages( appDimension );
-    final var eventHandler = new EventHandler( hardwareImages );
+    final var eventHandler = new EventHandler(
+        hardwareImages, mDelayKeyRegular, mDelayKeyModifier );
 
     initWindowFrame();
     initWindowContents( hardwareImages );
@@ -178,9 +179,7 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
   }
 
   private void initKeyboardListener( final PropertyChangeListener listener ) {
-    final KeyboardListener keyboardListener = new KeyboardListener(
-        mDelayKeyRegular, mDelayKeyModifier
-    );
+    final KeyboardListener keyboardListener = new KeyboardListener();
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();

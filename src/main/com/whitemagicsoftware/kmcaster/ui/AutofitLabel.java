@@ -142,10 +142,9 @@ public final class AutofitLabel extends JLabel {
     // Derived using a binary search algorithm to minimize text width lookups.
     var scaledFont = getFont();
 
-    // Using the scaledPt as a relative max size reduces the iterations by two.
     var scaledPt = scaledFont.getSize();
-    var minSizePt = 1;
-    var maxSizePt = scaledPt * 2;
+    var minSizePt = 4;
+    var maxSizePt = 100;
 
     while( maxSizePt - minSizePt > 1 ) {
       scaledFont = scaledFont.deriveFont( (float) scaledPt );
