@@ -116,6 +116,18 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
   private int mDelayKeyModifier = 150;
 
   /**
+   * Milliseconds to wait before releasing (clearing) any mouse button.
+   */
+  @Option(
+      names = {"-c", "--delay-click"},
+      description = "Delay for releasing mouse buttons (${DEFAULT-VALUE} " +
+          "milliseconds)",
+      paramLabel = "delay",
+      defaultValue = "200"
+  )
+  private int mDelayMouseClick = 200;
+
+  /**
    * Empty constructor so that command line arguments may be parsed.
    */
   public KmCaster() {
@@ -152,7 +164,12 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
 
     for( final var hwSwitch : HardwareSwitch.values() ) {
       final var component = hardwareImages.get( hwSwitch );
-      panel.add( component );
+
+      // If there is no image for the switch, it may be a a mouse button
+      // without a direct visual representation.
+      if( component != null ) {
+        panel.add( component );
+      }
     }
 
     getContentPane().add( panel );

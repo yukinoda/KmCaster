@@ -34,7 +34,7 @@ import java.awt.event.ActionListener;
 /**
  * A one-off timer that can be reset to its initial delay.
  */
-public class ResetTimer extends Timer {
+public final class ResetTimer extends Timer {
   /**
    * @inheritDoc
    */

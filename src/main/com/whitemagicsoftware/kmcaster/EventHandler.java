@@ -134,15 +134,13 @@ public final class EventHandler implements PropertyChangeListener {
       final var timer = getTimer( hwSwitch );
 
       if( hwState == SWITCH_RELEASED ) {
-        timer.addActionListener( ( event ) -> {
-          updateSwitchState( switchState );
-          updateSwitchLabel( switchState );
-        } );
+        timer.addActionListener(
+            ( event ) -> updateKeyboardLabel( switchState )
+        );
       }
       else {
         timer.stop();
-        updateSwitchState( switchState );
-        updateSwitchLabel( switchState );
+        updateKeyboardLabel( switchState );
       }
     }
     else {
@@ -151,8 +149,7 @@ public final class EventHandler implements PropertyChangeListener {
   }
 
   protected void updateSwitchState( final HardwareSwitchState switchState ) {
-    final var component = getHardwareComponent( switchState );
-    component.setState( switchState );
+    getHardwareComponent( switchState ).setState( switchState );
   }
 
   private final ConsecutiveEventCounter<String> mKeyCounter =
@@ -163,8 +160,9 @@ public final class EventHandler implements PropertyChangeListener {
    *
    * @param state The key that has changed.
    */
-  protected synchronized void updateSwitchLabel(
+  protected synchronized void updateKeyboardLabel(
       final HardwareSwitchState state ) {
+    updateSwitchState( state );
     final var hwState = state.getHardwareState();
 
     if( state.isModifier() ) {
@@ -201,11 +199,11 @@ public final class EventHandler implements PropertyChangeListener {
 
           // Label for number pad keys or icon glyphs.
           main.setText( keyValue.substring( index + 1 ) );
-          main.transform( .9f );
+          main.transform( .8f );
 
           // Shift the main label down away from the superscript.
           final var mainLoc = main.getLocation();
-          main.setLocation( mainLoc.x, mainLoc.y + (sup.getHeight() / 3) );
+          main.setLocation( mainLoc.x, mainLoc.y + (sup.getHeight() / 2) );
 
           main.setVisible( true );
           sup.setVisible( true );
