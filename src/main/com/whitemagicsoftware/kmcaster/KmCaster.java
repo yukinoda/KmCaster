@@ -34,15 +34,12 @@ import com.whitemagicsoftware.kmcaster.ui.TranslucentPanel;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Help.Ansi.Style;
 
 import javax.swing.*;
-import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.concurrent.Callable;
 
 import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
@@ -51,7 +48,6 @@ import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
 import static org.jnativehook.GlobalScreen.*;
 import static picocli.CommandLine.Help.ColorScheme;
-import static picocli.CommandLine.Option;
 
 /**
  * This class is responsible for casting key presses and mouse clicks on the
@@ -70,75 +66,20 @@ import static picocli.CommandLine.Option;
  *   <li>Check the value column for use_compositing.</li>
  * </ol>
  */
-@Command(
-    name = "KmCaster",
-    mixinStandardHelpOptions = true,
-    description = "Displays key presses and mouse clicks on the screen."
-)
-@SuppressWarnings("FieldMayBeFinal")
-public final class KmCaster extends JFrame implements Callable<Integer> {
+public final class KmCaster extends JFrame {
+
+  private final UserSettings mUserSettings = new UserSettings( this );
 
   /**
-   * Application height in pixels. Images are scaled to this height, maintaining
-   * aspect ratio. The height constrains the width, so as long as the width
-   * is large enough, the application's window will adjust to fit.
-   */
-  @Option(
-      names = {"-s", "--size"},
-      description = "Application size (${DEFAULT-VALUE} pixels)",
-      paramLabel = "height",
-      defaultValue = "100"
-  )
-  private int mHeight = 100;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) the regular key.
-   */
-  @Option(
-      names = {"-a", "--delay-alphanum"},
-      description = "Delay for releasing non-modifier keys (${DEFAULT-VALUE} " +
-          "milliseconds)",
-      paramLabel = "delay",
-      defaultValue = "250"
-  )
-  private int mDelayKeyRegular = 250;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) any modifier key.
-   */
-  @Option(
-      names = {"-m", "--delay-modifier"},
-      description = "Delay for releasing modifier keys (${DEFAULT-VALUE} " +
-          "milliseconds)",
-      paramLabel = "delay",
-      defaultValue = "150"
-  )
-  private int mDelayKeyModifier = 150;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) any mouse button.
-   */
-  @Option(
-      names = {"-c", "--delay-click"},
-      description = "Delay for releasing mouse buttons (${DEFAULT-VALUE} " +
-          "milliseconds)",
-      paramLabel = "delay",
-      defaultValue = "200"
-  )
-  private int mDelayMouseClick = 200;
-
-  /**
-   * Empty constructor so that command line arguments may be parsed.
+   * Constructs a window with the class name for its frame title.
    */
   public KmCaster() {
     super( KmCaster.class.getSimpleName() );
   }
 
-  private void init() {
-    final var appDimension = new Dimension( 1024 + mHeight, mHeight );
-    final var hardwareImages = new HardwareImages( appDimension );
-    final var eventHandler = new EventHandler(
-        hardwareImages, mDelayKeyRegular, mDelayKeyModifier );
+  public void init() {
+    final var hardwareImages = new HardwareImages( mUserSettings );
+    final var eventHandler = new EventHandler( hardwareImages, mUserSettings );
 
     initWindowFrame();
     initWindowContents( hardwareImages );
@@ -202,6 +143,10 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
     keyboardListener.initModifiers();
   }
 
+  private UserSettings getUserSettings() {
+    return mUserSettings;
+  }
+
   /**
    * Suppress writing logging messages to standard output.
    */
@@ -223,17 +168,6 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
   }
 
   /**
-   * Invoked after the command-line arguments are parsed.
-   *
-   * @return Exit level zero.
-   */
-  @Override
-  public Integer call() {
-    init();
-    return 0;
-  }
-
-  /**
    * Main entry point.
    *
    * @param args Unused.
@@ -249,7 +183,7 @@ public final class KmCaster extends JFrame implements Callable<Integer> {
     }
 
     final var kc = new KmCaster();
-    final var parser = new CommandLine( kc );
+    final var parser = new CommandLine( kc.getUserSettings() );
     parser.setColorScheme( createColourScheme() );
 
     invokeLater( () -> {

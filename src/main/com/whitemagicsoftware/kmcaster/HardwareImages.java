@@ -85,8 +85,8 @@ public final class HardwareImages {
       HardwareComponent<HardwareSwitchState, Image>
       > mSwitches = new HashMap<>();
 
-  public HardwareImages( final Dimension appDimensions ) {
-    mAppDimensions = appDimensions;
+  public HardwareImages( final UserSettings userSettings ) {
+    mAppDimensions = userSettings.createAppDimensions();
 
     final var mouseStates = createHardwareComponent();
     final var mouseReleased = mouseImage( "0" );

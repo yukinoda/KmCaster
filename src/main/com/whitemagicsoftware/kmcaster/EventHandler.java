@@ -64,9 +64,7 @@ public final class EventHandler implements PropertyChangeListener {
   private final Map<HardwareSwitch, ResetTimer> mTimers = new HashMap<>();
 
   public EventHandler(
-      final HardwareImages hardwareImages,
-      final int regularDelay,
-      final int modifierDelay ) {
+      final HardwareImages hardwareImages, final UserSettings userSettings ) {
     mHardwareImages = hardwareImages;
 
     final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
@@ -85,6 +83,9 @@ public final class EventHandler implements PropertyChangeListener {
           () -> mHardwareImages.get( KEY_REGULAR ).add( label )
       );
     }
+
+    final var modifierDelay = userSettings.getDelayKeyModifier();
+    final var regularDelay = userSettings.getDelayKeyRegular();
 
     for( final var key : HardwareSwitch.keyboardSwitches() ) {
       final var delay = key.isModifier() ? modifierDelay : regularDelay;
