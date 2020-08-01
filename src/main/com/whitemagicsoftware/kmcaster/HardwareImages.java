@@ -95,14 +95,10 @@ public final class HardwareImages {
       final var stateOn = state( key, SWITCH_PRESSED );
       final var stateOff = state( key, SWITCH_RELEASED );
 
-      try {
-        final var imageDn = mouseImage( key.toString() );
-        mouseStates.put( stateOn, imageDn.getKey() );
-        mouseStates.put( stateOff, mouseReleased.getKey() );
-        mSwitches.put( key, mouseStates );
-      } catch( final Exception e ) {
-        // Not all mouse buttons map to images.
-      }
+      final var imageDn = mouseImage( key.toString() );
+      mouseStates.put( stateOn, imageDn.getKey() );
+      mouseStates.put( stateOff, mouseReleased.getKey() );
+      mSwitches.put( key, mouseStates );
     }
 
     for( final var key : HardwareSwitch.keyboardSwitches() ) {

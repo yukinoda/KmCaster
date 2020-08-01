@@ -28,6 +28,7 @@ public final class MouseListener
     mSwitches.put( MOUSE_LEFT, false );
     mSwitches.put( MOUSE_MIDDLE, false );
     mSwitches.put( MOUSE_RIGHT, false );
+    mSwitches.put( MOUSE_REGULAR, false );
   }
 
   public void nativeMousePressed( final NativeMouseEvent e ) {
@@ -39,7 +40,7 @@ public final class MouseListener
   }
 
   public void nativeMouseWheelMoved( final NativeMouseWheelEvent e ) {
-//    System.out.println( "Mouse Scroll: " + e.getWheelRotation() );
+    //dispatchMouseEvent( e, e.getWheelRotation() );
   }
 
   /**
@@ -49,9 +50,7 @@ public final class MouseListener
    * @param pressed {@code true} means pressed, {@code false} means released.
    */
   private void dispatchMouseEvent(
-      final NativeMouseEvent e,
-      final boolean pressed ) {
-
+      final NativeMouseEvent e, final boolean pressed ) {
     try {
       final var id = Integer.toString( e.getButton() );
       final var hwSwitch = HardwareSwitch.valueFrom( id );
@@ -60,7 +59,8 @@ public final class MouseListener
       mSwitches.put( hwSwitch, pressed );
     } catch( final Exception ex ) {
       // The mouse button wasn't found. This means that there is no visual
-      // representation for the button, so the event can be silently ignored.
+      // representation for the button, so pass up the generic brand instead.
+      //tryFire( MOUSE_REGULAR, mSwitches.get( MOUSE_REGULAR ), pressed );
     }
   }
 

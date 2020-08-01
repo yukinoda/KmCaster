@@ -38,7 +38,7 @@ public enum HardwareSwitch {
   MOUSE_LEFT( "1" ),
   MOUSE_MIDDLE( "2" ),
   MOUSE_RIGHT( "3" ),
-  MOUSE_REGULAR( "4" ),
+  MOUSE_REGULAR( "regular" ),
   KEY_SHIFT( "shift", SHIFT_MASK ),
   KEY_CTRL( "ctrl", CTRL_MASK ),
   KEY_ALT( "alt", ALT_MASK ),
