@@ -100,8 +100,7 @@ public final class HardwareImages {
         mouseStates.put( stateOn, imageDn.getKey() );
         mouseStates.put( stateOff, mouseReleased.getKey() );
         mSwitches.put( key, mouseStates );
-      }
-      catch( final Exception e ) {
+      } catch( final Exception e ) {
         // Not all mouse buttons map to images.
       }
     }
@@ -115,12 +114,12 @@ public final class HardwareImages {
       final var insets = new PaddedInsets( SWITCH_INSETS.get( key ) );
       final var scaledInsets = insets.scale( scale );
 
-      final var hardwareComponent = createHardwareComponent( scaledInsets );
+      final var component = createHardwareComponent( scaledInsets );
 
-      hardwareComponent.put( stateOn, imageDn.getKey() );
-      hardwareComponent.put( stateOff, imageUp.getKey() );
+      component.put( stateOn, imageDn.getKey() );
+      component.put( stateOff, imageUp.getKey() );
 
-      mSwitches.put( key, hardwareComponent );
+      mSwitches.put( key, component );
     }
   }
 

@@ -56,19 +56,20 @@ public final class UserSettings implements Callable<Integer> {
    */
   @CommandLine.Option(
       names = {"-s", "--size"},
-      description = "Application size (${DEFAULT-VALUE} pixels)",
+      description =
+          "Application size (${DEFAULT-VALUE} pixels)",
       paramLabel = "height",
       defaultValue = "100"
   )
   private int mHeight = 100;
 
   /**
-   * Milliseconds to wait before releasing (clearing) the regular key.
+   * Milliseconds to wait before releasing (clearing) a regular key.
    */
   @CommandLine.Option(
       names = {"-a", "--delay-alphanum"},
-      description = "Delay for releasing non-modifier keys (${DEFAULT-VALUE} " +
-          "milliseconds)",
+      description =
+          "Delay for releasing regular keys (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "250"
   )
@@ -79,20 +80,20 @@ public final class UserSettings implements Callable<Integer> {
    */
   @CommandLine.Option(
       names = {"-m", "--delay-modifier"},
-      description = "Delay for releasing modifier keys (${DEFAULT-VALUE} " +
-          "milliseconds)",
+      description =
+          "Delay for releasing modifier keys (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "150"
   )
   private int mDelayKeyModifier = 150;
 
   /**
-   * Milliseconds to wait before releasing (clearing) any mouse button.
+   * Milliseconds to wait before releasing (clearing) a mouse button.
    */
   @CommandLine.Option(
       names = {"-b", "--delay-button"},
-      description = "Delay for releasing mouse buttons (${DEFAULT-VALUE} " +
-          "milliseconds)",
+      description =
+          "Delay for releasing mouse buttons (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "200"
   )
@@ -116,15 +117,6 @@ public final class UserSettings implements Callable<Integer> {
     return 0;
   }
 
-  /**
-   * This will return the user-specified height
-   *
-   * @return The application height, in pixels.
-   */
-  public int getHeight() {
-    return mHeight < MIN_HEIGHT_PX ? MIN_HEIGHT_PX : mHeight;
-  }
-
   public int getDelayKeyRegular() {
     return mDelayKeyRegular;
   }
@@ -139,5 +131,14 @@ public final class UserSettings implements Callable<Integer> {
 
   public Dimension createAppDimensions() {
     return new Dimension( 1024 + getHeight(), getHeight() );
+  }
+
+  /**
+   * This will return the user-specified height
+   *
+   * @return The application height, in pixels.
+   */
+  private int getHeight() {
+    return mHeight < MIN_HEIGHT_PX ? MIN_HEIGHT_PX : mHeight;
   }
 }
