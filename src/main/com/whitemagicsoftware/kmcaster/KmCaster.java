@@ -106,8 +106,8 @@ public final class KmCaster extends JFrame {
     for( final var hwSwitch : HardwareSwitch.values() ) {
       final var component = hardwareImages.get( hwSwitch );
 
-      // If there is no image for the switch, it may be a a mouse button
-      // without a direct visual representation.
+      // If there is no image for the switch, it may be a mouse button without
+      // a direct visual representation.
       if( component != null ) {
         panel.add( component );
       }

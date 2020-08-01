@@ -84,13 +84,18 @@ public final class EventHandler implements PropertyChangeListener {
       );
     }
 
-    final var modifierDelay = userSettings.getDelayKeyModifier();
-    final var regularDelay = userSettings.getDelayKeyRegular();
+    final var delayModifier = userSettings.getDelayKeyModifier();
+    final var delayRegular = userSettings.getDelayKeyRegular();
+    final var delayButton = userSettings.getDelayMouseButton();
 
     for( final var key : HardwareSwitch.keyboardSwitches() ) {
-      final var delay = key.isModifier() ? modifierDelay : regularDelay;
+      final var delay = key.isModifier() ? delayModifier : delayRegular;
 
       mTimers.put( key, new ResetTimer( delay ) );
+    }
+
+    for( final var key : HardwareSwitch.mouseSwitches() ) {
+      mTimers.put( key, new ResetTimer( delayButton ) );
     }
   }
 

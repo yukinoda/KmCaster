@@ -31,8 +31,6 @@ import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -224,8 +222,6 @@ public final class KeyboardListener
     }
   }
 
-  final Object mMutex = new Object();
-
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
     final var modifierKey = getModifierKey( e );
@@ -236,25 +232,6 @@ public final class KeyboardListener
     else {
       updateModifier( modifierKey, -1 );
     }
-  }
-
-  /**
-   * Convenience method to start a one-time action at a relative time in
-   * the future.
-   *
-   * @param delay    When to perform the action.
-   * @param listener The listener that will perform some future action.
-   * @return The {@link Timer} that will perform a one-time action.
-   */
-  @SuppressWarnings("SameParameterValue")
-  private Timer delayedAction(
-      final int delay, final ActionListener listener ) {
-    final var timer = new Timer( delay, listener );
-
-    timer.setRepeats( false );
-    timer.start();
-
-    return timer;
   }
 
   /**
