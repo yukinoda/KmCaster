@@ -136,9 +136,9 @@ public final class EventHandler implements PropertyChangeListener {
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
 
-    if( hwSwitch.isKeyboard() ) {
-      final var timer = getTimer( hwSwitch );
+    final var timer = getTimer( hwSwitch );
 
+    if( hwSwitch.isKeyboard() ) {
       if( hwState == SWITCH_RELEASED ) {
         timer.addActionListener(
             ( event ) -> updateKeyboardLabel( switchState )
@@ -150,7 +150,15 @@ public final class EventHandler implements PropertyChangeListener {
       }
     }
     else {
-      updateSwitchState( switchState );
+      if( hwState == SWITCH_RELEASED ) {
+        timer.addActionListener(
+            ( event ) -> updateSwitchState( switchState )
+        );
+      }
+      else {
+        timer.stop();
+        updateSwitchState( switchState );
+      }
     }
   }
 
