@@ -32,8 +32,6 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.ui.Constants.INSETS_EMPTY;
-
 /**
  * Responsible for drawing an image based on a state; the state can be
  * changed at any time.
@@ -55,18 +53,6 @@ public final class HardwareComponent<S, I extends Image> extends JComponent {
   private final Insets mInsets;
 
   private Dimension mPreferredSize;
-
-  /**
-   * Constructs a new {@link HardwareComponent} without an initial state. The
-   * initial state must be set by calling {@link #setState(Object)}
-   * or {@link #put(Object, Image)} before drawing the image.
-   * <p>
-   * The default insets will be empty.
-   * </p>
-   */
-  public HardwareComponent() {
-    this( INSETS_EMPTY );
-  }
 
   /**
    * Constructs a new {@link HardwareComponent} without an initial state. The

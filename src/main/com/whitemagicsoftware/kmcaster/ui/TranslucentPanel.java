@@ -50,16 +50,13 @@ public final class TranslucentPanel extends JPanel {
    */
   @Override
   public void paintComponent( final Graphics g ) {
-    super.paintComponent( g );
-
     final var graphics = (Graphics2D) g;
+    final var r = graphics.getClipBounds();
 
     // https://docs.oracle.com/javase/tutorial/2d/advanced/compositing.html
     graphics.setComposite( AlphaComposite.Src );
     graphics.setBackground( TRANSLUCENT );
     graphics.setColor( TRANSPARENT );
-
-    final var r = graphics.getClipBounds();
     graphics.fillRect( r.x, r.y, r.width, r.height );
   }
 }

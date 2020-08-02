@@ -81,10 +81,9 @@ public final class HardwareImages {
 
   private final Dimension mAppDimensions;
 
-  private final Map<
-      HardwareSwitch,
-      HardwareComponent<HardwareSwitchState, Image>
-      > mSwitches = new HashMap<>();
+  private final Map
+      <HardwareSwitch, HardwareComponent<HardwareSwitchState, Image>>
+      mSwitches = new HashMap<>();
 
   public HardwareImages( final UserSettings userSettings ) {
     mAppDimensions = userSettings.createAppDimensions();

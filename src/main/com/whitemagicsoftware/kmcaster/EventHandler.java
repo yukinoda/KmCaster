@@ -34,15 +34,19 @@ import com.whitemagicsoftware.kmcaster.util.ConsecutiveEventCounter;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Deque;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.KEY_REGULAR;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.MOUSE_UNDEFINED;
 import static com.whitemagicsoftware.kmcaster.LabelConfig.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static java.awt.Toolkit.getDefaultToolkit;
+import static javax.swing.RepaintManager.currentManager;
 import static javax.swing.SwingUtilities.invokeLater;
 
 /**
@@ -58,6 +62,12 @@ public final class EventHandler implements PropertyChangeListener {
       SWITCH_PRESSED, COLOUR_KEY_DN,
       SWITCH_RELEASED, COLOUR_KEY_UP
   );
+
+  /**
+   * This is used to temporarily set the mouse to the released state.
+   */
+  private static final HardwareSwitchState MOUSE_RELEASED =
+      new HardwareSwitchState( MOUSE_UNDEFINED, SWITCH_RELEASED );
 
   private final HardwareImages mHardwareImages;
   private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
@@ -117,6 +127,8 @@ public final class EventHandler implements PropertyChangeListener {
     );
   }
 
+  private final Deque<HardwareSwitch> mMousePressed = new LinkedList<>();
+
   /**
    * Called to update the user interface after a keyboard or mouse event
    * has fired. This must be invoked from Swing's event dispatch thread.
@@ -152,13 +164,15 @@ public final class EventHandler implements PropertyChangeListener {
     }
     else {
       if( hwState == SWITCH_RELEASED ) {
+        mMousePressed.remove( hwSwitch );
         timer.addActionListener(
-            ( event ) -> updateMouseLabel( switchState )
+            ( event ) -> updateMouseStatus( switchState )
         );
       }
       else {
         timer.stop();
-        updateMouseLabel( switchState );
+        mMousePressed.add( hwSwitch );
+        updateMouseStatus( switchState );
       }
     }
   }
@@ -237,17 +251,33 @@ public final class EventHandler implements PropertyChangeListener {
     }
   }
 
-  private void updateMouseLabel( final HardwareSwitchState state ) {
-    updateSwitchState( state );
-
+  private void updateMouseStatus( final HardwareSwitchState switchState ) {
+    final var container = getHardwareComponent( MOUSE_RELEASED );
+    final var rm = currentManager( container );
     final var button = getLabel( LABEL_MOUSE_UNDEFINED );
-    button.setVisible( false );
+    final var hwSwitch = switchState.getHardwareSwitch();
+    final var hwState = switchState.getHardwareState();
 
-    if( state.getHardwareSwitch() == MOUSE_UNDEFINED &&
-        state.getHardwareState() == SWITCH_PRESSED ) {
-      button.setText( state.getValue() );
-      button.transform();
-      button.setVisible( true );
+    if( hwSwitch == MOUSE_UNDEFINED ) {
+      if( hwState == SWITCH_PRESSED ) {
+        button.setText( switchState.getValue() );
+        button.transform();
+        button.setVisible( true );
+      }
+      else {
+        button.setVisible( false );
+      }
+    }
+
+    container.setState( new HardwareSwitchState( hwSwitch, SWITCH_RELEASED ) );
+    rm.paintDirtyRegions();
+
+    for( final var mouseSwitch : mMousePressed ) {
+      final var buttonState = new HardwareSwitchState(
+          mouseSwitch, SWITCH_PRESSED );
+
+      container.setState( buttonState );
+      rm.paintDirtyRegions();
     }
   }
 

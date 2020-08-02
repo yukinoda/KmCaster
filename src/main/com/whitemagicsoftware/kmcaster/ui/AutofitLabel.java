@@ -139,7 +139,7 @@ public final class AutofitLabel extends JLabel {
     final var dstWidthPx = getWidth();
     final var dstHeightPx = getHeight();
 
-    // Derived using a binary search algorithm to minimize text width lookups.
+    // Derived using a binary search to minimize text width lookups.
     var scaledFont = getFont();
 
     var scaledPt = scaledFont.getSize();

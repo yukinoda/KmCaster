@@ -116,4 +116,13 @@ public final class HardwareSwitchState {
   public int hashCode() {
     return 31 * mHardwareSwitch.hashCode() + mHardwareState.hashCode();
   }
+
+  @Override
+  public String toString() {
+    return "HardwareSwitchState{" +
+        "mHardwareSwitch=" + mHardwareSwitch +
+        ", mHardwareState=" + mHardwareState +
+        ", mValue='" + mValue + '\'' +
+        '}';
+  }
 }

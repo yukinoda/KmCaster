@@ -51,6 +51,11 @@ public final class MouseListener
   }
 
   /**
+   * Most recently pressed non-mapped button value, empty signifies release.
+   */
+  private String mUndefined = "";
+
+  /**
    * Called to send a mouse event to all listeners.
    *
    * @param e       The mouse event that was most recently triggered.
@@ -66,9 +71,10 @@ public final class MouseListener
     if( hwSwitch == MOUSE_UNDEFINED ) {
       final var button = Integer.toString( e.getButton() );
       final var n = pressed ? button : "";
-      final var o = pressed ? "" : button;
+      final var o = pressed ? mUndefined : button;
 
       fire( hwSwitch, o, n );
+      mUndefined = n;
     }
     else {
       tryFire( hwSwitch, mSwitches.get( hwSwitch ), pressed );
