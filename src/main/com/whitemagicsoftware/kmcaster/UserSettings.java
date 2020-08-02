@@ -69,7 +69,7 @@ public final class UserSettings implements Callable<Integer> {
   @CommandLine.Option(
       names = {"-a", "--delay-alphanum"},
       description =
-          "Delay for releasing regular keys (${DEFAULT-VALUE} milliseconds)",
+          "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "250"
   )
@@ -81,7 +81,7 @@ public final class UserSettings implements Callable<Integer> {
   @CommandLine.Option(
       names = {"-m", "--delay-modifier"},
       description =
-          "Delay for releasing modifier keys (${DEFAULT-VALUE} milliseconds)",
+          "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "150"
   )
@@ -93,7 +93,7 @@ public final class UserSettings implements Callable<Integer> {
   @CommandLine.Option(
       names = {"-b", "--delay-button"},
       description =
-          "Delay for releasing mouse buttons (${DEFAULT-VALUE} milliseconds)",
+          "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
       defaultValue = "100"
   )
