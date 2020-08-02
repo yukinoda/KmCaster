@@ -9,7 +9,9 @@ import org.jnativehook.mouse.NativeMouseWheelListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.MOUSE_UNDEFINED;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.mouseSwitches;
+import static java.util.Map.entry;
 
 /**
  * Listens for all mouse events: clicks and mouse wheel scrolls.
@@ -18,6 +20,12 @@ public final class MouseListener
     extends PropertyDispatcher<HardwareSwitch>
     implements NativeMouseInputListener, NativeMouseWheelListener {
 
+  private final static Map<Integer, String> SCROLL_CODES =
+      Map.ofEntries(
+          entry( 1, "↑" ),
+          entry( -1, "↓" )
+      );
+
   /**
    * Stores the state of button presses. The contents of the map reflect the
    * state of each switch, so the reference can be final but not its contents.
@@ -25,10 +33,9 @@ public final class MouseListener
   private final Map<HardwareSwitch, Boolean> mSwitches = new HashMap<>();
 
   public MouseListener() {
-    mSwitches.put( MOUSE_LEFT, false );
-    mSwitches.put( MOUSE_MIDDLE, false );
-    mSwitches.put( MOUSE_RIGHT, false );
-    mSwitches.put( MOUSE_REGULAR, false );
+    for( final var key : mouseSwitches() ) {
+      mSwitches.put( key, false );
+    }
   }
 
   public void nativeMousePressed( final NativeMouseEvent e ) {
@@ -51,17 +58,32 @@ public final class MouseListener
    */
   private void dispatchMouseEvent(
       final NativeMouseEvent e, final boolean pressed ) {
-    try {
-      final var id = Integer.toString( e.getButton() );
-      final var hwSwitch = HardwareSwitch.valueFrom( id );
+    final var hwSwitch = getMouseSwitch( e );
 
-      tryFire( hwSwitch, mSwitches.get( hwSwitch ), pressed );
-      mSwitches.put( hwSwitch, pressed );
-    } catch( final Exception ex ) {
-      // The mouse button wasn't found. This means that there is no visual
-      // representation for the button, so pass up the generic brand instead.
-      //tryFire( MOUSE_REGULAR, mSwitches.get( MOUSE_REGULAR ), pressed );
+    // Percolate the button number as a string for any undefined (unmapped)
+    // mouse buttons that are clicked. This enables additional mouse
+    // buttons beyond two to appear, without an image representation.
+    if( hwSwitch == MOUSE_UNDEFINED ) {
+      final var button = Integer.toString( e.getButton() );
+      final var n = pressed ? button : "";
+      final var o = pressed ? "" : button;
+
+      fire( hwSwitch, o, n );
     }
+    else {
+      tryFire( hwSwitch, mSwitches.get( hwSwitch ), pressed );
+    }
+
+    mSwitches.put( hwSwitch, pressed );
+  }
+
+  private HardwareSwitch getMouseSwitch( final NativeMouseEvent e ) {
+    final var button = e.getButton();
+
+    return switch( button ) {
+      case 1, 2, 3 -> HardwareSwitch.valueFrom( Integer.toString( button ) );
+      default -> MOUSE_UNDEFINED;
+    };
   }
 
   /**

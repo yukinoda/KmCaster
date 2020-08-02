@@ -95,9 +95,9 @@ public final class UserSettings implements Callable<Integer> {
       description =
           "Delay for releasing mouse buttons (${DEFAULT-VALUE} milliseconds)",
       paramLabel = "delay",
-      defaultValue = "200"
+      defaultValue = "100"
   )
-  private int mDelayMouseButton = 200;
+  private int mDelayMouseButton = 100;
 
   public UserSettings( final KmCaster kmCaster ) {
     assert kmCaster != null;

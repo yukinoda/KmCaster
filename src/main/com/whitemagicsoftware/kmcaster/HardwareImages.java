@@ -73,7 +73,8 @@ public final class HardwareImages {
       KEY_ALT, new Insets( 10, 11, 12, 11 ),
       KEY_CTRL, new Insets( 10, 11, 12, 11 ),
       KEY_SHIFT, new Insets( 10, 50, 12, 11 ),
-      KEY_REGULAR, new Insets( 3, 7, 6, 7 )
+      KEY_REGULAR, new Insets( 3, 7, 6, 7 ),
+      MOUSE_UNDEFINED, new Insets( 27, 5, 11, 5 )
   );
 
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
@@ -88,8 +89,10 @@ public final class HardwareImages {
   public HardwareImages( final UserSettings userSettings ) {
     mAppDimensions = userSettings.createAppDimensions();
 
-    final var mouseStates = createHardwareComponent();
     final var mouseReleased = mouseImage( "0" );
+    final var mouseScale = mouseReleased.getValue();
+    final var mouseStates =
+        createHardwareComponent( MOUSE_UNDEFINED, mouseScale );
 
     for( final var key : HardwareSwitch.mouseSwitches() ) {
       final var stateOn = state( key, SWITCH_PRESSED );
@@ -107,25 +110,26 @@ public final class HardwareImages {
       final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
       final var imageUp = keyUpImage( FILE_NAME_PREFIXES.get( key ) );
       final var scale = imageDn.getValue();
-      final var insets = new PaddedInsets( SWITCH_INSETS.get( key ) );
-      final var scaledInsets = insets.scale( scale );
+      final var keyStates = createHardwareComponent( key, scale );
 
-      final var component = createHardwareComponent( scaledInsets );
+      keyStates.put( stateOn, imageDn.getKey() );
+      keyStates.put( stateOff, imageUp.getKey() );
 
-      component.put( stateOn, imageDn.getKey() );
-      component.put( stateOff, imageUp.getKey() );
-
-      mSwitches.put( key, component );
+      mSwitches.put( key, keyStates );
     }
   }
 
-  private HardwareComponent<HardwareSwitchState, Image> createHardwareComponent() {
-    return new HardwareComponent<>();
+  private PaddedInsets createInsets( final HardwareSwitch hwSwitch ) {
+    return new PaddedInsets( SWITCH_INSETS.get( hwSwitch ) );
   }
 
   private HardwareComponent<HardwareSwitchState, Image> createHardwareComponent(
-      final Insets insets ) {
-    return new HardwareComponent<>( insets );
+      final HardwareSwitch hwSwitch,
+      final DimensionTuple scale ) {
+    final var insets = createInsets( hwSwitch );
+    final var scaledInsets = insets.scale( scale );
+
+    return new HardwareComponent<>( scaledInsets );
   }
 
   public HardwareComponent<HardwareSwitchState, Image> get(

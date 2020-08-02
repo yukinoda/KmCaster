@@ -38,7 +38,7 @@ public enum HardwareSwitch {
   MOUSE_LEFT( "1" ),
   MOUSE_MIDDLE( "2" ),
   MOUSE_RIGHT( "3" ),
-  MOUSE_REGULAR( "regular" ),
+  MOUSE_UNDEFINED( "undefined" ),
   KEY_SHIFT( "shift", SHIFT_MASK ),
   KEY_CTRL( "ctrl", CTRL_MASK ),
   KEY_ALT( "alt", ALT_MASK ),
@@ -137,13 +137,13 @@ public enum HardwareSwitch {
   }
 
   /**
-   * Returns a list of all mouse buttons.
+   * Returns a list of mouse buttons.
    *
    * @return The complete list of mouse buttons.
    */
   public static HardwareSwitch[] mouseSwitches() {
     return new HardwareSwitch[]{
-        MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_REGULAR
+        MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_UNDEFINED
     };
   }
 

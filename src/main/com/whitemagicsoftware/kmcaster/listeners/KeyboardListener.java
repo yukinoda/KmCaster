@@ -215,10 +215,10 @@ public final class KeyboardListener
     final var modifierKey = getModifierKey( e );
 
     if( modifierKey == null ) {
-      updateRegular( mRegularHeld, getDisplayText( e ) );
+      dispatchRegular( mRegularHeld, getDisplayText( e ) );
     }
     else {
-      updateModifier( modifierKey, 1 );
+      dispatchModifier( modifierKey, 1 );
     }
   }
 
@@ -227,10 +227,10 @@ public final class KeyboardListener
     final var modifierKey = getModifierKey( e );
 
     if( modifierKey == null ) {
-      updateRegular( getDisplayText( e ), "" );
+      dispatchRegular( getDisplayText( e ), "" );
     }
     else {
-      updateModifier( modifierKey, -1 );
+      dispatchModifier( modifierKey, -1 );
     }
   }
 
@@ -259,7 +259,7 @@ public final class KeyboardListener
    * @param key       Must be a modifier key.
    * @param increment {@code -1} means released, {@code 1} means pressed.
    */
-  private void updateModifier( final HardwareSwitch key, final int increment ) {
+  private void dispatchModifier( final HardwareSwitch key, final int increment ) {
     final var oldCount = mModifiers.get( key );
     final var newCount = oldCount + increment;
 
@@ -274,7 +274,7 @@ public final class KeyboardListener
    * @param o Previous key value.
    * @param n Current key value.
    */
-  private void updateRegular( final String o, final String n ) {
+  private void dispatchRegular( final String o, final String n ) {
     assert o != null;
     assert n != null;
 

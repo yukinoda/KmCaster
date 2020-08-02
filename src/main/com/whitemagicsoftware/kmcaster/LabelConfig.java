@@ -10,16 +10,20 @@ import static java.util.Optional.*;
 import static javax.swing.SwingConstants.*;
 
 /**
- * Used for initializing the {@link AutofitLabel} instances.
+ * Used for initializing the {@link AutofitLabel} instances. Labels are
+ * centre-aligned vertically and horizontally by default. See also
+ * the hardware switch insets from {@link HardwareImages}, which defines
+ * the safe drawing area for each label.
  */
 public enum LabelConfig {
-  LABEL_SHIFT( KEY_SHIFT, CENTER, CENTER ),
-  LABEL_CTRL( KEY_CTRL, CENTER, CENTER ),
-  LABEL_ALT( KEY_ALT, CENTER, CENTER ),
-  LABEL_REGULAR( KEY_REGULAR, CENTER, CENTER ),
-  LABEL_REGULAR_NUM_MAIN( CENTER, CENTER ),
+  LABEL_SHIFT( KEY_SHIFT ),
+  LABEL_CTRL( KEY_CTRL ),
+  LABEL_ALT( KEY_ALT ),
+  LABEL_REGULAR( KEY_REGULAR ),
+  LABEL_REGULAR_NUM_MAIN(),
   LABEL_REGULAR_NUM_SUPERSCRIPT( TOP, LEFT ),
-  LABEL_REGULAR_COUNTER( TOP, RIGHT );
+  LABEL_REGULAR_COUNTER( TOP, RIGHT ),
+  LABEL_MOUSE_UNDEFINED( MOUSE_UNDEFINED );
 
   /**
    * A value of {@code null} indicates multiple labels adorn the switch.
@@ -27,6 +31,22 @@ public enum LabelConfig {
   private final HardwareSwitch mHardwareSwitch;
   private final int mHorizontalAlign;
   private final int mVerticalAlign;
+
+  /**
+   * Centres the label vertically and horizontally.
+   */
+  LabelConfig() {
+    this( null );
+  }
+
+  /**
+   * Centres the label vertically and horizontally.
+   *
+   * @param hwSwitch The switch to associate with the single label.
+   */
+  LabelConfig( final HardwareSwitch hwSwitch ) {
+    this( hwSwitch, CENTER, CENTER );
+  }
 
   /**
    * Creates a configuration for a multi-label hardware switch (such as

@@ -39,7 +39,7 @@ import java.util.Map;
 
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
 import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.KEY_REGULAR;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.LabelConfig.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static java.awt.Toolkit.getDefaultToolkit;
@@ -136,6 +136,7 @@ public final class EventHandler implements PropertyChangeListener {
     final var switchState = new HardwareSwitchState(
         hwSwitch, hwState, switchValue );
 
+    // Get the mouse timer, modifier key timer, or non-modifier key timer.
     final var timer = getTimer( hwSwitch );
 
     if( hwSwitch.isKeyboard() ) {
@@ -152,12 +153,12 @@ public final class EventHandler implements PropertyChangeListener {
     else {
       if( hwState == SWITCH_RELEASED ) {
         timer.addActionListener(
-            ( event ) -> updateSwitchState( switchState )
+            ( event ) -> updateMouseLabel( switchState )
         );
       }
       else {
         timer.stop();
-        updateSwitchState( switchState );
+        updateMouseLabel( switchState );
       }
     }
   }
@@ -192,9 +193,9 @@ public final class EventHandler implements PropertyChangeListener {
       final var sup = getLabel( LABEL_REGULAR_NUM_SUPERSCRIPT );
       final var tally = getLabel( LABEL_REGULAR_COUNTER );
 
-      tally.setVisible( false );
       main.setVisible( false );
       sup.setVisible( false );
+      tally.setVisible( false );
 
       if( hwState == SWITCH_PRESSED ) {
         final var keyValue = state.getValue();
@@ -233,6 +234,20 @@ public final class EventHandler implements PropertyChangeListener {
           tally.setVisible( true );
         }
       }
+    }
+  }
+
+  private void updateMouseLabel( final HardwareSwitchState state ) {
+    updateSwitchState( state );
+
+    final var button = getLabel( LABEL_MOUSE_UNDEFINED );
+    button.setVisible( false );
+
+    if( state.getHardwareSwitch() == MOUSE_UNDEFINED &&
+        state.getHardwareState() == SWITCH_PRESSED ) {
+      button.setText( state.getValue() );
+      button.transform();
+      button.setVisible( true );
     }
   }
 
