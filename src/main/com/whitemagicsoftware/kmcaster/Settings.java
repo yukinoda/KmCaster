@@ -58,7 +58,7 @@ public final class Settings implements Callable<Integer> {
       names = {"-d", "--dimension"},
       description =
           "Application height (${DEFAULT-VALUE} pixels)",
-      paramLabel = "height",
+      paramLabel = "pixels",
       defaultValue = "100"
   )
   private int mHeight = 100;
@@ -70,7 +70,7 @@ public final class Settings implements Callable<Integer> {
       names = {"-a", "--delay-alphanum"},
       description =
           "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "delay",
+      paramLabel = "ms",
       defaultValue = "250"
   )
   private int mDelayKeyRegular = 250;
@@ -82,7 +82,7 @@ public final class Settings implements Callable<Integer> {
       names = {"-m", "--delay-modifier"},
       description =
           "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "delay",
+      paramLabel = "ms",
       defaultValue = "150"
   )
   private int mDelayKeyModifier = 150;
@@ -94,7 +94,7 @@ public final class Settings implements Callable<Integer> {
       names = {"-b", "--delay-button"},
       description =
           "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "delay",
+      paramLabel = "ms",
       defaultValue = "100"
   )
   private int mDelayMouseButton = 100;
@@ -103,10 +103,22 @@ public final class Settings implements Callable<Integer> {
    * Milliseconds to wait before releasing (clearing) a mouse scroll event.
    */
   @CommandLine.Option(
+      names = {"-c", "--key-counter"},
+      description =
+          "Count repeated key presses (${DEFAULT-VALUE} times)",
+      paramLabel = "number",
+      defaultValue = "9"
+  )
+  private int mKeyCount = 9;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
+   */
+  @CommandLine.Option(
       names = {"-s", "--delay-scroll"},
       description =
           "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "delay",
+      paramLabel = "ms",
       defaultValue = "300"
   )
   private int mDelayMouseScroll = 300;
@@ -143,6 +155,10 @@ public final class Settings implements Callable<Integer> {
 
   public int getDelayMouseScroll() {
     return mDelayMouseScroll;
+  }
+
+  public int getKeyCount() {
+    return mKeyCount < 2 ? 2 : mKeyCount;
   }
 
   public Dimension createAppDimensions() {

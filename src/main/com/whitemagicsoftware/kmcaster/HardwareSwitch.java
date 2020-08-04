@@ -133,10 +133,6 @@ public enum HardwareSwitch {
     return isPrefix( "MOUSE_SCROLL" );
   }
 
-  private boolean isPrefix( final String key ) {
-    return name().startsWith( key );
-  }
-
   /**
    * Looks up the key that matches the given name, case-insensitively.
    *
@@ -213,5 +209,9 @@ public enum HardwareSwitch {
   @Override
   public String toString() {
     return mName;
+  }
+
+  private boolean isPrefix( final String key ) {
+    return name().startsWith( key );
   }
 }

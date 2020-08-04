@@ -70,10 +70,13 @@ public final class EventHandler implements PropertyChangeListener {
   private final HardwareImages mHardwareImages;
   private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
   private final Map<HardwareSwitch, ResetTimer> mTimers = new HashMap<>();
+  private final Deque<HardwareSwitch> mMouseActions = new LinkedList<>();
+  private final ConsecutiveEventCounter<String> mKeyCounter;
 
   public EventHandler(
       final HardwareImages hardwareImages, final Settings userSettings ) {
     mHardwareImages = hardwareImages;
+    mKeyCounter = new ConsecutiveEventCounter<>( userSettings.getKeyCount() );
 
     final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
 
@@ -117,8 +120,6 @@ public final class EventHandler implements PropertyChangeListener {
         }
     );
   }
-
-  private final Deque<HardwareSwitch> mMouseActions = new LinkedList<>();
 
   /**
    * Called to update the user interface after a keyboard or mouse event
@@ -165,13 +166,15 @@ public final class EventHandler implements PropertyChangeListener {
         mMouseActions.add( hwSwitch );
         updateMouseStatus( switchState );
 
+        // There are no "stop scrolling" events, so clear the scroll indicator
+        // after a few moments of inactivity.
         if( hwSwitch.isScroll() ) {
           timer.addActionListener(
               ( action ) -> {
-                final var sauce = e.getSource();
+                final var source = e.getSource();
                 final var name = e.getPropertyName();
                 final var event = new PropertyChangeEvent(
-                    sauce, name, true, false );
+                    source, name, true, false );
 
                 update( event );
               }
@@ -184,9 +187,6 @@ public final class EventHandler implements PropertyChangeListener {
   protected void updateSwitchState( final HardwareSwitchState switchState ) {
     getHardwareComponent( switchState ).setState( switchState );
   }
-
-  private final ConsecutiveEventCounter<String> mKeyCounter =
-      new ConsecutiveEventCounter<>( 9 );
 
   /**
    * Changes the text on labels when the state of a key changes.

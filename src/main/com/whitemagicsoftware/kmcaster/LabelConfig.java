@@ -24,7 +24,7 @@ public enum LabelConfig {
   LABEL_REGULAR_NUM_MAIN(),
   LABEL_REGULAR_NUM_SUPERSCRIPT( TOP, LEFT ),
   LABEL_REGULAR_COUNTER( TOP, RIGHT ),
-  LABEL_MOUSE_OTHER( MOUSE_EXTRA );
+  LABEL_MOUSE_EXTRA( MOUSE_EXTRA );
 
   /**
    * A value of {@code null} indicates multiple labels adorn the switch.
