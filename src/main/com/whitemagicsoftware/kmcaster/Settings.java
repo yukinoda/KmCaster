@@ -37,7 +37,7 @@ import java.util.concurrent.Callable;
     mixinStandardHelpOptions = true,
     description = "Displays key presses and mouse clicks on the screen."
 )
-@SuppressWarnings("FieldMayBeFinal")
+@SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
 public final class Settings implements Callable<Integer> {
   /**
    * Minimum application height, in pixels.

@@ -46,11 +46,6 @@ public final class Constants {
   public static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
 
   /**
-   * Default insets, has no padding.
-   */
-  public final static Insets INSETS_EMPTY = new Insets( 0, 0, 0, 0 );
-
-  /**
    * DejaVu Sans is the only free, open, sans serif font that supports all
    * the Unicode blocks used by the application. The font size will be scaled
    * dynamically to the window size, but should be sufficiently large for the

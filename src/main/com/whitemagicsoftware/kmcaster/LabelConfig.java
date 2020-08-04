@@ -56,6 +56,7 @@ public enum LabelConfig {
    * @param vAlign Vertical alignment.
    * @param hAlign Horizontal alignment.
    */
+  @SuppressWarnings("SameParameterValue")
   LabelConfig( final int vAlign, final int hAlign ) {
     this( null, vAlign, hAlign );
   }
