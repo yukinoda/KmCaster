@@ -124,11 +124,6 @@ public enum LabelConfig {
     return mHardwareSwitch == null ? " " : mHardwareSwitch.toTitleCase();
   }
 
-  private boolean isHardwareSwitch( final HardwareSwitch hwSwitch ) {
-    final var os = getHardwareSwitch();
-    return os.isPresent() && os.get() == hwSwitch;
-  }
-
   /**
    * Returns the number of values in the enumeration.
    *
@@ -136,5 +131,10 @@ public enum LabelConfig {
    */
   static int size() {
     return values().length;
+  }
+
+  private boolean isHardwareSwitch( final HardwareSwitch hwSwitch ) {
+    final var os = getHardwareSwitch();
+    return os.isPresent() && os.get() == hwSwitch;
   }
 }
