@@ -142,6 +142,7 @@ public final class EventHandler implements PropertyChangeListener {
 
     // Get the mouse timer, modifier key timer, or non-modifier key timer.
     final var timer = getTimer( hwSwitch );
+    timer.stop();
 
     if( hwSwitch.isKeyboard() ) {
       if( hwState == SWITCH_RELEASED ) {
@@ -150,7 +151,6 @@ public final class EventHandler implements PropertyChangeListener {
         );
       }
       else {
-        timer.stop();
         updateKeyboardLabel( switchState );
       }
     }
@@ -162,7 +162,6 @@ public final class EventHandler implements PropertyChangeListener {
         );
       }
       else {
-        timer.stop();
         mMouseActions.add( hwSwitch );
         updateMouseStatus( switchState );
 
