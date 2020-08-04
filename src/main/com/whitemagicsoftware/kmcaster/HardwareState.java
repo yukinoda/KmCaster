@@ -27,19 +27,19 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
-import static java.lang.Boolean.*;
+import static java.lang.Boolean.FALSE;
 
 /**
  * Responsible for defining hardware switch states.
  */
 public enum HardwareState {
   /**
-   * Defines when a hardware switch is down.
+   * Indicates a hardware switch is down.
    */
   SWITCH_PRESSED,
 
   /**
-   * Defines when a hardware switch is up.
+   * Indicates a hardware switch is up.
    */
   SWITCH_RELEASED;
 

@@ -39,10 +39,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_PRESSED;
-import static com.whitemagicsoftware.kmcaster.HardwareState.SWITCH_RELEASED;
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.KEY_REGULAR;
-import static com.whitemagicsoftware.kmcaster.HardwareSwitch.MOUSE_UNDEFINED;
+import static com.whitemagicsoftware.kmcaster.HardwareState.*;
+import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.LabelConfig.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.*;
 import static java.awt.Toolkit.getDefaultToolkit;
@@ -67,14 +65,14 @@ public final class EventHandler implements PropertyChangeListener {
    * This is used to temporarily set the mouse to the released state.
    */
   private static final HardwareSwitchState MOUSE_RELEASED =
-      new HardwareSwitchState( MOUSE_UNDEFINED, SWITCH_RELEASED );
+      new HardwareSwitchState( MOUSE_EXTRA, SWITCH_RELEASED );
 
   private final HardwareImages mHardwareImages;
   private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
   private final Map<HardwareSwitch, ResetTimer> mTimers = new HashMap<>();
 
   public EventHandler(
-      final HardwareImages hardwareImages, final UserSettings userSettings ) {
+      final HardwareImages hardwareImages, final Settings userSettings ) {
     mHardwareImages = hardwareImages;
 
     final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
@@ -88,25 +86,18 @@ public final class EventHandler implements PropertyChangeListener {
 
       mLabels[ config.ordinal() ] = label;
 
-      config.getHardwareSwitch().ifPresentOrElse(
+      final var hwSwitch = config.getHardwareSwitch();
+
+      hwSwitch.ifPresentOrElse(
           s -> mHardwareImages.get( s ).add( label ),
           () -> mHardwareImages.get( KEY_REGULAR ).add( label )
       );
     }
 
-    final var delayModifier = userSettings.getDelayKeyModifier();
-    final var delayRegular = userSettings.getDelayKeyRegular();
-    final var delayButton = userSettings.getDelayMouseButton();
-
-    for( final var key : HardwareSwitch.keyboardSwitches() ) {
-      final var delay = key.isModifier() ? delayModifier : delayRegular;
-
-      mTimers.put( key, new ResetTimer( delay ) );
-    }
-
-    for( final var key : HardwareSwitch.mouseSwitches() ) {
-      mTimers.put( key, new ResetTimer( delayButton ) );
-    }
+    putTimers( modifierSwitches(), userSettings.getDelayKeyModifier() );
+    putTimers( regularSwitches(), userSettings.getDelayKeyRegular() );
+    putTimers( mouseSwitches(), userSettings.getDelayMouseButton() );
+    putTimers( scrollSwitches(), userSettings.getDelayMouseScroll() );
   }
 
   /**
@@ -127,7 +118,7 @@ public final class EventHandler implements PropertyChangeListener {
     );
   }
 
-  private final Deque<HardwareSwitch> mMousePressed = new LinkedList<>();
+  private final Deque<HardwareSwitch> mMouseActions = new LinkedList<>();
 
   /**
    * Called to update the user interface after a keyboard or mouse event
@@ -164,15 +155,28 @@ public final class EventHandler implements PropertyChangeListener {
     }
     else {
       if( hwState == SWITCH_RELEASED ) {
-        mMousePressed.remove( hwSwitch );
+        mMouseActions.remove( hwSwitch );
         timer.addActionListener(
             ( event ) -> updateMouseStatus( switchState )
         );
       }
       else {
         timer.stop();
-        mMousePressed.add( hwSwitch );
+        mMouseActions.add( hwSwitch );
         updateMouseStatus( switchState );
+
+        if( hwSwitch.isScroll() ) {
+          timer.addActionListener(
+              ( action ) -> {
+                final var sauce = e.getSource();
+                final var name = e.getPropertyName();
+                final var event = new PropertyChangeEvent(
+                    sauce, name, true, false );
+
+                update( event );
+              }
+          );
+        }
       }
     }
   }
@@ -252,13 +256,13 @@ public final class EventHandler implements PropertyChangeListener {
   }
 
   private void updateMouseStatus( final HardwareSwitchState switchState ) {
-    final var container = getHardwareComponent( MOUSE_RELEASED );
-    final var rm = currentManager( container );
-    final var button = getLabel( LABEL_MOUSE_UNDEFINED );
     final var hwSwitch = switchState.getHardwareSwitch();
     final var hwState = switchState.getHardwareState();
 
-    if( hwSwitch == MOUSE_UNDEFINED ) {
+    if( hwSwitch == MOUSE_EXTRA ) {
+      final var config = LabelConfig.valueFrom( hwSwitch );
+      final var button = getLabel( config );
+
       if( hwState == SWITCH_PRESSED ) {
         button.setText( switchState.getValue() );
         button.transform();
@@ -269,14 +273,14 @@ public final class EventHandler implements PropertyChangeListener {
       }
     }
 
-    container.setState( new HardwareSwitchState( hwSwitch, SWITCH_RELEASED ) );
+    final var component = getHardwareComponent( MOUSE_RELEASED );
+    final var rm = currentManager( component );
+
+    component.setState( new HardwareSwitchState( hwSwitch, SWITCH_RELEASED ) );
     rm.paintDirtyRegions();
 
-    for( final var mouseSwitch : mMousePressed ) {
-      final var buttonState = new HardwareSwitchState(
-          mouseSwitch, SWITCH_PRESSED );
-
-      container.setState( buttonState );
+    for( final var action : mMouseActions ) {
+      component.setState( new HardwareSwitchState( action, SWITCH_PRESSED ) );
       rm.paintDirtyRegions();
     }
   }
@@ -300,6 +304,12 @@ public final class EventHandler implements PropertyChangeListener {
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
       final HardwareSwitchState state ) {
     return mHardwareImages.get( state.getHardwareSwitch() );
+  }
+
+  private void putTimers( final HardwareSwitch[] hwSwitches, final int delay ) {
+    for( final var hwSwitch : hwSwitches ) {
+      mTimers.put( hwSwitch, new ResetTimer( delay ) );
+    }
   }
 
   private AutofitLabel getLabel( final LabelConfig config ) {

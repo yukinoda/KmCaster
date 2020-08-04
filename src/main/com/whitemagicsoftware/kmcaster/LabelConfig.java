@@ -3,6 +3,7 @@ package com.whitemagicsoftware.kmcaster;
 import com.whitemagicsoftware.kmcaster.ui.AutofitLabel;
 
 import javax.swing.*;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
@@ -23,7 +24,7 @@ public enum LabelConfig {
   LABEL_REGULAR_NUM_MAIN(),
   LABEL_REGULAR_NUM_SUPERSCRIPT( TOP, LEFT ),
   LABEL_REGULAR_COUNTER( TOP, RIGHT ),
-  LABEL_MOUSE_UNDEFINED( MOUSE_UNDEFINED );
+  LABEL_MOUSE_OTHER( MOUSE_EXTRA );
 
   /**
    * A value of {@code null} indicates multiple labels adorn the switch.
@@ -74,6 +75,16 @@ public enum LabelConfig {
     mHorizontalAlign = hAlign;
   }
 
+  static LabelConfig valueFrom( final HardwareSwitch hwSwitch ) {
+    for( final var lc : values() ) {
+      if( lc.isHardwareSwitch( hwSwitch ) ) {
+        return lc;
+      }
+    }
+
+    throw new NoSuchElementException( hwSwitch.toTitleCase() );
+  }
+
   /**
    * If present, a return value indicates the switch has a single label and
    * is associated with it.
@@ -110,6 +121,11 @@ public enum LabelConfig {
    */
   String toTitleCase() {
     return mHardwareSwitch == null ? " " : mHardwareSwitch.toTitleCase();
+  }
+
+  private boolean isHardwareSwitch( final HardwareSwitch hwSwitch ) {
+    final var os = getHardwareSwitch();
+    return os.isPresent() && os.get() == hwSwitch;
   }
 
   /**

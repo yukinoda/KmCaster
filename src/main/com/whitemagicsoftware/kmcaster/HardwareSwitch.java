@@ -38,11 +38,33 @@ public enum HardwareSwitch {
   MOUSE_LEFT( "1" ),
   MOUSE_MIDDLE( "2" ),
   MOUSE_RIGHT( "3" ),
-  MOUSE_UNDEFINED( "undefined" ),
+  MOUSE_EXTRA( "extra" ),
+  MOUSE_SCROLL_U( "u" ),
+  MOUSE_SCROLL_D( "d" ),
+  MOUSE_SCROLL_L( "l" ),
+  MOUSE_SCROLL_R( "r" ),
   KEY_SHIFT( "shift", SHIFT_MASK ),
   KEY_CTRL( "ctrl", CTRL_MASK ),
   KEY_ALT( "alt", ALT_MASK ),
   KEY_REGULAR( "regular" );
+
+  private final static HardwareSwitch[] mMouseSwitches = {
+      MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_EXTRA,
+      MOUSE_SCROLL_U, MOUSE_SCROLL_D, MOUSE_SCROLL_L, MOUSE_SCROLL_R
+  };
+
+  private final static HardwareSwitch[] mScrollSwitches = {
+      MOUSE_SCROLL_U, MOUSE_SCROLL_D, MOUSE_SCROLL_L, MOUSE_SCROLL_R
+  };
+
+  private final static HardwareSwitch[] mKeyboardSwitches =
+      {KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_REGULAR};
+
+  private final static HardwareSwitch[] mModifierSwitches =
+      {KEY_SHIFT, KEY_CTRL, KEY_ALT};
+
+  private final static HardwareSwitch[] mRegularSwitches =
+      {KEY_REGULAR};
 
   /**
    * Indicates the switch is not a modifier.
@@ -99,7 +121,20 @@ public enum HardwareSwitch {
    * @return {@code true} when this is a keyboard key.
    */
   public boolean isKeyboard() {
-    return name().startsWith( "KEY" );
+    return isPrefix( "KEY" );
+  }
+
+  /**
+   * Answers whether this hardware switch represents a scroll "button".
+   *
+   * @return {@code true} to indicate a scrolling action occurred.
+   */
+  public boolean isScroll() {
+    return isPrefix( "MOUSE_SCROLL" );
+  }
+
+  private boolean isPrefix( final String key ) {
+    return name().startsWith( key );
   }
 
   /**
@@ -129,22 +164,33 @@ public enum HardwareSwitch {
    * @return The complete list of keyboard keys.
    */
   public static HardwareSwitch[] keyboardSwitches() {
-    return new HardwareSwitch[]{KEY_SHIFT, KEY_CTRL, KEY_ALT, KEY_REGULAR};
+    return mKeyboardSwitches;
   }
 
   public static HardwareSwitch[] modifierSwitches() {
-    return new HardwareSwitch[]{KEY_SHIFT, KEY_CTRL, KEY_ALT};
+    return mModifierSwitches;
+  }
+
+  public static HardwareSwitch[] regularSwitches() {
+    return mRegularSwitches;
   }
 
   /**
    * Returns a list of mouse buttons.
    *
-   * @return The complete list of mouse buttons.
+   * @return The complete list of mouse and scroll buttons.
    */
   public static HardwareSwitch[] mouseSwitches() {
-    return new HardwareSwitch[]{
-        MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_UNDEFINED
-    };
+    return mMouseSwitches;
+  }
+
+  /**
+   * Returns a list of scrolling direction indicators.
+   *
+   * @return The complete list of scroll direction indicators.
+   */
+  public static HardwareSwitch[] scrollSwitches() {
+    return mScrollSwitches;
   }
 
   /**

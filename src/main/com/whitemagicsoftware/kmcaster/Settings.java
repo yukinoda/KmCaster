@@ -38,7 +38,7 @@ import java.util.concurrent.Callable;
     description = "Displays key presses and mouse clicks on the screen."
 )
 @SuppressWarnings("FieldMayBeFinal")
-public final class UserSettings implements Callable<Integer> {
+public final class Settings implements Callable<Integer> {
   /**
    * Minimum application height, in pixels.
    */
@@ -55,9 +55,9 @@ public final class UserSettings implements Callable<Integer> {
    * is large enough, the application's window will adjust to fit.
    */
   @CommandLine.Option(
-      names = {"-s", "--size"},
+      names = {"-d", "--dimension"},
       description =
-          "Application size (${DEFAULT-VALUE} pixels)",
+          "Application height (${DEFAULT-VALUE} pixels)",
       paramLabel = "height",
       defaultValue = "100"
   )
@@ -99,7 +99,19 @@ public final class UserSettings implements Callable<Integer> {
   )
   private int mDelayMouseButton = 100;
 
-  public UserSettings( final KmCaster kmCaster ) {
+  /**
+   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
+   */
+  @CommandLine.Option(
+      names = {"-s", "--delay-scroll"},
+      description =
+          "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
+      paramLabel = "delay",
+      defaultValue = "300"
+  )
+  private int mDelayMouseScroll = 300;
+
+  public Settings( final KmCaster kmCaster ) {
     assert kmCaster != null;
 
     mKmCaster = kmCaster;
@@ -127,6 +139,10 @@ public final class UserSettings implements Callable<Integer> {
 
   public int getDelayMouseButton() {
     return mDelayMouseButton;
+  }
+
+  public int getDelayMouseScroll() {
+    return mDelayMouseScroll;
   }
 
   public Dimension createAppDimensions() {

@@ -68,7 +68,7 @@ import static picocli.CommandLine.Help.ColorScheme;
  */
 public final class KmCaster extends JFrame {
 
-  private final UserSettings mUserSettings = new UserSettings( this );
+  private final Settings mUserSettings = new Settings( this );
 
   /**
    * Constructs a window with the class name for its frame title.
@@ -143,7 +143,7 @@ public final class KmCaster extends JFrame {
     keyboardListener.initModifiers();
   }
 
-  private UserSettings getUserSettings() {
+  private Settings getUserSettings() {
     return mUserSettings;
   }
 

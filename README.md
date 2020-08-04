@@ -57,6 +57,17 @@ After installing Java, run the program as follows:
 java -jar kmcaster.jar
 ```
 
+To see the configuration options, run the program as follows:
+
+``` bash
+java -jar kmcaster.jar -h
+```
+
+To quit the application:
+
+1. Click the application to give it focus.
+1. Press `Alt+F4` to exit.
+
 ## Error Messages
 
 Java version 14 is required; earlier versions will display the following

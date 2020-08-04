@@ -74,7 +74,7 @@ public final class HardwareImages {
       KEY_CTRL, new Insets( 10, 11, 12, 11 ),
       KEY_SHIFT, new Insets( 10, 50, 12, 11 ),
       KEY_REGULAR, new Insets( 3, 7, 6, 7 ),
-      MOUSE_UNDEFINED, new Insets( 27, 5, 11, 5 )
+      MOUSE_EXTRA, new Insets( 27, 5, 11, 5 )
   );
 
   private final static SvgRasterizer sRasterizer = new SvgRasterizer();
@@ -85,25 +85,25 @@ public final class HardwareImages {
       <HardwareSwitch, HardwareComponent<HardwareSwitchState, Image>>
       mSwitches = new HashMap<>();
 
-  public HardwareImages( final UserSettings userSettings ) {
+  public HardwareImages( final Settings userSettings ) {
     mAppDimensions = userSettings.createAppDimensions();
 
     final var mouseReleased = mouseImage( "0" );
     final var mouseScale = mouseReleased.getValue();
     final var mouseStates =
-        createHardwareComponent( MOUSE_UNDEFINED, mouseScale );
+        createHardwareComponent( MOUSE_EXTRA, mouseScale );
 
-    for( final var key : HardwareSwitch.mouseSwitches() ) {
-      final var stateOn = state( key, SWITCH_PRESSED );
-      final var stateOff = state( key, SWITCH_RELEASED );
+    for( final var hwSwitch : mouseSwitches() ) {
+      final var stateOn = state( hwSwitch, SWITCH_PRESSED );
+      final var stateOff = state( hwSwitch, SWITCH_RELEASED );
+      final var imageDn = mouseImage( hwSwitch.toString() );
 
-      final var imageDn = mouseImage( key.toString() );
       mouseStates.put( stateOn, imageDn.getKey() );
       mouseStates.put( stateOff, mouseReleased.getKey() );
-      mSwitches.put( key, mouseStates );
+      mSwitches.put( hwSwitch, mouseStates );
     }
 
-    for( final var key : HardwareSwitch.keyboardSwitches() ) {
+    for( final var key : keyboardSwitches() ) {
       final var stateOn = state( key, SWITCH_PRESSED );
       final var stateOff = state( key, SWITCH_RELEASED );
       final var imageDn = keyDnImage( FILE_NAME_PREFIXES.get( key ) );
@@ -113,7 +113,6 @@ public final class HardwareImages {
 
       keyStates.put( stateOn, imageDn.getKey() );
       keyStates.put( stateOff, imageUp.getKey() );
-
       mSwitches.put( key, keyStates );
     }
   }
