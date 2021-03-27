@@ -25,5 +25,5 @@ cd kmcaster
 gradle clean build
 ```
 
-The application is built.
+The application is built as `build/libs/kmcaster.jar`.
 
