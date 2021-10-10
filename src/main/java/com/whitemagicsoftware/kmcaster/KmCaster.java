@@ -158,13 +158,13 @@ public final class KmCaster extends JFrame {
 
   private static ColorScheme createColourScheme() {
     return new ColorScheme.Builder()
-        .commands( Style.bold )
-        .options( Style.fg_blue, Style.bold )
-        .parameters( Style.fg_blue )
-        .optionParams( Style.italic )
-        .errors( Style.fg_red, Style.bold )
-        .stackTraces( Style.italic )
-        .build();
+      .commands( Style.bold )
+      .options( Style.fg_blue, Style.bold )
+      .parameters( Style.fg_blue )
+      .optionParams( Style.italic )
+      .errors( Style.fg_red, Style.bold )
+      .stackTraces( Style.italic )
+      .build();
   }
 
   /**
@@ -173,7 +173,7 @@ public final class KmCaster extends JFrame {
    * @param args Unused.
    */
   public static void main( final String[] args )
-      throws NativeHookException, IOException, URISyntaxException {
+    throws NativeHookException, IOException, URISyntaxException {
     initFonts();
     disableNativeHookLogger();
     registerNativeHook();

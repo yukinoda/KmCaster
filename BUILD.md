@@ -6,8 +6,9 @@ Build instructions for the application.
 
 Install the following:
 
-* [Gradle](https://gradle.org) version 6.7 or greater
-* [Git](https://git-scm.com) version 2.31.1 or greater
+* [JDK](https://jdk.java.net/16) 16 or greater
+* [Gradle](https://gradle.org) 6.7 or greater
+* [Git](https://git-scm.com) 2.31.1 or greater
 
 Ensure both Gradle and Git may be run from the command-line. This may
 entail setting the `PATH` environment variable.
