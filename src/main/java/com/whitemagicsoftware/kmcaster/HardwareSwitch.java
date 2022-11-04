@@ -29,7 +29,7 @@ package com.whitemagicsoftware.kmcaster;
 
 import java.util.NoSuchElementException;
 
-import static org.jnativehook.NativeInputEvent.*;
+import static com.github.kwhat.jnativehook.NativeInputEvent.*;
 
 /**
  * Used for compile-time binding between change listeners input events.

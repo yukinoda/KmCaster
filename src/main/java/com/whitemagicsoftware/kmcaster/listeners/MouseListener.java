@@ -27,20 +27,20 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import com.github.kwhat.jnativehook.mouse.NativeMouseEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseInputListener;
+import com.github.kwhat.jnativehook.mouse.NativeMouseWheelEvent;
+import com.github.kwhat.jnativehook.mouse.NativeMouseWheelListener;
 import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import com.whitemagicsoftware.kmcaster.util.Pair;
-import org.jnativehook.mouse.NativeMouseEvent;
-import org.jnativehook.mouse.NativeMouseInputListener;
-import org.jnativehook.mouse.NativeMouseWheelEvent;
-import org.jnativehook.mouse.NativeMouseWheelListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.kwhat.jnativehook.mouse.NativeMouseWheelEvent.WHEEL_HORIZONTAL_DIRECTION;
+import static com.github.kwhat.jnativehook.mouse.NativeMouseWheelEvent.WHEEL_VERTICAL_DIRECTION;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
-import static org.jnativehook.mouse.NativeMouseWheelEvent.WHEEL_HORIZONTAL_DIRECTION;
-import static org.jnativehook.mouse.NativeMouseWheelEvent.WHEEL_VERTICAL_DIRECTION;
 
 /**
  * Listens for all mouse events: clicks and mouse wheel scrolls.

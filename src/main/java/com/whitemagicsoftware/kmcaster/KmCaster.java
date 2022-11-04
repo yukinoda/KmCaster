@@ -27,12 +27,12 @@
  */
 package com.whitemagicsoftware.kmcaster;
 
+import com.github.kwhat.jnativehook.GlobalScreen;
+import com.github.kwhat.jnativehook.NativeHookException;
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
 import com.whitemagicsoftware.kmcaster.ui.TranslucentPanel;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi.Style;
 
@@ -41,19 +41,19 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static com.github.kwhat.jnativehook.GlobalScreen.*;
 import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
 import static java.util.logging.Level.OFF;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
-import static org.jnativehook.GlobalScreen.*;
 import static picocli.CommandLine.Help.ColorScheme;
 
 /**
  * This class is responsible for casting key presses and mouse clicks on the
  * screen. While there is a plethora of software out here that does this,
  * none meet all the following criteria: small size, easily positioned,
- * show single key stroke or chord, shows left/right mouse clicks, shows
+ * show single keystroke or chord, shows left/right mouse clicks, shows
  * release of modifier keys when quickly typing, and traps all keys typed
  * from within Sikuli.
  * <p>

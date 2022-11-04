@@ -51,8 +51,6 @@ sudo add-apt-repository ppa:linuxuprising/java
 sudo apt install openjdk-15-jdk
 ```
 
-
-
 # Download
 
 Download the latest Java Archive file:

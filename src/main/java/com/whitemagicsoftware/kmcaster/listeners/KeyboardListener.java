@@ -27,16 +27,16 @@
  */
 package com.whitemagicsoftware.kmcaster.listeners;
 
+import com.github.kwhat.jnativehook.keyboard.NativeKeyEvent;
+import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.whitemagicsoftware.kmcaster.HardwareSwitch;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.github.kwhat.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static java.util.Map.entry;
-import static org.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 
 /**
  * Responsible for sending property change events for keyboard state changes.
