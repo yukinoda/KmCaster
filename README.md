@@ -55,7 +55,7 @@ sudo apt install openjdk-15-jdk
 
 Download the latest Java Archive file:
 
-[Download](https://gitreleases.dev/gh/DaveJarvis/kmcaster/latest/kmcaster.jar)
+[Download](https://github.com/DaveJarvis/kmcaster/releases/latest/download/kmcaster.jar)
 
 # Running
 
