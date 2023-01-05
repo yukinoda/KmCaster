@@ -96,8 +96,10 @@ public final class MouseListener
       }
     }
 
-    tryFire( scrollSwitch, mSwitches.get( scrollSwitch ), true );
-    mSwitches.put( scrollSwitch, true );
+    if( scrollSwitch != null ) {
+      tryFire( scrollSwitch, mSwitches.get( scrollSwitch ), true );
+      mSwitches.put( scrollSwitch, true );
+    }
   }
 
   /**
@@ -142,6 +144,7 @@ public final class MouseListener
    *
    * @param e Ignored.
    */
+  @Override
   public void nativeMouseClicked( final NativeMouseEvent e ) {
   }
 
@@ -150,6 +153,7 @@ public final class MouseListener
    *
    * @param e Ignored.
    */
+  @Override
   public void nativeMouseMoved( final NativeMouseEvent e ) {
   }
 
@@ -158,6 +162,7 @@ public final class MouseListener
    *
    * @param e Ignored.
    */
+  @Override
   public void nativeMouseDragged( final NativeMouseEvent e ) {
   }
 }

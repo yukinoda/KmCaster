@@ -64,7 +64,7 @@ public final class EventHandler implements PropertyChangeListener {
   /**
    * This is used to temporarily set the mouse to the released state.
    */
-  private static final HardwareSwitchState MOUSE_RELEASED =
+  public static final HardwareSwitchState MOUSE_RELEASED =
       new HardwareSwitchState( MOUSE_EXTRA, SWITCH_RELEASED );
 
   private final HardwareImages mHardwareImages;
@@ -183,7 +183,7 @@ public final class EventHandler implements PropertyChangeListener {
     }
   }
 
-  protected void updateSwitchState( final HardwareSwitchState switchState ) {
+  private void updateSwitchState(final HardwareSwitchState switchState) {
     getHardwareComponent( switchState ).setState( switchState );
   }
 
@@ -192,8 +192,8 @@ public final class EventHandler implements PropertyChangeListener {
    *
    * @param state The key that has changed.
    */
-  protected synchronized void updateKeyboardLabel(
-      final HardwareSwitchState state ) {
+  private synchronized void updateKeyboardLabel(
+          final HardwareSwitchState state) {
     updateSwitchState( state );
     final var hwState = state.getHardwareState();
 
@@ -273,14 +273,14 @@ public final class EventHandler implements PropertyChangeListener {
     }
 
     final var component = getHardwareComponent( MOUSE_RELEASED );
-    final var rm = currentManager( component );
+    final var repaintManager = currentManager( component );
 
     component.setState( new HardwareSwitchState( hwSwitch, SWITCH_RELEASED ) );
-    rm.paintDirtyRegions();
+    repaintManager.paintDirtyRegions();
 
     for( final var action : mMouseActions ) {
       component.setState( new HardwareSwitchState( action, SWITCH_PRESSED ) );
-      rm.paintDirtyRegions();
+      repaintManager.paintDirtyRegions();
     }
   }
 

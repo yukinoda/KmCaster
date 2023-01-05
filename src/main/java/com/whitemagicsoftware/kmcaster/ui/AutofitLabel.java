@@ -29,6 +29,8 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
 import static java.lang.Math.floor;
@@ -66,7 +68,7 @@ public final class AutofitLabel extends JLabel {
    */
   public void transform( final int width, final int height ) {
     setSize( width, height );
-    setFont( computeScaledFont() );
+    setFont( computeScaledFontNew() );
 
     final var bounds = getParentBounds();
 
@@ -120,6 +122,44 @@ public final class AutofitLabel extends JLabel {
     transform( bounds.width, bounds.height );
   }
 
+  private Font computeScaledFontNew() {
+    final var font = getFont();
+    final var text = getText();
+
+    final var dstWidthPx = getWidth();
+    final var dstHeightPx = getHeight();
+
+    float shrink = 0;
+
+    Rectangle2D newExtents;
+    Font newFont;
+
+    do {
+      final var oldExtents = getTextExtents( text, font );
+      final var widthText = oldExtents.getWidth();
+      final var widthRatio = dstWidthPx / widthText;
+      final var widthFontSizeNew = (int) (font.getSize() * widthRatio);
+      final var widthFontSizeNorm = (float) Math.min( widthFontSizeNew, dstHeightPx );
+
+      newFont = font.deriveFont( widthFontSizeNorm - shrink );
+      newExtents = getTextExtents( text, newFont );
+      shrink++;
+    }
+    while( newExtents.getHeight() > dstHeightPx );
+
+    return newFont;
+  }
+
+  private double getTextWidth( final String text, final Font font ) {
+    return getTextExtents( text, font ).getWidth();
+  }
+
+  private Rectangle2D getTextExtents( final String text, final Font font ) {
+    final var transform = new AffineTransform();
+    final var context = new FontRenderContext( transform, true, true );
+    return font.getStringBounds( text, context );
+  }
+
   /**
    * Calculates a new {@link Font} size such that it fits within the bounds
    * of this label instance. This uses the label's current size, which must
@@ -149,28 +189,27 @@ public final class AutofitLabel extends JLabel {
     while( maxSizePt - minSizePt > 1 ) {
       scaledFont = scaledFont.deriveFont( (float) scaledPt );
 
-      final var bounds = getTextExtents( text, scaledFont, g );
+      final var bounds = getTextExtents( text, scaledFont );
       final var fontWidthPx = (int) bounds.getWidth();
       final var fontHeightPx = (int) bounds.getHeight();
 
       if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
         maxSizePt = scaledPt;
-      }
-      else {
+      } else {
         minSizePt = scaledPt;
       }
 
       scaledPt = (minSizePt + maxSizePt) / 2;
     }
 
-    g.dispose();
-
     // Round down to guarantee fit.
     scaledFont = scaledFont.deriveFont( (float) floor( scaledPt ) );
 
     // Recompute the bounds of the label based on the text extents that fit.
-    final var extents = getTextExtents( text, scaledFont, g );
+    final var extents = getTextExtents( text, scaledFont );
     setSize( (int) extents.getWidth(), (int) extents.getHeight() );
+
+    g.dispose();
 
     return scaledFont;
   }

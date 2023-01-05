@@ -79,6 +79,15 @@ public final class HardwareSwitchState {
   }
 
   /**
+   * Answers whether this is a mouse-related state change.
+   *
+   * @return {@code true} when this is a mouse state change.
+   */
+  public boolean isMouse() {
+    return mHardwareSwitch.isMouse();
+  }
+
+  /**
    * Returns the physical switch containing its name.
    *
    * @return The {@link HardwareSwitch} having a switch-dependent state.
@@ -115,5 +124,14 @@ public final class HardwareSwitchState {
   @Override
   public int hashCode() {
     return 31 * mHardwareSwitch.hashCode() + mHardwareState.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return getClass().getSimpleName() + "{" +
+        "mHardwareSwitch=" + mHardwareSwitch +
+        ", mHardwareState=" + mHardwareState +
+        ", mValue='" + mValue + '\'' +
+        '}';
   }
 }

@@ -34,8 +34,9 @@ import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.kwhat.jnativehook.keyboard.NativeKeyEvent.getKeyText;
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
 import static java.util.Map.entry;
 
 /**
@@ -48,14 +49,42 @@ public final class KeyboardListener
   private final static String KEY_BACKSPACE = "Back ⌫";
   private final static String KEY_TAB = "Tab ↹";
   private final static String KEY_ENTER = "Enter ⏎";
+  private static final String KEY_ESCAPE = "Esc";
+
+  private final static Map<Character, String> CHAR_CODES =
+    Map.ofEntries(
+      entry( '\b', KEY_BACKSPACE),
+      entry( '\t', KEY_TAB),
+      entry( '\r', KEY_ENTER ),
+      entry( '\u001B', KEY_ESCAPE),
+      entry( ' ', KEY_SPACE)
+    );
+
+  /**
+   * Shortens text strings from the keyboard library to fit the UI key.
+   */
+  private static final Map<String, String> TRANSLATE = Map.ofEntries(
+    entry( "Caps Lock", "Caps"),
+    entry( "Num Lock", "Num"),
+    entry( "Scroll Lock", "Scrl"),
+    entry( "Print Screen", "Print"),
+    entry( "Up","↑" ),
+    entry( "Down", "↓" ),
+    entry( "Left", "←" ),
+    entry( "Right", "→" )
+  );
 
   /**
    * The key is the raw key code return from the {@link NativeKeyEvent}, the
    * value is the human-readable text to display on screen.
    */
   @SuppressWarnings("JavacQuirks")
-  private final static Map<Integer, String> KEY_CODES =
+  private final static Map<Integer, String> RAW_CODES =
       Map.ofEntries(
+          entry( 8, KEY_BACKSPACE ),
+          entry( 9, KEY_TAB ),
+          entry( 13, KEY_ENTER ),
+          entry( 27, KEY_ESCAPE ),
           entry( 32, KEY_SPACE ),
           entry( 33, "!" ),
           entry( 34, "\"" ),
@@ -196,7 +225,7 @@ public final class KeyboardListener
    * An integer is used because keyboards usually have two separate keys for
    * each modifier, both can be pressed and released independently.
    */
-  private final Map<HardwareSwitch, Integer> mModifiers = new HashMap<>();
+  private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
 
   /**
    * Creates a keyboard listener that publishes events when keys are either
@@ -206,33 +235,49 @@ public final class KeyboardListener
    */
   public KeyboardListener() {
     for( final var key : modifierSwitches() ) {
-      mModifiers.put( key, 0 );
+      mModifiers.put( key, FALSE );
     }
+  }
+
+  /**
+   * Regular printable keys are passed into this method.
+   *
+   * @param e The native key event.
+   */
+  @Override
+  public void nativeKeyTyped( final NativeKeyEvent e ) {
+    final var key = getDisplayText( e.getKeyChar() );
+
+    dispatchRegular( mRegularHeld, key );
+    dispatchRegular( key, "" );
   }
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
-    final var modifierKey = getModifierKey( e );
+    dispatchModifiers(e, TRUE);
 
-    if( modifierKey == null ) {
-      dispatchRegular( mRegularHeld, getDisplayText( e ) );
-    }
-    else {
-      dispatchModifier( modifierKey, 1 );
+    if(e.isActionKey() && !isModifier(e)) {
+      final var key = translate(e);
+      dispatchRegular(mRegularHeld, key);
     }
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    final var modifierKey = getModifierKey( e );
+    dispatchModifiers(e, FALSE);
 
-    if( modifierKey == null ) {
-      dispatchRegular( getDisplayText( e ), "" );
-    }
-    else {
-      dispatchModifier( modifierKey, -1 );
+    if (e.isActionKey() && !isModifier(e)) {
+      final var key = translate(e);
+      dispatchRegular(key, "");
     }
   }
+
+  private String translate(final NativeKeyEvent e) {
+    final var keyCode = e.getKeyCode();
+    final var text = NativeKeyEvent.getKeyText(keyCode);
+    return TRANSLATE.getOrDefault(text, text);
+  }
+
 
   /**
    * Sets the initial state of the modifiers.
@@ -245,8 +290,36 @@ public final class KeyboardListener
       // events from "true" to "false" will cause the GUI to repaint with the
       // text label affixed to each key, drawn in the released state. This
       // happens before the frame is set to visible.
-      tryFire( key, state == 0, state == 1 );
+      tryFire( key, !state, state );
     }
+  }
+
+
+  /**
+   * Dispatches the modifier key that corresponds to the raw key code from
+   * the given event. This is necessary to ensure that both left and right
+   * modifier keys return the same {@link HardwareSwitch} value.
+   *
+   * @param e The event containing a raw key code to look up.
+   */
+  private void dispatchModifiers( final NativeKeyEvent e, final boolean pressed ) {
+    final var rawCode = e.getRawCode();
+
+    if (rawCode == 162 || rawCode == 163) {
+      dispatchModifier(KEY_CTRL, pressed);
+    }
+    if (rawCode == 160 || rawCode == 161) {
+      dispatchModifier(KEY_SHIFT, pressed);
+    }
+    if (rawCode == 164 || rawCode == 165) {
+      dispatchModifier(KEY_ALT, pressed);
+    }
+  }
+
+  private boolean isModifier(final NativeKeyEvent e) {
+    final var rawCode = e.getRawCode();
+
+    return rawCode >= 160 && rawCode <= 165;
   }
 
   /**
@@ -257,15 +330,15 @@ public final class KeyboardListener
    * fails to call this method.
    *
    * @param key       Must be a modifier key.
-   * @param increment {@code -1} means released, {@code 1} means pressed.
+   * @param newState {@link Boolean#FALSE} means released, {@link Boolean#TRUE}
+   * means pressed.
    */
-  private void dispatchModifier( final HardwareSwitch key, final int increment ) {
-    final var oldCount = mModifiers.get( key );
-    final var newCount = oldCount + increment;
+  private void dispatchModifier( final HardwareSwitch key, final boolean newState ) {
+    final var oldState = mModifiers.get( key );
 
     // Only fire the event if the state has changed.
-    tryFire( key, oldCount > 0, newCount > 0 );
-    mModifiers.put( key, newCount );
+    tryFire( key, oldState, newState );
+    mModifiers.put( key, newState );
   }
 
   /**
@@ -283,38 +356,7 @@ public final class KeyboardListener
     mRegularHeld = n;
   }
 
-  /**
-   * Looks up the key code for the given event. If the key code is not mapped,
-   * this will return the default value from the native implementation.
-   *
-   * @param e The keyboard event that was triggered.
-   * @return The human-readable name for the key relating to the event.
-   */
-  private String getDisplayText( final NativeKeyEvent e ) {
-    return KEY_CODES.getOrDefault(
-        e.getRawCode(), getKeyText( e.getKeyCode() )
-    );
-  }
-
-  /**
-   * Returns the modifier key that corresponds to the raw key code from
-   * the given event. This is necessary to ensure that both left and right
-   * modifier keys return the same {@link HardwareSwitch} value.
-   *
-   * @param e The event containing a raw key code to look up.
-   * @return The switch matching the raw key code, or {@code null} if the
-   * raw key code does not represent a modifier.
-   */
-  private HardwareSwitch getModifierKey( final NativeKeyEvent e ) {
-    return mModifierCodes.get( e.getRawCode() );
-  }
-
-  /**
-   * Unused. Key up and key down are tracked separately from a typed key.
-   *
-   * @param e Ignored.
-   */
-  @Override
-  public void nativeKeyTyped( final NativeKeyEvent e ) {
+  private String getDisplayText(final char keyChar ) {
+    return CHAR_CODES.getOrDefault(keyChar, String.valueOf(keyChar));
   }
 }
