@@ -30,33 +30,26 @@ package com.whitemagicsoftware.kmcaster.ui;
 import javax.swing.*;
 import java.awt.*;
 
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSPARENT;
-
 /**
  * Renders a panel---and its borders---as a translucent colour.
  */
 public final class TranslucentPanel extends JPanel {
-  public TranslucentPanel() {
-    setOpaque( true );
+  public TranslucentPanel( final int hgap, final int vgap ) {
+    final var layout = new FlowLayout();
+
+    layout.setHgap( hgap );
+    layout.setVgap( vgap );
+    setLayout( layout );
+    setOpaque( false );
   }
 
-  /**
-   * An alpha composite is required so that the "resting" mouse image (i.e.,
-   * no buttons pressed) will always be drawn such that any subsequent
-   * button presses will be drawn on top.
-   *
-   * @param g The graphics context to draw the translucent border upon.
-   */
   @Override
   public void paintComponent( final Graphics g ) {
-    final var graphics = (Graphics2D) g;
-    final var r = graphics.getClipBounds();
-
-    // https://docs.oracle.com/javase/tutorial/2d/advanced/compositing.html
-    graphics.setComposite( AlphaComposite.Src );
-    graphics.setBackground( TRANSLUCENT );
-    graphics.setColor( TRANSPARENT );
-    graphics.fillRect( r.x, r.y, r.width, r.height );
+    final var g2 = (Graphics2D) g;
+    g2.setComposite( AlphaComposite.Clear );
+    g2.setColor( getBackground() );
+    final var r = g2.getClipBounds();
+    g2.fillRect( r.x, r.y, r.width, r.height );
+    super.paintComponent( g2 );
   }
 }

@@ -32,6 +32,8 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.whitemagicsoftware.kmcaster.SvgRasterizer.RENDERING_HINTS;
+
 /**
  * Responsible for drawing an image based on a state; the state can be
  * changed at any time.
@@ -39,7 +41,7 @@ import java.util.Map;
  * @param <S> The type of state associated with an image.
  */
 public final class HardwareComponent
-    <S extends HardwareSwitchState, I extends Image> extends JComponent {
+  <S extends HardwareSwitchState, I extends Image> extends JComponent {
 
   private final Map<S, I> mStateImages = new HashMap<>();
 
@@ -68,13 +70,14 @@ public final class HardwareComponent
     assert insets != null;
 
     mInsets = insets;
+    setOpaque( true );
   }
 
   @Override
   public Dimension getPreferredSize() {
     return mPreferredSize == null
-        ? mPreferredSize = calcPreferredSize()
-        : mPreferredSize;
+      ? mPreferredSize = calcPreferredSize()
+      : mPreferredSize;
   }
 
   @Override
@@ -82,9 +85,16 @@ public final class HardwareComponent
     return mInsets;
   }
 
+  /**
+   * Draws the current status of the hardware switch for this widget.
+   */
   @Override
   protected void paintComponent( final Graphics g ) {
-    g.drawImage( getActiveImage(), 0, 0, this );
+    final var g2 = (Graphics2D) g.create();
+    g2.setRenderingHints( RENDERING_HINTS );
+    g2.setComposite( AlphaComposite.Src );
+    g2.drawImage( getActiveImage(), 0, 0, this );
+    g2.dispose();
   }
 
   /**
@@ -92,7 +102,7 @@ public final class HardwareComponent
    * changes the current state to the given state.
    *
    * @param hwSwitch The state to associate with an image.
-   * @param image The image to paint when the given state is selected.
+   * @param image    The image to paint when the given state is selected.
    */
   public void put( final S hwSwitch, final I image ) {
     getStateImages().put( hwSwitch, image );
@@ -125,7 +135,7 @@ public final class HardwareComponent
     final var image = getActiveImage();
 
     return new Dimension(
-        image.getWidth( null ), image.getHeight( null )
+      image.getWidth( null ), image.getHeight( null )
     );
   }
 

@@ -109,7 +109,8 @@
        id="stop16" />
   </radialGradient>
   <g
-     id="g1768">
+     id="g1768"
+     transform="translate(-0.14453,0.70410125)">
     <path
        id="path866"
        style="font-variation-settings:normal;vector-effect:none;fill:#515151;fill-opacity:1;stroke:#191d22;stroke-width:1.44;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;paint-order:markers fill stroke;stop-color:#000000"

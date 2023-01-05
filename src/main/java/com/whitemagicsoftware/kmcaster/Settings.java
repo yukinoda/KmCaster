@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 
 import static java.awt.Font.*;
 import static java.util.Map.entry;
+import static javax.swing.SwingUtilities.invokeLater;
 
 @CommandLine.Command(
   name = "KmCaster",
@@ -88,16 +89,16 @@ public final class Settings implements Callable<Integer> {
   private int mDelayMouseButton = 100;
 
   /**
-   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
+   * Background colour.
    */
   @CommandLine.Option(
-    names = {"-c", "--key-counter"},
+    names = {"-c", "--colour"},
     description =
-      "Count repeated key presses (${DEFAULT-VALUE} times)",
-    paramLabel = "number",
-    defaultValue = "9"
+      "Background colour, including alpha transparency (${DEFAULT-VALUE} RGBA)",
+    paramLabel = "hex",
+    defaultValue = "30303077"
   )
-  private int mKeyCount = 9;
+  private String mBackgroundColour = "30303077";
 
   /**
    * Application height in pixels. Images are scaled to this height, maintaining
@@ -114,7 +115,7 @@ public final class Settings implements Callable<Integer> {
   private int mHeight = 100;
 
   /**
-   * Application preferred font.
+   * Application preferred font name.
    */
   @CommandLine.Option(
     names = {"-f", "--font-name"},
@@ -126,10 +127,10 @@ public final class Settings implements Callable<Integer> {
   private String mFontName = "Inter";
 
   /**
-   * Application preferred font.
+   * Application preferred font style.
    */
   @CommandLine.Option(
-    names = {"--font-weight"},
+    names = {"--font-style"},
     description =
       "plain, bold, italic, bold+italic (${DEFAULT-VALUE})",
     paramLabel = "string",
@@ -150,6 +151,18 @@ public final class Settings implements Callable<Integer> {
   private int mDelayKeyModifier = 150;
 
   /**
+   * Number of times to count a key press before displaying +.
+   */
+  @CommandLine.Option(
+    names = {"-k", "--key-counter"},
+    description =
+      "Count repeated key presses (${DEFAULT-VALUE} times)",
+    paramLabel = "number",
+    defaultValue = "9"
+  )
+  private int mKeyCount = 9;
+
+  /**
    * Milliseconds to wait before releasing (clearing) a mouse scroll event.
    */
   @CommandLine.Option(
@@ -160,6 +173,30 @@ public final class Settings implements Callable<Integer> {
     defaultValue = "300"
   )
   private int mDelayMouseScroll = 300;
+
+  /**
+   * Amount of padding above and below the frame.
+   */
+  @CommandLine.Option(
+    names = {"--gap-horizontal"},
+    description =
+      "Amount of padding above and below frame (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "5"
+  )
+  private int mGapHorizontal = 5;
+
+  /**
+   * Amount of padding between items in the frame.
+   */
+  @CommandLine.Option(
+    names = {"--gap-vertical"},
+    description =
+      "Amount of padding between switches (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "5"
+  )
+  private int mGapVertical = 5;
 
   public Settings( final KmCaster kmCaster ) {
     assert kmCaster != null;
@@ -175,7 +212,7 @@ public final class Settings implements Callable<Integer> {
    */
   @Override
   public Integer call() {
-    mKmCaster.init();
+    invokeLater( mKmCaster::init );
     return 0;
   }
 
@@ -219,5 +256,17 @@ public final class Settings implements Callable<Integer> {
    */
   private int getHeight() {
     return mHeight < MIN_HEIGHT_PX ? MIN_HEIGHT_PX : mHeight;
+  }
+
+  public int getGapHorizontal() {
+    return mGapHorizontal;
+  }
+
+  public int getGapVertical() {
+    return mGapVertical;
+  }
+
+  public String getBackgroundColour() {
+    return mBackgroundColour;
   }
 }

@@ -40,30 +40,22 @@ import java.util.Map;
 
 import static java.awt.RenderingHints.*;
 import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
+import static java.util.Map.entry;
 
 /**
  * Responsible for converting SVG images into rasterized PNG images.
  */
 public final class SvgRasterizer {
-  private final static Map<Object, Object> RENDERING_HINTS = Map.of(
-      KEY_ANTIALIASING,
-      VALUE_ANTIALIAS_ON,
-      KEY_ALPHA_INTERPOLATION,
-      VALUE_ALPHA_INTERPOLATION_QUALITY,
-      KEY_COLOR_RENDERING,
-      VALUE_COLOR_RENDER_QUALITY,
-      KEY_DITHERING,
-      VALUE_DITHER_DISABLE,
-      KEY_FRACTIONALMETRICS,
-      VALUE_FRACTIONALMETRICS_ON,
-      KEY_INTERPOLATION,
-      VALUE_INTERPOLATION_BICUBIC,
-      KEY_RENDERING,
-      VALUE_RENDER_QUALITY,
-      KEY_STROKE_CONTROL,
-      VALUE_STROKE_PURE,
-      KEY_TEXT_ANTIALIASING,
-      VALUE_TEXT_ANTIALIAS_ON
+  public final static Map<Object, Object> RENDERING_HINTS = Map.ofEntries(
+    entry( KEY_ANTIALIASING, VALUE_ANTIALIAS_ON ),
+    entry( KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_QUALITY ),
+    entry( KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_QUALITY ),
+    entry( KEY_DITHERING, VALUE_DITHER_DISABLE ),
+    entry( KEY_FRACTIONALMETRICS, VALUE_FRACTIONALMETRICS_ON ),
+    entry( KEY_INTERPOLATION, VALUE_INTERPOLATION_BILINEAR ),
+    entry( KEY_RENDERING, VALUE_RENDER_QUALITY ),
+    entry( KEY_STROKE_CONTROL, VALUE_STROKE_PURE ),
+    entry( KEY_TEXT_ANTIALIASING, VALUE_TEXT_ANTIALIAS_ON )
   );
 
   private final static SVGUniverse sRenderer = new SVGUniverse();
@@ -95,9 +87,9 @@ public final class SvgRasterizer {
    * scaled image dimensions (value).
    */
   public DimensionTuple calculateScale(
-      final SVGDiagram diagram, final Dimension dstDim ) {
+    final SVGDiagram diagram, final Dimension dstDim ) {
     final var srcDim = new ScalableDimension(
-        (int) diagram.getWidth(), (int) diagram.getHeight()
+      (int) diagram.getWidth(), (int) diagram.getHeight()
     );
     final var scaled = srcDim.scale( dstDim );
 
@@ -114,8 +106,8 @@ public final class SvgRasterizer {
    * @throws SVGException Could not open, read, parse, or render SVG data.
    */
   public BufferedImage rasterize(
-      final SVGDiagram diagram, final DimensionTuple tuple )
-      throws SVGException {
+    final SVGDiagram diagram, final DimensionTuple tuple )
+    throws SVGException {
     final var scaled = tuple.getValue();
     final var wScaled = (int) scaled.getWidth();
     final var hScaled = (int) scaled.getHeight();
@@ -143,7 +135,7 @@ public final class SvgRasterizer {
    * @throws SVGException Could not open, read, parse, or render SVG data.
    */
   public Image rasterize(
-      final SVGDiagram diagram, final Dimension dstDim ) throws SVGException {
+    final SVGDiagram diagram, final Dimension dstDim ) throws SVGException {
     return rasterize( diagram, calculateScale( diagram, dstDim ) );
   }
 

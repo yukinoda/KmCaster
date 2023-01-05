@@ -138,8 +138,8 @@ public final class AutofitLabel extends JLabel {
       final var widthText = oldExtents.getWidth();
       final var widthRatio = dstWidthPx / widthText;
       final var widthFontSizeNew = (int) (font.getSize() * widthRatio);
-      final var widthFontSizeNorm = (float) Math.min( widthFontSizeNew,
-                                                      dstHeightPx );
+      final var widthFontSizeNorm =
+        (float) Math.min( widthFontSizeNew, dstHeightPx );
 
       newFont = font.deriveFont( widthFontSizeNorm - shrink );
       newExtents = getTextExtents( text, newFont );
