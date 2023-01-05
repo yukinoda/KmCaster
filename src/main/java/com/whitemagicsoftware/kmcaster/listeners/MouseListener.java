@@ -46,15 +46,15 @@ import static java.util.Map.entry;
  * Listens for all mouse events: clicks and mouse wheel scrolls.
  */
 public final class MouseListener
-    extends PropertyDispatcher<HardwareSwitch>
-    implements NativeMouseInputListener, NativeMouseWheelListener {
+  extends PropertyDispatcher<HardwareSwitch>
+  implements NativeMouseInputListener, NativeMouseWheelListener {
 
   private final static Map<Pair<Integer, Integer>, HardwareSwitch>
-      SCROLL_CODES = Map.ofEntries(
-      entry( new Pair<>( WHEEL_VERTICAL_DIRECTION, -1 ), MOUSE_SCROLL_U ),
-      entry( new Pair<>( WHEEL_VERTICAL_DIRECTION, 1 ), MOUSE_SCROLL_D ),
-      entry( new Pair<>( WHEEL_HORIZONTAL_DIRECTION, -1 ), MOUSE_SCROLL_L ),
-      entry( new Pair<>( WHEEL_HORIZONTAL_DIRECTION, 1 ), MOUSE_SCROLL_R )
+    SCROLL_CODES = Map.ofEntries(
+    entry( new Pair<>( WHEEL_VERTICAL_DIRECTION, -1 ), MOUSE_SCROLL_U ),
+    entry( new Pair<>( WHEEL_VERTICAL_DIRECTION, 1 ), MOUSE_SCROLL_D ),
+    entry( new Pair<>( WHEEL_HORIZONTAL_DIRECTION, -1 ), MOUSE_SCROLL_L ),
+    entry( new Pair<>( WHEEL_HORIZONTAL_DIRECTION, 1 ), MOUSE_SCROLL_R )
   );
 
   /**
@@ -109,7 +109,7 @@ public final class MouseListener
    * @param pressed {@code true} means pressed, {@code false} means released.
    */
   private void dispatchButtonEvent(
-      final NativeMouseEvent e, final boolean pressed ) {
+    final NativeMouseEvent e, final boolean pressed ) {
     final var hwSwitch = getMouseSwitch( e );
 
     // Percolate the button number as a string for any undefined (unmapped)

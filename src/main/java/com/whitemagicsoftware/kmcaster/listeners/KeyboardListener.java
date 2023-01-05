@@ -32,19 +32,25 @@ import com.github.kwhat.jnativehook.keyboard.NativeKeyListener;
 import com.whitemagicsoftware.kmcaster.HardwareSwitch;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
+import static com.whitemagicsoftware.kmcaster.listeners.KeyboardListener.HandedSwitch.*;
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
 import static java.util.Map.entry;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_LINUX;
+import static org.apache.commons.lang3.SystemUtils.IS_OS_WINDOWS;
 
 /**
  * Responsible for sending property change events for keyboard state changes.
  */
 public final class KeyboardListener
-    extends PropertyDispatcher<HardwareSwitch>
-    implements NativeKeyListener {
+  extends PropertyDispatcher<HardwareSwitch>
+  implements NativeKeyListener {
   private final static String KEY_SPACE = "Space";
   private final static String KEY_BACKSPACE = "Back ⌫";
   private final static String KEY_TAB = "Tab ↹";
@@ -53,22 +59,22 @@ public final class KeyboardListener
 
   private final static Map<Character, String> CHAR_CODES =
     Map.ofEntries(
-      entry( '\b', KEY_BACKSPACE),
-      entry( '\t', KEY_TAB),
+      entry( '\b', KEY_BACKSPACE ),
+      entry( '\t', KEY_TAB ),
       entry( '\r', KEY_ENTER ),
-      entry( '\u001B', KEY_ESCAPE),
-      entry( ' ', KEY_SPACE)
+      entry( '\u001B', KEY_ESCAPE ),
+      entry( ' ', KEY_SPACE )
     );
 
   /**
    * Shortens text strings from the keyboard library to fit the UI key.
    */
   private static final Map<String, String> TRANSLATE = Map.ofEntries(
-    entry( "Caps Lock", "Caps"),
-    entry( "Num Lock", "Num"),
-    entry( "Scroll Lock", "Scrl"),
-    entry( "Print Screen", "Print"),
-    entry( "Up","↑" ),
+    entry( "Caps Lock", "Caps" ),
+    entry( "Num Lock", "Num" ),
+    entry( "Scroll Lock", "Scrl" ),
+    entry( "Print Screen", "Print" ),
+    entry( "Up", "↑" ),
     entry( "Down", "↓" ),
     entry( "Left", "←" ),
     entry( "Right", "→" )
@@ -78,120 +84,175 @@ public final class KeyboardListener
    * The key is the raw key code return from the {@link NativeKeyEvent}, the
    * value is the human-readable text to display on screen.
    */
-  @SuppressWarnings("JavacQuirks")
+  @SuppressWarnings( "JavacQuirks" )
   private final static Map<Integer, String> RAW_CODES =
-      Map.ofEntries(
-          entry( 8, KEY_BACKSPACE ),
-          entry( 9, KEY_TAB ),
-          entry( 13, KEY_ENTER ),
-          entry( 27, KEY_ESCAPE ),
-          entry( 32, KEY_SPACE ),
-          entry( 33, "!" ),
-          entry( 34, "\"" ),
-          entry( 35, "#" ),
-          entry( 36, "$" ),
-          entry( 37, "%" ),
-          entry( 38, "&" ),
-          entry( 39, "'" ),
-          entry( 40, "(" ),
-          entry( 41, ")" ),
-          entry( 42, "*" ),
-          entry( 43, "+" ),
-          entry( 44, "," ),
-          entry( 45, "-" ),
-          entry( 46, "." ),
-          entry( 47, "/" ),
-          entry( 58, ":" ),
-          entry( 59, ";" ),
-          entry( 60, "<" ),
-          entry( 61, "=" ),
-          entry( 62, ">" ),
-          entry( 63, "?" ),
-          entry( 64, "@" ),
-          entry( 91, "[" ),
-          entry( 92, "\\" ),
-          entry( 93, "]" ),
-          entry( 94, "^" ),
-          entry( 95, "_" ),
-          entry( 96, "`" ),
-          entry( 97, "a" ),
-          entry( 98, "b" ),
-          entry( 99, "c" ),
-          entry( 100, "d" ),
-          entry( 101, "e" ),
-          entry( 102, "f" ),
-          entry( 103, "g" ),
-          entry( 104, "h" ),
-          entry( 105, "i" ),
-          entry( 106, "j" ),
-          entry( 107, "k" ),
-          entry( 108, "l" ),
-          entry( 109, "m" ),
-          entry( 110, "n" ),
-          entry( 111, "o" ),
-          entry( 112, "p" ),
-          entry( 113, "q" ),
-          entry( 114, "r" ),
-          entry( 115, "s" ),
-          entry( 116, "t" ),
-          entry( 117, "u" ),
-          entry( 118, "v" ),
-          entry( 119, "w" ),
-          entry( 120, "x" ),
-          entry( 121, "y" ),
-          entry( 122, "z" ),
-          entry( 123, "{" ),
-          entry( 124, "|" ),
-          entry( 125, "}" ),
-          entry( 126, "~" ),
-          entry( 65056, KEY_TAB ),
-          entry( 65289, KEY_TAB ),
-          entry( 65293, KEY_ENTER ),
-          entry( 65288, KEY_BACKSPACE ),
-          entry( 65301, "SysRq" ),
-          entry( 65377, "Print" ),
-          entry( 65361, "←" ),
-          entry( 65362, "↑" ),
-          entry( 65363, "→" ),
-          entry( 65364, "↓" ),
-          entry( 65307, "Esc" ),
-          entry( 65365, "PgUp" ),
-          entry( 65366, "PgDn" ),
-          entry( 65379, "Ins" ),
-          entry( 65535, "Del" ),
-          entry( 65506, "Shift" ),
-          entry( 65407, "Num" ),
-          entry( 65421, "Num ⏎" ),
-          entry( 65430, "Num ←" ),
-          entry( 65431, "Num ↑" ),
-          entry( 65432, "Num →" ),
-          entry( 65433, "Num ↓" ),
-          entry( 65429, "Num Home" ),
-          entry( 65434, "Num PgUp" ),
-          entry( 65435, "Num PgDn" ),
-          entry( 65436, "Num End" ),
-          entry( 65437, "Num Clear" ),
-          entry( 65438, "Num Ins" ),
-          entry( 65439, "Num Del" ),
-          entry( 65450, "Num *" ),
-          entry( 65451, "Num +" ),
-          entry( 65452, "Num Sep" ),
-          entry( 65453, "Num -" ),
-          entry( 65454, "Num ." ),
-          entry( 65455, "Num /" ),
-          entry( 65456, "Num 0" ),
-          entry( 65457, "Num 1" ),
-          entry( 65458, "Num 2" ),
-          entry( 65459, "Num 3" ),
-          entry( 65460, "Num 4" ),
-          entry( 65461, "Num 5" ),
-          entry( 65462, "Num 6" ),
-          entry( 65463, "Num 7" ),
-          entry( 65464, "Num 8" ),
-          entry( 65465, "Num 9" ),
-          entry( 65300, "Scrl" ),
-          entry( 65509, "Caps" )
-      );
+    Map.ofEntries(
+      entry( 8, KEY_BACKSPACE ),
+      entry( 9, KEY_TAB ),
+      entry( 13, KEY_ENTER ),
+      entry( 27, KEY_ESCAPE ),
+      entry( 32, KEY_SPACE ),
+      entry( 33, "!" ),
+      entry( 34, "\"" ),
+      entry( 35, "#" ),
+      entry( 36, "$" ),
+      entry( 37, "%" ),
+      entry( 38, "&" ),
+      entry( 39, "'" ),
+      entry( 40, "(" ),
+      entry( 41, ")" ),
+      entry( 42, "*" ),
+      entry( 43, "+" ),
+      entry( 44, "," ),
+      entry( 45, "-" ),
+      entry( 46, "." ),
+      entry( 47, "/" ),
+      entry( 58, ":" ),
+      entry( 59, ";" ),
+      entry( 60, "<" ),
+      entry( 61, "=" ),
+      entry( 62, ">" ),
+      entry( 63, "?" ),
+      entry( 64, "@" ),
+      entry( 91, "[" ),
+      entry( 92, "\\" ),
+      entry( 93, "]" ),
+      entry( 94, "^" ),
+      entry( 95, "_" ),
+      entry( 96, "`" ),
+      entry( 97, "a" ),
+      entry( 98, "b" ),
+      entry( 99, "c" ),
+      entry( 100, "d" ),
+      entry( 101, "e" ),
+      entry( 102, "f" ),
+      entry( 103, "g" ),
+      entry( 104, "h" ),
+      entry( 105, "i" ),
+      entry( 106, "j" ),
+      entry( 107, "k" ),
+      entry( 108, "l" ),
+      entry( 109, "m" ),
+      entry( 110, "n" ),
+      entry( 111, "o" ),
+      entry( 112, "p" ),
+      entry( 113, "q" ),
+      entry( 114, "r" ),
+      entry( 115, "s" ),
+      entry( 116, "t" ),
+      entry( 117, "u" ),
+      entry( 118, "v" ),
+      entry( 119, "w" ),
+      entry( 120, "x" ),
+      entry( 121, "y" ),
+      entry( 122, "z" ),
+      entry( 123, "{" ),
+      entry( 124, "|" ),
+      entry( 125, "}" ),
+      entry( 126, "~" ),
+      entry( 65056, KEY_TAB ),
+      entry( 65288, KEY_BACKSPACE ),
+      entry( 65289, KEY_TAB ),
+      entry( 65293, KEY_ENTER ),
+      entry( 65299, "Pause" ),
+      entry( 65301, "SysRq" ),
+      entry( 65307, "Esc" ),
+      entry( 65360, "Home" ),
+      entry( 65361, "←" ),
+      entry( 65362, "↑" ),
+      entry( 65363, "→" ),
+      entry( 65364, "↓" ),
+      entry( 65365, "PgUp" ),
+      entry( 65366, "PgDn" ),
+      entry( 65367, "End" ),
+      entry( 65377, "Print" ),
+      entry( 65379, "Ins" ),
+      entry( 65387, "Break" ),
+      entry( 65535, "Del" ),
+      entry( 65506, "Shift" ),
+      entry( 65407, "Num" ),
+      entry( 65421, "Num ⏎" ),
+      entry( 65430, "Num ←" ),
+      entry( 65431, "Num ↑" ),
+      entry( 65432, "Num →" ),
+      entry( 65433, "Num ↓" ),
+      entry( 65429, "Num Home" ),
+      entry( 65434, "Num PgUp" ),
+      entry( 65435, "Num PgDn" ),
+      entry( 65436, "Num End" ),
+      entry( 65437, "Num Clear" ),
+      entry( 65438, "Num Ins" ),
+      entry( 65439, "Num Del" ),
+      entry( 65450, "Num *" ),
+      entry( 65451, "Num +" ),
+      entry( 65452, "Num Sep" ),
+      entry( 65453, "Num -" ),
+      entry( 65454, "Num ." ),
+      entry( 65455, "Num /" ),
+      entry( 65456, "Num 0" ),
+      entry( 65457, "Num 1" ),
+      entry( 65458, "Num 2" ),
+      entry( 65459, "Num 3" ),
+      entry( 65460, "Num 4" ),
+      entry( 65461, "Num 5" ),
+      entry( 65462, "Num 6" ),
+      entry( 65463, "Num 7" ),
+      entry( 65464, "Num 8" ),
+      entry( 65465, "Num 9" ),
+      entry( 65470, "F1" ),
+      entry( 65471, "F2" ),
+      entry( 65472, "F3" ),
+      entry( 65473, "F4" ),
+      entry( 65474, "F5" ),
+      entry( 65475, "F6" ),
+      entry( 65476, "F7" ),
+      entry( 65477, "F8" ),
+      entry( 65478, "F9" ),
+      entry( 65479, "F10" ),
+      entry( 65480, "F11" ),
+      entry( 65481, "F12" ),
+      entry( 65300, "Scrl" ),
+      entry( 65509, "Caps" )
+    );
+
+  /**
+   * Maps left and right switches to their on-screen representation. This
+   * allows the left and right keys to control whether the switch is active,
+   * independently.
+   */
+  enum HandedSwitch {
+    KEY_SHIFT_LEFT( KEY_SHIFT ),
+    KEY_SHIFT_RIGHT( KEY_SHIFT ),
+    KEY_CTRL_LEFT( KEY_CTRL ),
+    KEY_CTRL_RIGHT( KEY_CTRL ),
+    KEY_ALT_LEFT( KEY_ALT ),
+    KEY_ALT_RIGHT( KEY_ALT );
+
+    final HardwareSwitch mHwSwitch;
+
+    HandedSwitch( final HardwareSwitch hwSwitch ) {
+      assert hwSwitch != null;
+      mHwSwitch = hwSwitch;
+    }
+
+    public HardwareSwitch getHardwareSwitch() {
+      return mHwSwitch;
+    }
+  }
+
+  /**
+   * The key is the raw key code return from the {@link NativeKeyEvent}, the
+   * value is the human-readable text to display on screen.
+   */
+  private final static Map<Integer, HandedSwitch> MODIFIERS_WINDOWS =
+    Map.ofEntries(
+      entry( 160, KEY_SHIFT_LEFT ),
+      entry( 161, KEY_SHIFT_RIGHT ),
+      entry( 162, KEY_CTRL_LEFT ),
+      entry( 163, KEY_CTRL_RIGHT ),
+      entry( 164, KEY_ALT_LEFT ),
+      entry( 165, KEY_ALT_RIGHT )
+    );
 
   /**
    * Whether a modifier key state is pressed or released depends on the state
@@ -202,17 +263,17 @@ public final class KeyboardListener
    * The 65511, 65512 are shifted alt key codes (a.k.a. the meta key).
    * </p>
    */
-  private final Map<Integer, HardwareSwitch> mModifierCodes =
-      Map.ofEntries(
-          entry( 65505, KEY_SHIFT ),
-          entry( 65506, KEY_SHIFT ),
-          entry( 65507, KEY_CTRL ),
-          entry( 65508, KEY_CTRL ),
-          entry( 65511, KEY_ALT ),
-          entry( 65512, KEY_ALT ),
-          entry( 65513, KEY_ALT ),
-          entry( 65514, KEY_ALT )
-      );
+  private final Map<Integer, HandedSwitch> MODIFIERS_LINUX =
+    Map.ofEntries(
+      entry( 65505, KEY_SHIFT_LEFT ),
+      entry( 65506, KEY_SHIFT_RIGHT ),
+      entry( 65507, KEY_CTRL_LEFT ),
+      entry( 65508, KEY_CTRL_RIGHT ),
+      entry( 65511, KEY_ALT_LEFT ),
+      entry( 65512, KEY_ALT_RIGHT ),
+      entry( 65513, KEY_ALT_LEFT ),
+      entry( 65514, KEY_ALT_RIGHT )
+    );
 
   /**
    * Most recently pressed non-modifier key value, empty signifies release.
@@ -226,6 +287,8 @@ public final class KeyboardListener
    * each modifier, both can be pressed and released independently.
    */
   private final Map<HardwareSwitch, Boolean> mModifiers = new HashMap<>();
+
+  private final Set<HandedSwitch> mHandedModifiers = new HashSet<>();
 
   /**
    * Creates a keyboard listener that publishes events when keys are either
@@ -246,38 +309,41 @@ public final class KeyboardListener
    */
   @Override
   public void nativeKeyTyped( final NativeKeyEvent e ) {
-    final var key = getDisplayText( e.getKeyChar() );
+    if( isRegular( e ) ) {
+      String key = getDisplayText( e.getKeyChar() );
 
-    dispatchRegular( mRegularHeld, key );
-    dispatchRegular( key, "" );
+      if( IS_OS_LINUX ) {
+        key = RAW_CODES.getOrDefault( e.getRawCode(), key );
+      }
+
+      dispatchRegular( mRegularHeld, key );
+      dispatchRegular( key, "" );
+    }
   }
 
   @Override
   public void nativeKeyPressed( final NativeKeyEvent e ) {
-    dispatchModifiers(e, TRUE);
+    dispatchModifiers( e, TRUE );
 
-    if(e.isActionKey() && !isModifier(e)) {
-      final var key = translate(e);
-      dispatchRegular(mRegularHeld, key);
+    if( e.isActionKey() && isRegular( e ) && IS_OS_WINDOWS ) {
+      dispatchRegular( mRegularHeld, translate( e ) );
     }
   }
 
   @Override
   public void nativeKeyReleased( final NativeKeyEvent e ) {
-    dispatchModifiers(e, FALSE);
+    dispatchModifiers( e, FALSE );
 
-    if (e.isActionKey() && !isModifier(e)) {
-      final var key = translate(e);
-      dispatchRegular(key, "");
+    if( e.isActionKey() && isRegular( e ) && IS_OS_WINDOWS ) {
+      dispatchRegular( translate( e ), "" );
     }
   }
 
-  private String translate(final NativeKeyEvent e) {
+  private String translate( final NativeKeyEvent e ) {
     final var keyCode = e.getKeyCode();
-    final var text = NativeKeyEvent.getKeyText(keyCode);
-    return TRANSLATE.getOrDefault(text, text);
+    final var text = NativeKeyEvent.getKeyText( keyCode );
+    return TRANSLATE.getOrDefault( text, text );
   }
-
 
   /**
    * Sets the initial state of the modifiers.
@@ -294,7 +360,6 @@ public final class KeyboardListener
     }
   }
 
-
   /**
    * Dispatches the modifier key that corresponds to the raw key code from
    * the given event. This is necessary to ensure that both left and right
@@ -302,24 +367,50 @@ public final class KeyboardListener
    *
    * @param e The event containing a raw key code to look up.
    */
-  private void dispatchModifiers( final NativeKeyEvent e, final boolean pressed ) {
+  private void dispatchModifiers(
+    final NativeKeyEvent e, final boolean pressed ) {
     final var rawCode = e.getRawCode();
+    final Map<Integer, HandedSwitch> map;
 
-    if (rawCode == 162 || rawCode == 163) {
-      dispatchModifier(KEY_CTRL, pressed);
+    if( IS_OS_WINDOWS ) {
+      map = MODIFIERS_WINDOWS;
     }
-    if (rawCode == 160 || rawCode == 161) {
-      dispatchModifier(KEY_SHIFT, pressed);
+    else if( IS_OS_LINUX ) {
+      map = MODIFIERS_LINUX;
     }
-    if (rawCode == 164 || rawCode == 165) {
-      dispatchModifier(KEY_ALT, pressed);
+    else {
+      return;
+    }
+
+    final var key = map.get( rawCode );
+
+    if( key != null ) {
+      if( pressed ) {
+        mHandedModifiers.add( key );
+      }
+      else {
+        mHandedModifiers.remove( key );
+      }
+
+      final var newHw = key.getHardwareSwitch();
+      final var counts = new HashMap<HardwareSwitch, Integer>();
+
+      mHandedModifiers.forEach(
+        modifier -> {
+          final var oldHw = modifier.getHardwareSwitch();
+          counts.put( oldHw, counts.getOrDefault( oldHw, 0 ) + 1 );
+        }
+      );
+
+      dispatchModifier( newHw, counts.get( newHw ) != null );
     }
   }
 
-  private boolean isModifier(final NativeKeyEvent e) {
+  private boolean isRegular( final NativeKeyEvent e ) {
     final var rawCode = e.getRawCode();
 
-    return rawCode >= 160 && rawCode <= 165;
+    return !((MODIFIERS_LINUX.containsKey( rawCode ) && IS_OS_LINUX) ||
+      (MODIFIERS_WINDOWS.containsKey( rawCode ) && IS_OS_WINDOWS));
   }
 
   /**
@@ -329,11 +420,12 @@ public final class KeyboardListener
    * holding both Left/Right Shift keys followed by pressing either Ctrl key
    * fails to call this method.
    *
-   * @param key       Must be a modifier key.
+   * @param key      Must be a modifier key.
    * @param newState {@link Boolean#FALSE} means released, {@link Boolean#TRUE}
-   * means pressed.
+   *                 means pressed.
    */
-  private void dispatchModifier( final HardwareSwitch key, final boolean newState ) {
+  private void dispatchModifier(
+    final HardwareSwitch key, final boolean newState ) {
     final var oldState = mModifiers.get( key );
 
     // Only fire the event if the state has changed.
@@ -356,7 +448,7 @@ public final class KeyboardListener
     mRegularHeld = n;
   }
 
-  private String getDisplayText(final char keyChar ) {
-    return CHAR_CODES.getOrDefault(keyChar, String.valueOf(keyChar));
+  private String getDisplayText( final char keyChar ) {
+    return CHAR_CODES.getOrDefault( keyChar, String.valueOf( keyChar ) );
   }
 }
