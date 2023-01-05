@@ -30,14 +30,18 @@ package com.whitemagicsoftware.kmcaster;
 import picocli.CommandLine;
 
 import java.awt.*;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
+import static java.awt.Font.*;
+import static java.util.Map.entry;
+
 @CommandLine.Command(
-    name = "KmCaster",
-    mixinStandardHelpOptions = true,
-    description = "Displays key presses and mouse clicks on the screen."
+  name = "KmCaster",
+  mixinStandardHelpOptions = true,
+  description = "Displays key presses and mouse clicks on the screen."
 )
-@SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
+@SuppressWarnings( {"FieldMayBeFinal", "CanBeFinal"} )
 public final class Settings implements Callable<Integer> {
   /**
    * Minimum application height, in pixels.
@@ -45,57 +49,41 @@ public final class Settings implements Callable<Integer> {
   private static final int MIN_HEIGHT_PX = 20;
 
   /**
+   * Maps font styles to {@link Font} API equivalents.
+   */
+  private static Map<String, Integer> FONT_STYLES = Map.ofEntries(
+    entry( "plain", PLAIN ),
+    entry( "bold", BOLD ),
+    entry( "italic", ITALIC ),
+    entry( "bold+italic", BOLD + ITALIC )
+  );
+
+  /**
    * Executable class.
    */
   private final KmCaster mKmCaster;
 
   /**
-   * Application height in pixels. Images are scaled to this height, maintaining
-   * aspect ratio. The height constrains the width, so as long as the width
-   * is large enough, the application's window will adjust to fit.
-   */
-  @CommandLine.Option(
-      names = {"-d", "--dimension"},
-      description =
-          "Application height (${DEFAULT-VALUE} pixels)",
-      paramLabel = "pixels",
-      defaultValue = "100"
-  )
-  private int mHeight = 100;
-
-  /**
    * Milliseconds to wait before releasing (clearing) a regular key.
    */
   @CommandLine.Option(
-      names = {"-a", "--delay-alphanum"},
-      description =
-          "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "250"
+    names = {"-a", "--delay-alphanum"},
+    description =
+      "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "250"
   )
   private int mDelayKeyRegular = 250;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) any modifier key.
-   */
-  @CommandLine.Option(
-      names = {"-m", "--delay-modifier"},
-      description =
-          "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "150"
-  )
-  private int mDelayKeyModifier = 150;
 
   /**
    * Milliseconds to wait before releasing (clearing) a mouse button.
    */
   @CommandLine.Option(
-      names = {"-b", "--delay-button"},
-      description =
-          "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "100"
+    names = {"-b", "--delay-button"},
+    description =
+      "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "100"
   )
   private int mDelayMouseButton = 100;
 
@@ -103,23 +91,73 @@ public final class Settings implements Callable<Integer> {
    * Milliseconds to wait before releasing (clearing) a mouse scroll event.
    */
   @CommandLine.Option(
-      names = {"-c", "--key-counter"},
-      description =
-          "Count repeated key presses (${DEFAULT-VALUE} times)",
-      paramLabel = "number",
-      defaultValue = "9"
+    names = {"-c", "--key-counter"},
+    description =
+      "Count repeated key presses (${DEFAULT-VALUE} times)",
+    paramLabel = "number",
+    defaultValue = "9"
   )
   private int mKeyCount = 9;
+
+  /**
+   * Application height in pixels. Images are scaled to this height, maintaining
+   * aspect ratio. The height constrains the width, so as long as the width
+   * is large enough, the application's window will adjust to fit.
+   */
+  @CommandLine.Option(
+    names = {"-d", "--dimension"},
+    description =
+      "Application height (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "100"
+  )
+  private int mHeight = 100;
+
+  /**
+   * Application preferred font.
+   */
+  @CommandLine.Option(
+    names = {"-f", "--font-name"},
+    description =
+      "Font name (${DEFAULT-VALUE})",
+    paramLabel = "string",
+    defaultValue = "Inter"
+  )
+  private String mFontName = "Inter";
+
+  /**
+   * Application preferred font.
+   */
+  @CommandLine.Option(
+    names = {"--font-weight"},
+    description =
+      "plain, bold, italic, bold+italic (${DEFAULT-VALUE})",
+    paramLabel = "string",
+    defaultValue = "bold"
+  )
+  private String mFontStyle = "bold";
+
+  /**
+   * Milliseconds to wait before releasing (clearing) any modifier key.
+   */
+  @CommandLine.Option(
+    names = {"-m", "--delay-modifier"},
+    description =
+      "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "150"
+  )
+  private int mDelayKeyModifier = 150;
 
   /**
    * Milliseconds to wait before releasing (clearing) a mouse scroll event.
    */
   @CommandLine.Option(
-      names = {"-s", "--delay-scroll"},
-      description =
-          "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "300"
+    names = {"-s", "--delay-scroll"},
+    description =
+      "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "300"
   )
   private int mDelayMouseScroll = 300;
 
@@ -159,6 +197,15 @@ public final class Settings implements Callable<Integer> {
 
   public int getKeyCount() {
     return mKeyCount < 2 ? 2 : mKeyCount;
+  }
+
+  @SuppressWarnings( "MagicConstant" )
+  public Font createFont() {
+    final var style = FONT_STYLES.getOrDefault(
+      mFontStyle.toLowerCase(), BOLD
+    );
+
+    return new Font( mFontName, style, 100 );
   }
 
   public Dimension createAppDimensions() {

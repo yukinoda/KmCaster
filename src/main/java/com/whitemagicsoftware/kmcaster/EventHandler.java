@@ -57,15 +57,15 @@ public final class EventHandler implements PropertyChangeListener {
    * Maps key pressed states to key cap title colours.
    */
   private static final Map<HardwareState, Color> KEY_COLOURS = Map.of(
-      SWITCH_PRESSED, COLOUR_KEY_DN,
-      SWITCH_RELEASED, COLOUR_KEY_UP
+    SWITCH_PRESSED, COLOUR_KEY_DN,
+    SWITCH_RELEASED, COLOUR_KEY_UP
   );
 
   /**
    * This is used to temporarily set the mouse to the released state.
    */
   public static final HardwareSwitchState MOUSE_RELEASED =
-      new HardwareSwitchState( MOUSE_EXTRA, SWITCH_RELEASED );
+    new HardwareSwitchState( MOUSE_EXTRA, SWITCH_RELEASED );
 
   private final HardwareImages mHardwareImages;
   private final AutofitLabel[] mLabels = new AutofitLabel[ LabelConfig.size() ];
@@ -74,14 +74,15 @@ public final class EventHandler implements PropertyChangeListener {
   private final ConsecutiveEventCounter<String> mKeyCounter;
 
   public EventHandler(
-      final HardwareImages hardwareImages, final Settings userSettings ) {
+    final HardwareImages hardwareImages, final Settings userSettings ) {
     mHardwareImages = hardwareImages;
     mKeyCounter = new ConsecutiveEventCounter<>( userSettings.getKeyCount() );
 
     final var keyColour = KEY_COLOURS.get( SWITCH_PRESSED );
+    final var font = userSettings.createFont();
 
     for( final var config : LabelConfig.values() ) {
-      final var label = new AutofitLabel( config.toTitleCase(), LABEL_FONT );
+      final var label = new AutofitLabel( config.toTitleCase(), font );
 
       label.setVerticalAlignment( config.getVerticalAlign() );
       label.setHorizontalAlignment( config.getHorizontalAlign() );
@@ -92,8 +93,8 @@ public final class EventHandler implements PropertyChangeListener {
       final var hwSwitch = config.getHardwareSwitch();
 
       hwSwitch.ifPresentOrElse(
-          s -> mHardwareImages.get( s ).add( label ),
-          () -> mHardwareImages.get( KEY_REGULAR ).add( label )
+        s -> mHardwareImages.get( s ).add( label ),
+        () -> mHardwareImages.get( KEY_REGULAR ).add( label )
       );
     }
 
@@ -112,12 +113,12 @@ public final class EventHandler implements PropertyChangeListener {
   @Override
   public void propertyChange( final PropertyChangeEvent e ) {
     invokeLater(
-        () -> {
-          update( e );
+      () -> {
+        update( e );
 
-          // Prevent collapsing multiple paint events.
-          getDefaultToolkit().sync();
-        }
+        // Prevent collapsing multiple paint events.
+        getDefaultToolkit().sync();
+      }
     );
   }
 
@@ -138,7 +139,7 @@ public final class EventHandler implements PropertyChangeListener {
     final var hwState = HardwareState.valueFrom( newValue );
 
     final var switchState = new HardwareSwitchState(
-        hwSwitch, hwState, switchValue );
+      hwSwitch, hwState, switchValue );
 
     // Get the mouse timer, modifier key timer, or non-modifier key timer.
     final var timer = getTimer( hwSwitch );
@@ -147,7 +148,7 @@ public final class EventHandler implements PropertyChangeListener {
     if( hwSwitch.isKeyboard() ) {
       if( hwState == SWITCH_RELEASED ) {
         timer.addActionListener(
-            ( event ) -> updateKeyboardLabel( switchState )
+          ( event ) -> updateKeyboardLabel( switchState )
         );
       }
       else {
@@ -158,7 +159,7 @@ public final class EventHandler implements PropertyChangeListener {
       if( hwState == SWITCH_RELEASED ) {
         mMouseActions.remove( hwSwitch );
         timer.addActionListener(
-            ( event ) -> updateMouseStatus( switchState )
+          ( event ) -> updateMouseStatus( switchState )
         );
       }
       else {
@@ -169,21 +170,21 @@ public final class EventHandler implements PropertyChangeListener {
         // after a few moments of inactivity.
         if( hwSwitch.isScroll() ) {
           timer.addActionListener(
-              ( action ) -> {
-                final var source = e.getSource();
-                final var name = e.getPropertyName();
-                final var event = new PropertyChangeEvent(
-                    source, name, true, false );
+            ( action ) -> {
+              final var source = e.getSource();
+              final var name = e.getPropertyName();
+              final var event = new PropertyChangeEvent(
+                source, name, true, false );
 
-                update( event );
-              }
+              update( event );
+            }
           );
         }
       }
     }
   }
 
-  private void updateSwitchState(final HardwareSwitchState switchState) {
+  private void updateSwitchState( final HardwareSwitchState switchState ) {
     getHardwareComponent( switchState ).setState( switchState );
   }
 
@@ -193,7 +194,7 @@ public final class EventHandler implements PropertyChangeListener {
    * @param state The key that has changed.
    */
   private synchronized void updateKeyboardLabel(
-          final HardwareSwitchState state) {
+    final HardwareSwitchState state ) {
     updateSwitchState( state );
     final var hwState = state.getHardwareState();
 
@@ -301,7 +302,7 @@ public final class EventHandler implements PropertyChangeListener {
   }
 
   private HardwareComponent<HardwareSwitchState, Image> getHardwareComponent(
-      final HardwareSwitchState state ) {
+    final HardwareSwitchState state ) {
     return mHardwareImages.get( state.getHardwareSwitch() );
   }
 

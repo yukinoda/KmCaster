@@ -53,7 +53,7 @@ public final class KeyboardListener
   implements NativeKeyListener {
   private final static String KEY_SPACE = "Space";
   private final static String KEY_BACKSPACE = "Back ⌫";
-  private final static String KEY_TAB = "Tab ↹";
+  private final static String KEY_TAB = "Tab ↔";
   private final static String KEY_ENTER = "Enter ⏎";
   private static final String KEY_ESCAPE = "Esc";
 

@@ -126,7 +126,8 @@ public final class AutofitLabel extends JLabel {
     final var font = getFont();
     final var text = getText();
 
-    final var dstWidthPx = getWidth();
+    // Without the - 1 the word Esc fails to appear.
+    final var dstWidthPx = getWidth() - 1;
     final var dstHeightPx = getHeight();
 
     float shrink = 0;
@@ -148,10 +149,6 @@ public final class AutofitLabel extends JLabel {
     while( newExtents.getHeight() > dstHeightPx );
 
     return newFont;
-  }
-
-  private double getTextWidth( final String text, final Font font ) {
-    return getTextExtents( text, font ).getWidth();
   }
 
   private Rectangle2D getTextExtents( final String text, final Font font ) {
