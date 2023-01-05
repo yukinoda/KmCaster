@@ -33,8 +33,6 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-import static java.lang.Math.floor;
-
 /**
  * Responsible for changing a {@link JLabel}'s font size, dynamically.
  */
@@ -140,7 +138,8 @@ public final class AutofitLabel extends JLabel {
       final var widthText = oldExtents.getWidth();
       final var widthRatio = dstWidthPx / widthText;
       final var widthFontSizeNew = (int) (font.getSize() * widthRatio);
-      final var widthFontSizeNorm = (float) Math.min( widthFontSizeNew, dstHeightPx );
+      final var widthFontSizeNorm = (float) Math.min( widthFontSizeNew,
+                                                      dstHeightPx );
 
       newFont = font.deriveFont( widthFontSizeNorm - shrink );
       newExtents = getTextExtents( text, newFont );
@@ -158,73 +157,6 @@ public final class AutofitLabel extends JLabel {
   }
 
   /**
-   * Calculates a new {@link Font} size such that it fits within the bounds
-   * of this label instance. This uses the label's current size, which must
-   * be set prior to calling this method.
-   *
-   * @return A new {@link Font} instance that is guaranteed to write the given
-   * string within the bounds of the given {@link Rectangle}.
-   */
-  private Font computeScaledFont() {
-    final var g = getGraphics();
-
-    if( g == null ) {
-      return getFont();
-    }
-
-    final var text = getText();
-    final var dstWidthPx = getWidth();
-    final var dstHeightPx = getHeight();
-
-    // Derived using a binary search to minimize text width lookups.
-    var scaledFont = getFont();
-
-    var scaledPt = scaledFont.getSize();
-    var minSizePt = 4;
-    var maxSizePt = 100;
-
-    while( maxSizePt - minSizePt > 1 ) {
-      scaledFont = scaledFont.deriveFont( (float) scaledPt );
-
-      final var bounds = getTextExtents( text, scaledFont );
-      final var fontWidthPx = (int) bounds.getWidth();
-      final var fontHeightPx = (int) bounds.getHeight();
-
-      if( (fontWidthPx > dstWidthPx) || (fontHeightPx > dstHeightPx) ) {
-        maxSizePt = scaledPt;
-      } else {
-        minSizePt = scaledPt;
-      }
-
-      scaledPt = (minSizePt + maxSizePt) / 2;
-    }
-
-    // Round down to guarantee fit.
-    scaledFont = scaledFont.deriveFont( (float) floor( scaledPt ) );
-
-    // Recompute the bounds of the label based on the text extents that fit.
-    final var extents = getTextExtents( text, scaledFont );
-    setSize( (int) extents.getWidth(), (int) extents.getHeight() );
-
-    g.dispose();
-
-    return scaledFont;
-  }
-
-  /**
-   * Helper method to determine the width and height of the text.
-   *
-   * @param text     Text having a width and height to derive.
-   * @param font     Font used to render the next.
-   * @param graphics Graphics context needed for calculating the text extents.
-   * @return Text width and height.
-   */
-  private Rectangle2D getTextExtents(
-      final String text, final Font font, final Graphics graphics ) {
-    return getFontMetrics( font ).getStringBounds( text, graphics );
-  }
-
-  /**
    * Returns the bounds of the parent component, accounting for insets.
    *
    * @return The parent's safe drawing area.
@@ -233,8 +165,8 @@ public final class AutofitLabel extends JLabel {
     final var bounds = mParentBounds;
 
     return bounds == null
-        ? mParentBounds = calculateBounds( getParent() )
-        : bounds;
+      ? mParentBounds = calculateBounds( getParent() )
+      : bounds;
   }
 
   /**
@@ -248,9 +180,9 @@ public final class AutofitLabel extends JLabel {
     final var insets = container.getInsets();
 
     return new Rectangle(
-        insets.left, insets.top,
-        container.getWidth() - (insets.left + insets.right),
-        container.getHeight() - (insets.top + insets.bottom)
+      insets.left, insets.top,
+      container.getWidth() - (insets.left + insets.right),
+      container.getHeight() - (insets.top + insets.bottom)
     );
   }
 }

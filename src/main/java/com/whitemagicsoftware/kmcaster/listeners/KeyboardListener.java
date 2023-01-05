@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.whitemagicsoftware.kmcaster.HardwareSwitch.*;
 import static com.whitemagicsoftware.kmcaster.listeners.KeyboardListener.HandedSwitch.*;
