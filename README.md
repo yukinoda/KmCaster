@@ -1,3 +1,5 @@
+![Total Downloads](https://img.shields.io/github/downloads/DaveJarvis/kmcaster/total?color=blue&label=Total%20Downloads&style=flat) ![Release Downloads](https://img.shields.io/github/downloads/DaveJarvis/kmcaster/latest/total?color=purple&label=Release%20Downloads&style=flat) ![Released](https://img.shields.io/github/release-date/DaveJarvis/kmcaster?color=red&style=flat&label=Released) ![Version](https://img.shields.io/github/v/release/DaveJarvis/kmcaster?style=flat&label=Release)
+
 # Introduction
 
 Java-based on-screen display (OSD) for keyboard and mouse events.
