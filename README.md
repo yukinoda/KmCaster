@@ -80,8 +80,7 @@ To quit the application:
 
 ## Error Messages
 
-Java version 14 is required; earlier versions will display the following
-message:
+Earlier versions of Java will display the following message:
 
 > Error: A JNI error has occurred, please check your installation and try again.
 
