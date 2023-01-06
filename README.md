@@ -9,7 +9,7 @@ This program displays keyboard and mouse events for the purpose of screencasting
 * show single events;
 * show all mouse clicks;
 * show scrolling;
-* configurable traslucent background colour;
+* configurable translucent background colour;
 * configurable gaps between keys;
 * accurate modifier key states; and
 * works with emulation software (e.g., [Sikuli](http://sikulix.com/)).
