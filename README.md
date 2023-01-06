@@ -46,7 +46,7 @@ sudo archlinux-java set java-19-openjdk
 ```
 
 Note: on some Linux operating systems you may need to add a repository.
-On Ubuntu 18.04 run the following commands before trying to install Java 15, for example ([source](http://ubuntuhandbook.org/index.php/2020/03/install-oracle-java-14-ubuntu-18-04-20-04/)):
+On Ubuntu 18.04 run the following commands before trying to install Java 19, for example ([source](http://ubuntuhandbook.org/index.php/2020/03/install-oracle-java-14-ubuntu-18-04-20-04/)):
 
 ```
 sudo add-apt-repository ppa:linuxuprising/java
