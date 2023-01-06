@@ -27,6 +27,10 @@ The following video compares KmCaster to [key-mon](https://github.com/critiqjo/k
 
 ![KmCaster Demo](images/kmcaster-01.gif "Comparison Video")
 
+The UI has been modernized:
+
+![KmCaster UI](images/kmcaster-02.png)
+
 # Requirements
 
 [OpenJDK](https://bell-sw.com/pages/downloads/#/java-19-current) version 19.0.1 or newer.
