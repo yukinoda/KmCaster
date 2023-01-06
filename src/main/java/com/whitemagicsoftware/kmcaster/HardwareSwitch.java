@@ -49,7 +49,7 @@ public enum HardwareSwitch {
   KEY_REGULAR( "regular" );
 
   private final static HardwareSwitch[] mMouseSwitches = {
-      MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT, MOUSE_EXTRA,
+      MOUSE_EXTRA, MOUSE_LEFT, MOUSE_MIDDLE, MOUSE_RIGHT,
       MOUSE_SCROLL_U, MOUSE_SCROLL_D, MOUSE_SCROLL_L, MOUSE_SCROLL_R
   };
 
@@ -131,6 +131,15 @@ public enum HardwareSwitch {
    */
   public boolean isScroll() {
     return isPrefix( "MOUSE_SCROLL" );
+  }
+
+  /**
+   * Answers whether this hardware switch represents a mouse button (or scroll).
+   *
+   * @return {@code true} to indicate a mouse action occurred.
+   */
+  public boolean isMouse() {
+    return isPrefix( "MOUSE" );
   }
 
   /**

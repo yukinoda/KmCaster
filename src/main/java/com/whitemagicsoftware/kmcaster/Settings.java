@@ -30,14 +30,19 @@ package com.whitemagicsoftware.kmcaster;
 import picocli.CommandLine;
 
 import java.awt.*;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
+import static java.awt.Font.*;
+import static java.util.Map.entry;
+import static javax.swing.SwingUtilities.invokeLater;
+
 @CommandLine.Command(
-    name = "KmCaster",
-    mixinStandardHelpOptions = true,
-    description = "Displays key presses and mouse clicks on the screen."
+  name = "KmCaster",
+  mixinStandardHelpOptions = true,
+  description = "Displays key presses and mouse clicks on the screen."
 )
-@SuppressWarnings({"FieldMayBeFinal", "CanBeFinal"})
+@SuppressWarnings( {"FieldMayBeFinal", "CanBeFinal"} )
 public final class Settings implements Callable<Integer> {
   /**
    * Minimum application height, in pixels.
@@ -45,9 +50,55 @@ public final class Settings implements Callable<Integer> {
   private static final int MIN_HEIGHT_PX = 20;
 
   /**
+   * Maps font styles to {@link Font} API equivalents.
+   */
+  private static Map<String, Integer> FONT_STYLES = Map.ofEntries(
+    entry( "plain", PLAIN ),
+    entry( "bold", BOLD ),
+    entry( "italic", ITALIC ),
+    entry( "bold+italic", BOLD + ITALIC )
+  );
+
+  /**
    * Executable class.
    */
   private final KmCaster mKmCaster;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) a regular key.
+   */
+  @CommandLine.Option(
+    names = {"-a", "--delay-alphanum"},
+    description =
+      "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "250"
+  )
+  private int mDelayKeyRegular = 250;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) a mouse button.
+   */
+  @CommandLine.Option(
+    names = {"-b", "--delay-button"},
+    description =
+      "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "100"
+  )
+  private int mDelayMouseButton = 100;
+
+  /**
+   * Background colour.
+   */
+  @CommandLine.Option(
+    names = {"-c", "--colour"},
+    description =
+      "Background colour, including alpha transparency (${DEFAULT-VALUE} RGBA)",
+    paramLabel = "hex",
+    defaultValue = "30303077"
+  )
+  private String mBackgroundColour = "30303077";
 
   /**
    * Application height in pixels. Images are scaled to this height, maintaining
@@ -55,59 +106,59 @@ public final class Settings implements Callable<Integer> {
    * is large enough, the application's window will adjust to fit.
    */
   @CommandLine.Option(
-      names = {"-d", "--dimension"},
-      description =
-          "Application height (${DEFAULT-VALUE} pixels)",
-      paramLabel = "pixels",
-      defaultValue = "100"
+    names = {"-d", "--dimension"},
+    description =
+      "Application height (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "100"
   )
   private int mHeight = 100;
 
   /**
-   * Milliseconds to wait before releasing (clearing) a regular key.
+   * Application preferred font name.
    */
   @CommandLine.Option(
-      names = {"-a", "--delay-alphanum"},
-      description =
-          "Regular key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "250"
+    names = {"-f", "--font-name"},
+    description =
+      "Font name (${DEFAULT-VALUE})",
+    paramLabel = "string",
+    defaultValue = "Inter"
   )
-  private int mDelayKeyRegular = 250;
+  private String mFontName = "Inter";
+
+  /**
+   * Application preferred font style.
+   */
+  @CommandLine.Option(
+    names = {"--font-style"},
+    description =
+      "plain, bold, italic, bold+italic (${DEFAULT-VALUE})",
+    paramLabel = "string",
+    defaultValue = "bold"
+  )
+  private String mFontStyle = "bold";
 
   /**
    * Milliseconds to wait before releasing (clearing) any modifier key.
    */
   @CommandLine.Option(
-      names = {"-m", "--delay-modifier"},
-      description =
-          "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "150"
+    names = {"-m", "--delay-modifier"},
+    description =
+      "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "150"
   )
   private int mDelayKeyModifier = 150;
 
   /**
-   * Milliseconds to wait before releasing (clearing) a mouse button.
+   * Number of times to count a key press before displaying +.
    */
   @CommandLine.Option(
-      names = {"-b", "--delay-button"},
-      description =
-          "Mouse button release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "100"
-  )
-  private int mDelayMouseButton = 100;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
-   */
-  @CommandLine.Option(
-      names = {"-c", "--key-counter"},
-      description =
-          "Count repeated key presses (${DEFAULT-VALUE} times)",
-      paramLabel = "number",
-      defaultValue = "9"
+    names = {"-k", "--key-counter"},
+    description =
+      "Count repeated key presses (${DEFAULT-VALUE} times)",
+    paramLabel = "number",
+    defaultValue = "9"
   )
   private int mKeyCount = 9;
 
@@ -115,13 +166,37 @@ public final class Settings implements Callable<Integer> {
    * Milliseconds to wait before releasing (clearing) a mouse scroll event.
    */
   @CommandLine.Option(
-      names = {"-s", "--delay-scroll"},
-      description =
-          "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
-      paramLabel = "ms",
-      defaultValue = "300"
+    names = {"-s", "--delay-scroll"},
+    description =
+      "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "300"
   )
   private int mDelayMouseScroll = 300;
+
+  /**
+   * Amount of padding above and below the frame.
+   */
+  @CommandLine.Option(
+    names = {"--gap-horizontal"},
+    description =
+      "Amount of padding above and below frame (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "5"
+  )
+  private int mGapHorizontal = 5;
+
+  /**
+   * Amount of padding between items in the frame.
+   */
+  @CommandLine.Option(
+    names = {"--gap-vertical"},
+    description =
+      "Amount of padding between switches (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "5"
+  )
+  private int mGapVertical = 5;
 
   public Settings( final KmCaster kmCaster ) {
     assert kmCaster != null;
@@ -137,7 +212,7 @@ public final class Settings implements Callable<Integer> {
    */
   @Override
   public Integer call() {
-    mKmCaster.init();
+    invokeLater( mKmCaster::init );
     return 0;
   }
 
@@ -161,6 +236,15 @@ public final class Settings implements Callable<Integer> {
     return mKeyCount < 2 ? 2 : mKeyCount;
   }
 
+  @SuppressWarnings( "MagicConstant" )
+  public Font createFont() {
+    final var style = FONT_STYLES.getOrDefault(
+      mFontStyle.toLowerCase(), BOLD
+    );
+
+    return new Font( mFontName, style, 100 );
+  }
+
   public Dimension createAppDimensions() {
     return new Dimension( 1024 + getHeight(), getHeight() );
   }
@@ -172,5 +256,17 @@ public final class Settings implements Callable<Integer> {
    */
   private int getHeight() {
     return mHeight < MIN_HEIGHT_PX ? MIN_HEIGHT_PX : mHeight;
+  }
+
+  public int getGapHorizontal() {
+    return mGapHorizontal;
+  }
+
+  public int getGapVertical() {
+    return mGapVertical;
+  }
+
+  public String getBackgroundColour() {
+    return mBackgroundColour;
   }
 }

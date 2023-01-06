@@ -29,8 +29,6 @@ package com.whitemagicsoftware.kmcaster.ui;
 
 import java.awt.*;
 
-import static java.awt.Font.BOLD;
-
 /**
  * Responsible for containing shared constants required by the GUI.
  */
@@ -44,14 +42,6 @@ public final class Constants {
    * Partially see-through.
    */
   public static final Color TRANSLUCENT = new Color( .2f, .2f, .2f, 0.5f );
-
-  /**
-   * DejaVu Sans is the only free, open, sans serif font that supports all
-   * the Unicode blocks used by the application. The font size will be scaled
-   * dynamically to the window size, but should be sufficiently large for the
-   * autofit functionality to scale down as required.
-   */
-  public static final Font LABEL_FONT = new Font( "DejaVu Sans", BOLD, 100 );
 
   /**
    * Matches the shift-key arrow font colour when pressed.

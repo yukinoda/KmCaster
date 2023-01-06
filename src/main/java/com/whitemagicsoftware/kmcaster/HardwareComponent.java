@@ -32,13 +32,16 @@ import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.whitemagicsoftware.kmcaster.SvgRasterizer.RENDERING_HINTS;
+
 /**
  * Responsible for drawing an image based on a state; the state can be
  * changed at any time.
  *
  * @param <S> The type of state associated with an image.
  */
-public final class HardwareComponent<S, I extends Image> extends JComponent {
+public final class HardwareComponent
+  <S extends HardwareSwitchState, I extends Image> extends JComponent {
 
   private final Map<S, I> mStateImages = new HashMap<>();
 
@@ -56,8 +59,8 @@ public final class HardwareComponent<S, I extends Image> extends JComponent {
 
   /**
    * Constructs a new {@link HardwareComponent} without an initial state. The
-   * initial state must be set by calling {@link #setState(Object)}
-   * or {@link #put(Object, Image)} before drawing the image.
+   * initial state must be set by calling {@link #setState(S)}
+   * or {@link #put(S, Image)} before drawing the image.
    *
    * @param insets The padding to use around the component so that letters
    *               can be drawn within a safe region, without extending beyond
@@ -67,13 +70,14 @@ public final class HardwareComponent<S, I extends Image> extends JComponent {
     assert insets != null;
 
     mInsets = insets;
+    setOpaque( true );
   }
 
   @Override
   public Dimension getPreferredSize() {
     return mPreferredSize == null
-        ? mPreferredSize = calcPreferredSize()
-        : mPreferredSize;
+      ? mPreferredSize = calcPreferredSize()
+      : mPreferredSize;
   }
 
   @Override
@@ -81,28 +85,35 @@ public final class HardwareComponent<S, I extends Image> extends JComponent {
     return mInsets;
   }
 
+  /**
+   * Draws the current status of the hardware switch for this widget.
+   */
   @Override
   protected void paintComponent( final Graphics g ) {
-    g.drawImage( getActiveImage(), 0, 0, this );
+    final var g2 = (Graphics2D) g.create();
+    g2.setRenderingHints( RENDERING_HINTS );
+    g2.setComposite( AlphaComposite.Src );
+    g2.drawImage( getActiveImage(), 0, 0, this );
+    g2.dispose();
   }
 
   /**
    * Associates a new (or existing) state with the given image. This sets
    * changes the current state to the given state.
    *
-   * @param state The state to associate with an image.
-   * @param image The image to paint when the given state is selected.
+   * @param hwSwitch The state to associate with an image.
+   * @param image    The image to paint when the given state is selected.
    */
-  public void put( final S state, final I image ) {
-    getStateImages().put( state, image );
+  public void put( final S hwSwitch, final I image ) {
+    getStateImages().put( hwSwitch, image );
 
     // Change the state variable directly, no need to issue a repaint request.
-    mState = state;
+    mState = hwSwitch;
   }
 
   /**
    * Repaints this component by changing its mutable state. The new state
-   * must have been previously registered via {@link #put(Object, Image)}.
+   * must have been previously registered via {@link #put(S, Image)}.
    *
    * @param state The new state.
    */
@@ -124,11 +135,11 @@ public final class HardwareComponent<S, I extends Image> extends JComponent {
     final var image = getActiveImage();
 
     return new Dimension(
-        image.getWidth( null ), image.getHeight( null )
+      image.getWidth( null ), image.getHeight( null )
     );
   }
 
-  private Image getActiveImage() {
+  private I getActiveImage() {
     return getStateImages().get( getState() );
   }
 

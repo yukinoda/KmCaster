@@ -37,13 +37,14 @@ import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi.Style;
 
 import javax.swing.*;
+import java.awt.*;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import static com.github.kwhat.jnativehook.GlobalScreen.*;
-import static com.whitemagicsoftware.kmcaster.ui.Constants.TRANSLUCENT;
 import static com.whitemagicsoftware.kmcaster.ui.FontLoader.initFonts;
+import static java.lang.Integer.valueOf;
 import static java.util.logging.Level.OFF;
 import static java.util.logging.Logger.getLogger;
 import static javax.swing.SwingUtilities.invokeLater;
@@ -67,7 +68,6 @@ import static picocli.CommandLine.Help.ColorScheme;
  * </ol>
  */
 public final class KmCaster extends JFrame {
-
   private final Settings mUserSettings = new Settings( this );
 
   /**
@@ -94,14 +94,16 @@ public final class KmCaster extends JFrame {
     setLocationRelativeTo( null );
     setUndecorated( true );
     setAlwaysOnTop( true );
-    setBackground( TRANSLUCENT );
+    setBackground( getUserBgColour() );
 
     // Prevent tabbing to non-existent components.
     setFocusTraversalKeysEnabled( false );
   }
 
   private void initWindowContents( final HardwareImages hardwareImages ) {
-    final var panel = new TranslucentPanel();
+    final var hgap = getGapHorizontal();
+    final var vgap = getGapVertical();
+    final var panel = new TranslucentPanel( hgap, vgap );
 
     for( final var hwSwitch : HardwareSwitch.values() ) {
       final var component = hardwareImages.get( hwSwitch );
@@ -141,6 +143,33 @@ public final class KmCaster extends JFrame {
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();
+  }
+
+  @SuppressWarnings( "PointlessArithmeticExpression" )
+  private Color getUserBgColour() {
+    final var hex = getUserSettings().getBackgroundColour();
+    final var index = hex.startsWith( "#" ) ? 1 : 0;
+
+    try {
+      final var r = valueOf( hex.substring( index + 0, index + 2 ), 16 );
+      final var g = valueOf( hex.substring( index + 2, index + 4 ), 16 );
+      final var b = valueOf( hex.substring( index + 4, index + 6 ), 16 );
+      final var a = valueOf( hex.substring( index + 6, index + 8 ), 16 );
+
+      return new Color( r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f );
+    } catch( final Exception e ) {
+      e.printStackTrace();
+    }
+
+    return new Color( .2f, .2f, .2f, .5f );
+  }
+
+  private int getGapHorizontal() {
+    return getUserSettings().getGapHorizontal();
+  }
+
+  private int getGapVertical() {
+    return getUserSettings().getGapVertical();
   }
 
   private Settings getUserSettings() {

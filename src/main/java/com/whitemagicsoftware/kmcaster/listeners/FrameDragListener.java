@@ -39,11 +39,8 @@ import static java.awt.Cursor.getPredefinedCursor;
  * Responsible for moving the window when the user drags it around the screen.
  */
 public final class FrameDragListener extends MouseAdapter {
-  /**
-   *
-   */
   private final static Cursor DRAGGING =
-      getPredefinedCursor( MOVE_CURSOR );
+    getPredefinedCursor( MOVE_CURSOR );
 
   /**
    * Observed for drag events.

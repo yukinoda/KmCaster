@@ -3,20 +3,30 @@ plugins {
 }
 
 group 'com.whitemagicsoftware'
-version '1.1'
+version '2.0'
 
 repositories {
   mavenCentral()
 }
 
 dependencies {
-  // Command-line parsing
+  // Provides command-line parsing functionality.
   implementation 'info.picocli:picocli:4.7.0'
 
-  // SVG
+  // Provides operating system detection functionality.
+  implementation 'org.apache.commons:commons-lang3:3.12.0'
+
+  // Provides SVG parsing and rendering functionality.
   implementation fileTree(include: ['**/*.jar'], dir: 'libs')
 
+  // Provides ability to detect keystrokes outside of JVM.
   implementation 'com.github.kwhat:jnativehook:2.2.2'
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+  options.encoding = 'UTF-8'
 }
 
 sourceSets {

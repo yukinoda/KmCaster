@@ -9,6 +9,8 @@ This program displays keyboard and mouse events for the purpose of screencasting
 * show single events;
 * show all mouse clicks;
 * show scrolling;
+* configurable traslucent background colour;
+* configurable gaps between keys;
 * accurate modifier key states; and
 * works with emulation software (e.g., [Sikuli](http://sikulix.com/)).
 
@@ -25,14 +27,14 @@ The following video compares KmCaster to [key-mon](https://github.com/critiqjo/k
 
 # Requirements
 
-[OpenJDK](https://bell-sw.com/pages/downloads/#/java-14-current) version 14.0.1 or newer.
+[OpenJDK](https://bell-sw.com/pages/downloads/#/java-19-current) version 19.0.1 or newer.
 
 ## Linux Java Version
 
-Depending on the Linux distribution, Java 14+ can be installed by issuing one of the following commands in a terminal:
+Depending on the Linux distribution, Java 19+ can be installed by issuing one of the following commands in a terminal:
 
 ```bash
-sudo apt install openjdk-17-jdk # tested on ubuntu 22.04
+sudo apt install openjdk-19-jdk
 sudo pacman -S jdk-openjdk
 ```
 
@@ -40,7 +42,7 @@ Switching from earlier versions of Java can be accomplished by issuing one of th
 
 ```
 sudo update-alternatives --config java
-sudo archlinux-java set java-17-openjdk
+sudo archlinux-java set java-19-openjdk
 ```
 
 Note: on some Linux operating systems you may need to add a repository.
@@ -48,7 +50,7 @@ On Ubuntu 18.04 run the following commands before trying to install Java 15, for
 
 ```
 sudo add-apt-repository ppa:linuxuprising/java
-sudo apt install openjdk-15-jdk
+sudo apt install openjdk-19-jdk
 ```
 
 # Download
