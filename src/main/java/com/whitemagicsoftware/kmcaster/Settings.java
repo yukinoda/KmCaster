@@ -101,18 +101,16 @@ public final class Settings implements Callable<Integer> {
   private String mBackgroundColour = "30303077";
 
   /**
-   * Application height in pixels. Images are scaled to this height, maintaining
-   * aspect ratio. The height constrains the width, so as long as the width
-   * is large enough, the application's window will adjust to fit.
+   * Debugging for keystrokes.
    */
   @CommandLine.Option(
-    names = {"-d", "--dimension"},
+    names = {"-d", "--debug"},
     description =
-      "Application height (${DEFAULT-VALUE} pixels)",
-    paramLabel = "pixels",
-    defaultValue = "100"
+      "Enable debugging (${DEFAULT-VALUE})",
+    paramLabel = "Boolean",
+    defaultValue = "false"
   )
-  private int mHeight = 100;
+  private boolean mDebug = false;
 
   /**
    * Application preferred font name.
@@ -139,42 +137,6 @@ public final class Settings implements Callable<Integer> {
   private String mFontStyle = "bold";
 
   /**
-   * Milliseconds to wait before releasing (clearing) any modifier key.
-   */
-  @CommandLine.Option(
-    names = {"-m", "--delay-modifier"},
-    description =
-      "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
-    paramLabel = "ms",
-    defaultValue = "150"
-  )
-  private int mDelayKeyModifier = 150;
-
-  /**
-   * Number of times to count a key press before displaying +.
-   */
-  @CommandLine.Option(
-    names = {"-k", "--key-counter"},
-    description =
-      "Count repeated key presses (${DEFAULT-VALUE} times)",
-    paramLabel = "number",
-    defaultValue = "9"
-  )
-  private int mKeyCount = 9;
-
-  /**
-   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
-   */
-  @CommandLine.Option(
-    names = {"-s", "--delay-scroll"},
-    description =
-      "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
-    paramLabel = "ms",
-    defaultValue = "300"
-  )
-  private int mDelayMouseScroll = 300;
-
-  /**
    * Amount of padding above and below the frame.
    */
   @CommandLine.Option(
@@ -197,6 +159,56 @@ public final class Settings implements Callable<Integer> {
     defaultValue = "5"
   )
   private int mGapVertical = 5;
+
+  /**
+   * Number of times to count a key press before displaying +.
+   */
+  @CommandLine.Option(
+    names = {"-k", "--key-counter"},
+    description =
+      "Count repeated key presses (${DEFAULT-VALUE} times)",
+    paramLabel = "number",
+    defaultValue = "9"
+  )
+  private int mKeyCount = 9;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) any modifier key.
+   */
+  @CommandLine.Option(
+    names = {"-m", "--delay-modifier"},
+    description =
+      "Modifier key release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "150"
+  )
+  private int mDelayKeyModifier = 150;
+
+  /**
+   * Application height in pixels. Images are scaled to this height, maintaining
+   * aspect ratio. The height constrains the width, so as long as the width
+   * is large enough, the application's window will adjust to fit.
+   */
+  @CommandLine.Option(
+    names = {"-p", "--proportion"},
+    description =
+      "Application height (${DEFAULT-VALUE} pixels)",
+    paramLabel = "pixels",
+    defaultValue = "100"
+  )
+  private int mHeight = 100;
+
+  /**
+   * Milliseconds to wait before releasing (clearing) a mouse scroll event.
+   */
+  @CommandLine.Option(
+    names = {"-s", "--delay-scroll"},
+    description =
+      "Mouse scroll release delay (${DEFAULT-VALUE} milliseconds)",
+    paramLabel = "ms",
+    defaultValue = "300"
+  )
+  private int mDelayMouseScroll = 300;
 
   public Settings( final KmCaster kmCaster ) {
     assert kmCaster != null;
@@ -268,5 +280,9 @@ public final class Settings implements Callable<Integer> {
 
   public String getBackgroundColour() {
     return mBackgroundColour;
+  }
+
+  public boolean isDebugEnabled() {
+    return mDebug;
   }
 }

@@ -29,6 +29,7 @@ package com.whitemagicsoftware.kmcaster;
 
 import com.github.kwhat.jnativehook.GlobalScreen;
 import com.github.kwhat.jnativehook.NativeHookException;
+import com.whitemagicsoftware.kmcaster.listeners.DebugListener;
 import com.whitemagicsoftware.kmcaster.listeners.FrameDragListener;
 import com.whitemagicsoftware.kmcaster.listeners.KeyboardListener;
 import com.whitemagicsoftware.kmcaster.listeners.MouseListener;
@@ -122,6 +123,7 @@ public final class KmCaster extends JFrame {
     initWindowDragListener( this );
     initMouseListener( eventHandler );
     initKeyboardListener( eventHandler );
+    initDebugListener();
   }
 
   private void initWindowDragListener( final JFrame listener ) {
@@ -143,6 +145,13 @@ public final class KmCaster extends JFrame {
     addNativeKeyListener( keyboardListener );
     keyboardListener.addPropertyChangeListener( listener );
     keyboardListener.initModifiers();
+  }
+
+  private void initDebugListener() {
+    if( isDebugEnabled() ) {
+      final DebugListener debugListener = new DebugListener();
+      addNativeKeyListener( debugListener );
+    }
   }
 
   @SuppressWarnings( "PointlessArithmeticExpression" )
@@ -170,6 +179,10 @@ public final class KmCaster extends JFrame {
 
   private int getGapVertical() {
     return getUserSettings().getGapVertical();
+  }
+
+  private boolean isDebugEnabled() {
+    return getUserSettings().isDebugEnabled();
   }
 
   private Settings getUserSettings() {
